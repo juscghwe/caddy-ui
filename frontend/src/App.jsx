@@ -129,6 +129,14 @@ export default function App() {
         saveSettings(updates, onUnauth).catch(() => { });
     }, [onUnauth]);
 
+    const changeLanguage = async (lang) => {
+        if (!enabledLanguages.includes(lang)) return;
+
+        await loadLocale(lang);
+        setLanguage(lang);
+        persistSettings({ language: lang });
+    };
+
     const changeDarkPalette = (id) => { setDarkPalette(id); persistSettings({ darkPalette: id }); };
     const changeLightPalette = (id) => { setLightPalette(id); persistSettings({ lightPalette: id }); };
     const changeRouteColumns = (cols) => { setRouteColumns(cols); persistSettings({ routeColumns: cols }); };
@@ -226,11 +234,13 @@ export default function App() {
                                 <span className="page-title">{title}</span>
                             </div>
                             <div className="btn-row">
-                                <LanguagePicker
-                                    languages={enabledLanguages}
-                                    language={language}
-                                    onLanguageChange={changeLanguage}
-                                />
+                                {language && (
+                                    <LanguagePicker
+                                        languages={enabledLanguages}
+                                        language={language}
+                                        onLanguageChange={changeLanguage}
+                                    />
+                                )}
                                 <ThemePicker
                                     themes={allThemes}
                                     mode={theme}
