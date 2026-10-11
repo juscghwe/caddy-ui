@@ -2,11 +2,17 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './locales/en.js';
 
-const localeModules = import.meta.glob('./locales/*.js');
+const localeModules = import.meta.glob([
+    './locales/*.js',
+    '!./locales/en.js',
+]);
 
-export const availableLocales = Object.keys(localeModules)
-    .map(path => path.match(/\/([^/]+)\.js$/)?.[1])
-    .filter(Boolean);
+export const availableLocales = [
+    'en',
+    ...Object.keys(localeModules)
+        .map(path => path.match(/\/([^/]+)\.js$/)?.[1])
+        .filter(Boolean),
+];
 
 i18n
     .use(initReactI18next)
