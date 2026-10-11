@@ -206,7 +206,7 @@ export default function Instances({ toast, onUnauth, confirm, onInstanceChange }
                                 <div className="data-val mono">{inst.configPath}</div>
                             </div>
                             <div>
-                                <span className="field-label">Server Name</span>
+                                <span className="field-label">Primary Server ID</span>
                                 <div className="data-val mono">{inst.serverName || "srv0"}</div>
                             </div>
                             <div>
@@ -274,12 +274,15 @@ export default function Instances({ toast, onUnauth, confirm, onInstanceChange }
                                 <div className="hint" style={{ marginTop: 4 }}>Leave empty if Caddy files are mounted locally instead of accessed via Docker.</div>
                             </div>
                             <div className="field">
-                                <label>Server Name</label>
+                                <label>Primary Server ID</label>
                                 <input
                                     value={form.serverName}
                                     onChange={e => update({ serverName: e.target.value })}
                                     placeholder="srv0"
                                 />
+                                <div className="hint" style={{ marginTop: 4 }}>
+                                    Caddy HTTP server ID used when creating new routes. Usually srv0; this is not a hostname.
+                                </div>
                             </div>
                         </div>
 
