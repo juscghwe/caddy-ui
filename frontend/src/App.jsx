@@ -11,6 +11,7 @@ import Notifications from "./components/Notifications.jsx";
 import RoutesPage from "./components/Routes.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import ThemePicker from "./components/ThemePicker.jsx";
+import LanguagePicker from "./components/LanguagePicker.jsx";
 import ThemeWelcome from "./components/ThemeWelcome.jsx";
 import TLS from "./components/TLS.jsx";
 import { Toasts, useToast } from "./components/Toasts.jsx";
@@ -20,6 +21,7 @@ import { API, apiFetch, fetchCustomThemes, fetchSettings, getAuthEnabled, getIns
 const DEFAULTS = {
     firstTimeRun: true,
     theme: 'dark',
+    language: null,
     darkPalette: 'vt2026',
     lightPalette: 'coarse-everywhere',
     routeColumns: { status: true, title: true, upstream: true, server: true, id: true },
@@ -53,6 +55,8 @@ export default function App() {
         return !cached || !!getToken();
     });
     const [sessionExpired, setSessionExpired] = useState(false);
+    const [language, setLanguage] = useState(DEFAULTS.language);
+    const [enabledLanguages, setEnabledLanguages] = useState(['en']);
     const [theme, setTheme] = useState(DEFAULTS.theme);
     const [darkPalette, setDarkPalette] = useState(DEFAULTS.darkPalette);
     const [lightPalette, setLightPalette] = useState(DEFAULTS.lightPalette);
@@ -212,6 +216,11 @@ export default function App() {
                                 <span className="page-title">{title}</span>
                             </div>
                             <div className="btn-row">
+                                <LanguagePicker
+                                    languages={enabledLanguages}
+                                    language={language}
+                                    onLanguageChange={changeLanguage}
+                                />
                                 <ThemePicker
                                     themes={allThemes}
                                     mode={theme}
