@@ -11,6 +11,8 @@ import Notifications from "./components/Notifications.jsx";
 import RoutesPage from "./components/Routes.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import ThemePicker from "./components/ThemePicker.jsx";
+import LanguagePicker from "./components/LanguagePicker.jsx";
+import { availableLocales, loadLocale, resolveLocale } from "./i18n/index.js";
 import ThemeWelcome from "./components/ThemeWelcome.jsx";
 import TLS from "./components/TLS.jsx";
 import { Toasts, useToast } from "./components/Toasts.jsx";
@@ -20,6 +22,7 @@ import { API, apiFetch, fetchCustomThemes, fetchSettings, getAuthEnabled, getIns
 const DEFAULTS = {
     firstTimeRun: true,
     theme: 'dark',
+    language: null,
     darkPalette: 'vt2026',
     lightPalette: 'coarse-everywhere',
     routeColumns: { status: true, title: true, upstream: true, server: true, id: true },
@@ -53,6 +56,8 @@ export default function App() {
         return !cached || !!getToken();
     });
     const [sessionExpired, setSessionExpired] = useState(false);
+    const [language, setLanguage] = useState(DEFAULTS.language);
+    const [enabledLanguages, setEnabledLanguages] = useState(['en']);
     const [theme, setTheme] = useState(DEFAULTS.theme);
     const [darkPalette, setDarkPalette] = useState(DEFAULTS.darkPalette);
     const [lightPalette, setLightPalette] = useState(DEFAULTS.lightPalette);
@@ -74,7 +79,21 @@ export default function App() {
 
     useEffect(() => {
         if (!authed || settingsLoaded) return;
-        Promise.all([fetchSettings(onUnauth), fetchCustomThemes(onUnauth).catch(() => [])]).then(([s, custom]) => {
+        Promise.all([
+            fetchSettings(onUnauth),
+            fetchCustomThemes(onUnauth).catch(() => []),
+            apiFetch('/languages', {}, onUnauth).catch(() => ({ languages: ['en'] })),
+        ]).then(async ([s, custom, languageConfig]) => {
+            const available = new Set(availableLocales);
+            const enabled = (Array.isArray(languageConfig.languages) ? languageConfig.languages : ['en'])
+                .filter(lang => available.has(lang));
+            if (!enabled.includes('en')) enabled.unshift('en');
+            setEnabledLanguages(enabled);
+
+            const resolvedLanguage = resolveLocale(enabled, s.language ?? null);
+            await loadLocale(resolvedLanguage);
+            setLanguage(resolvedLanguage);
+
             setCustomThemes(custom);
             const validIds = new Set([...THEME_LIST, ...custom].map(t => t.id));
             const dk = validIds.has(s.darkPalette) ? s.darkPalette : DEFAULTS.darkPalette;
@@ -114,6 +133,14 @@ export default function App() {
     const persistSettings = useCallback((updates) => {
         saveSettings(updates, onUnauth).catch(() => {});
     }, [onUnauth]);
+
+    const changeLanguage = async (lang) => {
+        if (!enabledLanguages.includes(lang)) return;
+
+        await loadLocale(lang);
+        setLanguage(lang);
+        persistSettings({ language: lang });
+    };
 
     const changeDarkPalette = (id) => { setDarkPalette(id); persistSettings({ darkPalette: id }); };
     const changeLightPalette = (id) => { setLightPalette(id); persistSettings({ lightPalette: id }); };
@@ -212,6 +239,13 @@ export default function App() {
                                 <span className="page-title">{title}</span>
                             </div>
                             <div className="btn-row">
+                                {language && (
+                                    <LanguagePicker
+                                        languages={enabledLanguages}
+                                        language={language}
+                                        onLanguageChange={changeLanguage}
+                                    />
+                                )}
                                 <ThemePicker
                                     themes={allThemes}
                                     mode={theme}
