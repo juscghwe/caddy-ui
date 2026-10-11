@@ -53,4 +53,22 @@ export async function loadLocale(locale) {
     await i18n.changeLanguage(normalized);
 }
 
+export function resolveLocale(enabledLanguages, savedLanguage = null) {
+    const enabled = new Set(enabledLanguages);
+
+    if (savedLanguage && enabled.has(savedLanguage.toLowerCase())) {
+        return savedLanguage.toLowerCase();
+    }
+
+    for (const browserLocale of navigator.languages || [navigator.language]) {
+        const language = browserLocale.toLowerCase().split('-')[0];
+
+        if (enabled.has(language)) {
+            return language;
+        }
+    }
+
+    return 'en';
+}
+
 export default i18n;
