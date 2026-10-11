@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { caddyLoad } from '../caddy.js';
 import { readContainerFile, writeContainerFile } from '../containerFs.js';
 import { execInInstance, spawnInInstance } from '../docker.js';
-import logger from '../logger.js';
+import logger, { getRecentLogEntries, subscribeToLogs } from '../logger.js';
 const router = Router();
 const TAIL_LINES = 200;
 
@@ -109,6 +109,24 @@ function updateGlobalBlock(content, logConfig) {
 }
 
 // ── Routes ────────────────────────────────────────────────────────────────────
+
+router.get('/app', (req, res) => {
+    res.json({ entries: getRecentLogEntries(TAIL_LINES) });
+});
+
+router.get('/app/stream', (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    const unsubscribe = subscribeToLogs((entry) => {
+        res.write(`data: ${JSON.stringify({ entry })}\n\n`);
+    });
+
+    req.on('close', unsubscribe);
+});
+
 
 router.get('/config', async (req, res) => {
     const content = await readContainerFile(req.instance.containerName, req.instance.configPath);

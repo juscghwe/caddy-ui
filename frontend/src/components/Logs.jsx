@@ -3,6 +3,7 @@ import { API, apiFetch, getToken } from "../utils/api.js";
 
 export default function Logs({ toast, onUnauth }) {
     const [lines, setLines] = useState([]);
+    const [source, setSource] = useState("caddy");
     const [live, setLive] = useState(false);
     const [configOpen, setConfigOpen] = useState(false);
     const [logConfig, setLogConfig] = useState(null);
@@ -15,10 +16,20 @@ export default function Logs({ toast, onUnauth }) {
     const esRef = useRef(null);
 
     useEffect(() => {
-        apiFetch("/logs", {}, onUnauth).then(data => setLines(data.lines || [])).catch(e => toast.error(e.message));
-        apiFetch("/logs/config", {}, onUnauth).then(setLogConfig).catch(e => toast.error(e.message));
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount only; toast isn't stable across renders
-    }, [onUnauth]);
+        const path = source === "caddy" ? "/logs" : "/logs/app";
+        apiFetch(path, {}, onUnauth)
+            .then(data => setLines(source === "caddy" ? (data.lines || []) : (data.entries || []).map(entry => JSON.stringify(entry))))
+            .catch(e => toast.error(e.message));
+
+        if (source === "caddy" && !logConfig) {
+            apiFetch("/logs/config", {}, onUnauth).then(setLogConfig).catch(e => toast.error(e.message));
+        }
+
+        esRef.current?.close();
+        esRef.current = null;
+        setLive(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- reload when source changes; toast isn't stable across renders
+    }, [onUnauth, source]);
 
     useEffect(() => {
         if (!logSearch && levelFilter === "all") {
@@ -30,11 +41,13 @@ export default function Logs({ toast, onUnauth }) {
     const toggleLive = () => {
         if (live) { esRef.current?.close(); esRef.current = null; setLive(false); return; }
         const token = getToken();
-        const url = token ? `${API}/logs/stream?token=${token}` : `${API}/logs/stream`;
+        const streamPath = source === "caddy" ? "/logs/stream" : "/logs/app/stream";
+        const url = token ? `${API}${streamPath}?token=${token}` : `${API}${streamPath}`;
         const es = new EventSource(url);
         es.onmessage = e => {
             const data = JSON.parse(e.data);
-            if (data.line) setLines(l => [...l.slice(-500), data.line]);
+            const line = data.line || (data.entry ? JSON.stringify(data.entry) : null);
+            if (line) setLines(l => [...l.slice(-500), line]);
         };
         esRef.current = es;
         setLive(true);
@@ -68,15 +81,16 @@ export default function Logs({ toast, onUnauth }) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `caddy-access-${new Date().toISOString().slice(0, 10)}.log`;
+        a.download = `${source === "caddy" ? "caddy-access" : "caddy-ui"}-${new Date().toISOString().slice(0, 10)}.log`;
         a.click();
         URL.revokeObjectURL(url);
     };
 
     const refreshLogs = () => {
         setRefreshing(true);
-        apiFetch("/logs", {}, onUnauth)
-            .then(d => setLines(d.lines || []))
+        const path = source === "caddy" ? "/logs" : "/logs/app";
+        apiFetch(path, {}, onUnauth)
+            .then(d => setLines(source === "caddy" ? (d.lines || []) : (d.entries || []).map(entry => JSON.stringify(entry))))
             .catch(e => toast.error(e.message))
             .finally(() => setRefreshing(false));
     };
@@ -105,6 +119,12 @@ export default function Logs({ toast, onUnauth }) {
 
     return (
         <div className="gap-16 logs-page">
+            <div className="btn-row">
+                <button className={`btn ${source === "caddy" ? "btn-primary" : "btn-ghost"}`} onClick={() => setSource("caddy")}>Caddy</button>
+                <button className={`btn ${source === "app" ? "btn-primary" : "btn-ghost"}`} onClick={() => setSource("app")}>caddy/ui</button>
+            </div>
+
+            {source === "caddy" && (
             <div className="card card-flush">
                 <div className={`card-header--clickable ${configOpen ? "is-open" : ""}`} onClick={() => setConfigOpen(o => !o)}>
                     <span className="section-label">Log Configuration</span>
@@ -170,6 +190,7 @@ export default function Logs({ toast, onUnauth }) {
                     </div>
                 )}
             </div>
+            )}
 
             <div className="log-toolbar">
                 <div className="btn-row">
