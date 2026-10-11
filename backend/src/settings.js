@@ -7,6 +7,7 @@ const SETTINGS_PATH = process.env.SETTINGS_PATH || '/etc/caddy-ui/settings.json'
 const DEFAULT_SETTINGS = {
     firstTimeRun: true,
     theme: 'dark',
+    language: null,
     darkPalette: 'vt2026',
     lightPalette: 'coarse-everywhere',
     routeColumns: { status: true, title: true, upstream: true, server: true, id: true },

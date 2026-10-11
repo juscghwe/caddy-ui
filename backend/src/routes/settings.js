@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 
 router.put('/', async (req, res) => {
     try {
-        const allowed = ['firstTimeRun', 'theme', 'darkPalette', 'lightPalette', 'routeColumns', 'routeChecks', 'routeCheckExcludes'];
+        const allowed = ['firstTimeRun', 'theme', 'language', 'darkPalette', 'lightPalette', 'routeColumns', 'routeChecks', 'routeCheckExcludes'];
         const updates = {};
         for (const key of allowed) {
             if (key in req.body) updates[key] = req.body[key];
