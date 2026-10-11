@@ -12,6 +12,7 @@ import RoutesPage from "./components/Routes.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import ThemePicker from "./components/ThemePicker.jsx";
 import LanguagePicker from "./components/LanguagePicker.jsx";
+import { availableLocales, loadLocale, resolveLocale } from "./i18n/index.js";
 import ThemeWelcome from "./components/ThemeWelcome.jsx";
 import TLS from "./components/TLS.jsx";
 import { Toasts, useToast } from "./components/Toasts.jsx";
@@ -78,22 +79,31 @@ export default function App() {
 
     useEffect(() => {
         if (!authed || settingsLoaded) return;
-        Promise.all([fetchSettings(onUnauth), fetchCustomThemes(onUnauth).catch(() => [])]).then(([s, custom]) => {
-            setCustomThemes(custom);
-            const validIds = new Set([...THEME_LIST, ...custom].map(t => t.id));
-            const dk = validIds.has(s.darkPalette) ? s.darkPalette : DEFAULTS.darkPalette;
-            const lt = validIds.has(s.lightPalette) ? s.lightPalette : DEFAULTS.lightPalette;
-            setTheme(s.theme === 'light' ? 'light' : 'dark');
-            setDarkPalette(dk);
-            setLightPalette(lt);
-            setRouteColumns({ ...DEFAULTS.routeColumns, ...s.routeColumns });
-            setRouteChecks(s.routeChecks === true);
-            setRouteCheckExcludes(Array.isArray(s.routeCheckExcludes) ? s.routeCheckExcludes : []);
-            setSettingsLoaded(true);
-            if (s.firstTimeRun) setShowThemeWelcome(true);
-        }).catch(() => {
-            setSettingsLoaded(true);
-        });
+        Promise.all([fetchSettings(onUnauth), fetchCustomThemes(onUnauth).catch(() => []), apiFetch('/languages', {}, onUnauth)
+            .catch(() => ({ languages: ['en'] })),]).then(async ([s, custom, languageConfig]) => {
+                const available = new Set(availableLocales);
+                const enabled = ( Array.isArray(languageConfig.languages) ? languageConfig.languages: ['en'] ).filter(lang => available.has(lang));
+                if (!enabled.includes('en')) enabled.unshift('en');
+                setEnabledLanguages(enabled);
+                const resolvedLanguage = resolveLocale( enabled, s.language ?? null );
+                await loadLocale(resolvedLanguage);
+                setLanguage(resolvedLanguage);
+
+                setCustomThemes(custom);
+                const validIds = new Set([...THEME_LIST, ...custom].map(t => t.id));
+                const dk = validIds.has(s.darkPalette) ? s.darkPalette : DEFAULTS.darkPalette;
+                const lt = validIds.has(s.lightPalette) ? s.lightPalette : DEFAULTS.lightPalette;
+                setTheme(s.theme === 'light' ? 'light' : 'dark');
+                setDarkPalette(dk);
+                setLightPalette(lt);
+                setRouteColumns({ ...DEFAULTS.routeColumns, ...s.routeColumns });
+                setRouteChecks(s.routeChecks === true);
+                setRouteCheckExcludes(Array.isArray(s.routeCheckExcludes) ? s.routeCheckExcludes : []);
+                setSettingsLoaded(true);
+                if (s.firstTimeRun) setShowThemeWelcome(true);
+            }).catch(() => {
+                setSettingsLoaded(true);
+            });
     }, [authed, settingsLoaded, onUnauth]);
 
     const allThemes = [...THEME_LIST, ...customThemes];
@@ -116,7 +126,7 @@ export default function App() {
     }, [theme, darkPalette, lightPalette, customThemes]);
 
     const persistSettings = useCallback((updates) => {
-        saveSettings(updates, onUnauth).catch(() => {});
+        saveSettings(updates, onUnauth).catch(() => { });
     }, [onUnauth]);
 
     const changeDarkPalette = (id) => { setDarkPalette(id); persistSettings({ darkPalette: id }); };
