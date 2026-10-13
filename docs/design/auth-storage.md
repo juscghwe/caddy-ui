@@ -31,5 +31,18 @@ These primitives implement local key wrapping, not a browser transport protocol.
 
 Storage tests exercise persisted ciphertext/WAL, wrong-key refusal, transactions,
 schema constraints, authenticated recovery/tampering, private key files and salted
-password verification. Runtime key provisioning, bootstrap, sessions and recovery
-CLI are subsequent checkpoints.
+password verification.
+
+The next service checkpoint adds runtime key provisioning outside the data
+directory, an installation marker, explicit configuration/transport validation,
+one-time administrator claiming and the wrapped owner recovery bundle. Session
+credentials are random 256-bit values stored only as SHA-256 digests; CSRF tokens
+use a separately derived HMAC key. Idle/absolute expiry, logout, password changes
+and disablement revoke access. Last-admin and concurrent claim protections are
+transactional, and privileged mutations recheck the acting session in the same
+transaction. Personal preferences have user-owned records. Audit events omit
+credentials and are limited to 90 days/10,000 records.
+
+The service remains unconnected to production login until the transport/API and
+browser cutover checkpoints. HTTP policy, TLS onboarding, recovery tooling and
+full-flow browser/image validation follow before release.
