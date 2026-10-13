@@ -146,10 +146,21 @@ Database encryption does not replace Argon2id or session-ID hashing.
 ### Deployment encryption recovery
 
 During verified HTTPS setup, offer the deployment owner a separate, randomly
-generated recovery code (at least 256 bits of entropy) to save offline. Display
-it once, never log it or retain it in browser storage. A local CLI export flow
-may be used instead. Keep this code distinct from the expiring administrator
-claim code and from any future user's account-reset codes.
+generated recovery code (at least 256 bits of entropy) to save in their vault or
+password manager. Deliver it only in the successful HTTPS setup response, with
+`Cache-Control: no-store`; do not expose a later retrieval/download endpoint.
+The setup view offers a user-controlled export using the value temporarily held
+in memory, with deployment identity and the canonical HTTPS URL so the owner can
+identify the entry. Export the recovery code, not the raw database key.
+
+Ask the owner to confirm saving it, then clear the transient view state and revoke
+any temporary download object URL when the view is dismissed. Never persist the
+code in browser storage, URLs, logs or telemetry, and never automatically send it
+to a third-party vault service. Reloading the view must not retrieve the code
+again. Local regeneration is the recovery path if delivery fails after setup
+commits; it does not reopen claiming or reveal the previous code. Keep this code
+distinct from the expiring administrator claim code and from any future user's
+account-reset codes.
 
 Use a reviewed authenticated wrapping implementation to encrypt a recovery copy
 of the database key under a key derived from that high-entropy recovery code.
@@ -214,7 +225,8 @@ not an excuse to expose management without auth.
    initialized guard, create the account, consume the code, and persist completion
    atomically so simultaneous claims cannot create two initial administrators.
    Give the deployment owner the separately generated encryption recovery code
-   over this verified connection. Define a crash-safe local regeneration flow so
+   once over this verified connection, with a vault/password-manager export and
+   save confirmation in the setup view. Define a crash-safe local regeneration flow so
    losing the response cannot leave the owner without a recovery option or reopen
    administrator claiming.
 7. Close the temporary listener and remove bootstrap mutation routes from normal
