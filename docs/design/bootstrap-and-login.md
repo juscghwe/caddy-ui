@@ -79,14 +79,22 @@ configuration is an actionable startup error even if a bypass was requested.
 
 ## Storage and credential design
 
-Use SQLite for the initial single-backend deployment, behind a small repository
-layer and versioned migrations. It provides transactions, unique constraints,
-foreign keys, and consistent updates without making users administer a second
-service. Use prepared statements, enable foreign keys, bound lock waits, and
-verify durability and WAL behavior on the supported persistent volume.
+Use encrypted SQLite by default for the initial single-backend deployment,
+behind a small repository layer and versioned migrations. Prefer SQLCipher
+Community, which provides AES-256 database encryption under a BSD-style
+[open-source license](https://github.com/sqlcipher/sqlcipher/blob/master/LICENSE.md).
+It does not require a commercial SEE license. Verify the selected Node adapter
+and crypto dependencies have compatible licenses too.
 
-A database file is still a file on a server. SQLite does not encrypt it or defend
-against a compromised host/backend. Restrict the auth directory to the service
+SQLite provides transactions, unique constraints, foreign keys, and consistent
+updates without making users administer a second service. Use prepared
+statements, enable foreign keys, bound lock waits, and verify durability and WAL
+behavior on the supported persistent volume.
+
+A database file is still a file on a server. Core SQLite has no built-in AES
+encryption; the application must ship a verified encryption-capable provider.
+Encryption protects an obtained database/backup, not a compromised running
+host/backend with access to its keys. Restrict the auth directory to the service
 identity (target mode 0700) and the database and related files to 0600, exclude
 them from source control, and support consistent protected backups. Do not place
 SQLite on a network share or claim multiple backend replicas are supported.
@@ -114,15 +122,56 @@ verification work; rate-limit by source and account, use generic failure message
 and avoid revealing whether a login name exists. Password changes and account
 disablement invalidate existing sessions.
 
-Encryption at rest is a volume/backup and key-management decision. SQLCipher is
-an option only with an independently supplied/protected key and supported builds;
-placing a decryption key next to the database does not establish protection from
-host compromise. Future TOTP secrets require recoverable encryption with a
-separately managed key; passkey public keys do not. Do not replace password
-hashing with reversible encryption.
+Configure and verify the encryption provider before the first schema/data write.
+Check provider capability, database readability with the correct key, and failure
+with no/wrong key. Stock SQLite can ignore unsupported pragmas, so executing
+`PRAGMA key` without checking the provider is not evidence of encryption. Verify
+protection of WAL/journal/temp data and migration/backup exports. No plaintext
+fallback if the provider or key is missing, and no automatic creation of a new
+database when an existing encrypted database cannot be opened.
 
-Choose the SQLite adapter and Argon2id implementation before adding dependencies:
-verify maintained releases, supported Node versions, Alpine/musl availability,
+For a fresh deployment, provision a cryptographically random database key (at
+least 256 bits) through the local setup flow before creating the database. Normal
+startup obtains it from a protected deployment secret or separately persisted,
+restricted key location. Do not put it into source control, container images,
+the database directory, logs, or the same backup as the encrypted database.
+Key storage must survive container recreation without prompting on every restart.
+An initialized deployment missing its key enters local recovery; it must not
+generate a replacement key silently.
+
+Volume and backup protection remain necessary. Future TOTP secrets require
+recoverable encryption with a separately managed key; passkey public keys do not.
+Database encryption does not replace Argon2id or session-ID hashing.
+
+### Deployment encryption recovery
+
+During verified HTTPS setup, offer the deployment owner a separate, randomly
+generated recovery code (at least 256 bits of entropy) to save offline. Display
+it once, never log it or retain it in browser storage. A local CLI export flow
+may be used instead. Keep this code distinct from the expiring administrator
+claim code and from any future user's account-reset codes.
+
+Use a reviewed authenticated wrapping implementation to encrypt a recovery copy
+of the database key under a key derived from that high-entropy recovery code.
+Persist the encrypted recovery bundle outside the encrypted database, with
+version/deployment metadata and the required non-secret derivation parameters.
+Include the bundle in the protected backup: it must remain readable while the
+database is locked, but it must not contain the plaintext recovery code/key.
+Hashing the recovery code alone would not allow recovery of the database key.
+
+Recovery requires the saved code, the bundle, and the database/backup. Require
+local control of the deployment for recovery, replace the missing runtime key
+securely, and invalidate sessions/challenges. The recovery code is a deployment
+master secret; administrator account creation does not automatically grant every
+administrator a copy. It cannot recover lost data without a backup.
+
+After recovery, replace the recovery code/bundle. Offline copies cannot be made
+provably single-use: re-key the database when compromise of a recovery code is
+suspected, and explain that retained old backups remain decryptable with their
+old keys. Rotation and backup retention need an explicit operator procedure.
+
+Choose the SQLCipher-compatible adapter and Argon2id implementation before adding
+dependencies: verify maintained releases, supported Node versions, Alpine/musl availability,
 install behavior, resource usage, and migration/backup support. Avoid assuming a
 built-in API has identical support in Node 22 and 24.
 
@@ -164,6 +213,10 @@ not an excuse to expose management without auth.
 6. Through HTTPS, submit the code and create the first administrator. Enforce the
    initialized guard, create the account, consume the code, and persist completion
    atomically so simultaneous claims cannot create two initial administrators.
+   Give the deployment owner the separately generated encryption recovery code
+   over this verified connection. Define a crash-safe local regeneration flow so
+   losing the response cannot leave the owner without a recovery option or reopen
+   administrator claiming.
 7. Close the temporary listener and remove bootstrap mutation routes from normal
    operation. New devices/users receive the public certificate via the operator's
    export flow; adding a device never reopens administrator bootstrap.
@@ -280,9 +333,11 @@ Caddyfiles, history and operational settings. Existing personal settings can see
 the initial administrator's preferences without inventing settings for future
 users. Keep authentication initialization distinct from `firstTimeRun`.
 
-Backups must be consistent with SQLite/WAL, encrypted/protected as appropriate,
-and include required independent TLS material and installation metadata. The
-supported restore operation clears sessions and bootstrap challenges before
+Backups must preserve database encryption, be consistent with SQLite/WAL, and
+include the encrypted recovery bundle, required independent TLS material and
+installation metadata. Keep normal runtime keys and offline recovery codes
+separate from those backups. The supported restore operation clears sessions and
+bootstrap challenges before
 resuming service. Document that copying live database files is unsupported; do
 not promise detection of an arbitrary rollback of the entire filesystem. Fail
 closed on missing/corrupt state and document local recovery, certificate
@@ -298,13 +353,13 @@ filename or combine unrelated account, transport and UI changes to save commits.
 
 | Order and proposed commit | Behavior and likely areas | Review/verification boundary |
 | --- | --- | --- |
-| 1. `feat(auth): add transactional identity storage and password verification` | Backend repository layer, migrations, Argon2id service and dependency lockfile. No exposed incomplete login flow. | Migration constraints, hash/verify/rehash, duplicate users, bounded verification, storage permissions and restart persistence. |
+| 1. `feat(auth): add encrypted identity storage and password verification` | SQLCipher repository layer, normal key provisioning, migrations, Argon2id service and dependency lockfile. No exposed incomplete login flow. | Verified encryption provider, no/wrong-key refusal, encrypted WAL/temp/backup handling, migration constraints, hash/verify/rehash, duplicate users, bounded verification, storage permissions and restart persistence. |
 | 2. `fix(auth): reject incomplete configuration and untrusted transport` | Startup policy, lifecycle checks, trusted-proxy/origin handling and narrow public endpoints. | Partial env configuration, broken state, direct HTTP and spoofed forwarding headers fail safely; explicit development mode is tested separately. |
 | 3. `feat(setup): add HTTPS gateway and certificate onboarding` | Skip TLS provisioning when trusted HTTPS already exists; otherwise offer opt-in gateway/Compose wiring, persistent TLS identity, local certificate export and temporary read-only setup instructions. | Existing-HTTPS setup reaches the claim form without certificate/gateway steps; public-certificate-only exposure, fingerprint instructions, renewal/restart persistence and loopback/LAN bindings. |
-| 4. `feat(setup): claim the initial administrator with a one-time code` | CLI challenge lifecycle, HTTPS claim API and focused setup view. | Expiry, replay, concurrent claims, HTTP refusal, crash recovery and closure after setup. |
+| 4. `feat(setup): claim the initial administrator with a one-time code` | CLI challenge lifecycle, HTTPS claim API and focused setup view; separate owner encryption-recovery code and wrapped key bundle. | Expiry, replay, concurrent claims, HTTP refusal, crash recovery, recovery-code secrecy, locked-database recovery bundle access and closure after setup. |
 | 5. `feat(auth): replace browser JWTs with revocable cookie sessions` | Session store/middleware plus the matching login/API/App cutover, cookie-authenticated downloads and streams. | CSRF/origin checks, cookie flags, rotation/revocation/expiry, stale localStorage, URL-token rejection and browser rendering. Backend/frontend changes stay together because this is one protocol change. |
 | 6. `feat(accounts): manage administrator accounts and personal preferences` | Administrator/self-service API and corresponding views; preferences separated from global operational settings. | Last-admin races, targeting another user, disabled accounts, session revocation, independent preferences and global-setting boundaries. |
-| 7. `feat(auth): add legacy migration and local recovery commands` | Explicit environment import, protected recovery, restore/revocation behavior and integration transition. | One-shot imports, no secret logging, missing/corrupt state, restores, rejected old tokens and preserved Caddy/instance data. |
+| 7. `feat(auth): add legacy migration and local recovery commands` | Explicit environment import, protected account/database-key recovery, key rotation, restore/revocation behavior and integration transition. | One-shot imports, no secret logging, missing/wrong keys, corrupt state, correct/incorrect recovery codes, encrypted restores, rotation, rejected old tokens and preserved Caddy/instance data. |
 | 8. `test(auth): verify onboarding and upgrade flows with real HTTPS` | Remaining full-flow fixtures/browser coverage and CI wiring, plus the final rollout examples/reference consistency check. | Fresh install, migration, local recovery, trusted internal TLS, existing reverse proxy, live streams and direct-HTTP refusal. Keep regressions in their introducing commits; this commit joins the complete scenarios. |
 
 The actual migration/default switch may need to be grouped with session cutover
@@ -327,7 +382,10 @@ codes, appropriate 401/403 distinctions, request IDs and redacted causes.
 
 Resolve these concrete choices before activating runtime changes:
 
-- Reviewed SQLite/Argon2id packages and the supported Node/image matrix.
+- Reviewed SQLCipher-compatible/Argon2id packages and the supported Node/image
+  matrix, including adapter/crypto licensing and native builds.
+- Normal deployment-key provisioning, authenticated recovery-key wrapping,
+  encrypted backup/export behavior and the local rotation/recovery procedure.
 - Exact optional gateway topology, setup-port binding and fixed-origin/proxy
   configuration for Docker networking, host networking and existing proxies.
 - Session idle/absolute lifetimes and the minimal administrator account UI.
