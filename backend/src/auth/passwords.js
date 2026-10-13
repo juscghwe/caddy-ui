@@ -5,14 +5,14 @@ let running = 0;
 
 export function username(value) {
     if (typeof value !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$/.test(value)) {
-        throw new Error('Username must contain 1–64 ASCII letters, numbers, dots, underscores or hyphens');
+        throw Object.assign(new Error('Username must contain 1–64 ASCII letters, numbers, dots, underscores or hyphens'), { code: 'VALIDATION_FAILED' });
     }
     return value.toLowerCase();
 }
 
 export function validatePassword(value) {
     if (typeof value !== 'string' || value.length < 12 || Buffer.byteLength(value) > 1024) {
-        throw new Error('Password must contain at least 12 characters and at most 1024 bytes');
+        throw Object.assign(new Error('Password must contain at least 12 characters and at most 1024 bytes'), { code: 'VALIDATION_FAILED' });
     }
     return value;
 }

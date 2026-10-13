@@ -43,6 +43,13 @@ transactional, and privileged mutations recheck the acting session in the same
 transaction. Personal preferences have user-owned records. Audit events omit
 credentials and are limited to 90 days/10,000 records.
 
-The service remains unconnected to production login until the transport/API and
-browser cutover checkpoints. HTTP policy, TLS onboarding, recovery tooling and
-full-flow browser/image validation follow before release.
+The HTTP router/middleware factory now enforces canonical HTTPS transport,
+trusted forwarding, exact browser origin and session-bound CSRF checks. It issues
+only HttpOnly/Secure/SameSite cookies, rejects URL/bearer credentials, revokes the
+previous cookie session on login, and closes live log streams on revocation or
+expiry. Recovery material appears only in the successful uncached claim response.
+HTTP API tests exercise those boundaries against a real local Express server.
+
+These factories remain unconnected to production login until the browser
+cutover checkpoint. TLS onboarding, recovery tooling and full-flow browser/image
+validation follow before release.

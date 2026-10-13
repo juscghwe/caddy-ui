@@ -5,6 +5,7 @@ import { openDatabase, migrate } from './database.js';
 import { privateWrite, readKey, wrapKey } from './keys.js';
 import { hashPassword, verifyPassword, needsRehash, username } from './passwords.js';
 import { isOutside } from './config.js';
+import { EventEmitter } from 'node:events';
 
 export const digest = value => createHash('sha256').update(value).digest('hex');
 const failure = (code, message = code) => Object.assign(new Error(message), { code });
@@ -59,9 +60,11 @@ export class AuthService {
     constructor(config, db, key, installationId, clock) {
         Object.assign(this, { config, db, key, installationId, clock });
         this.csrfKey = Buffer.from(hkdfSync('sha256', key, installationId, 'caddy-ui/csrf/v1', 32));
+        this.revocations = new EventEmitter();
+        this.revocations.setMaxListeners(0);
     }
 
-    close() { return this.closing ??= this.db.close().finally(() => { this.key.fill(0); this.csrfKey.fill(0); }); }
+    close() { return this.closing ??= this.db.exclusive(db => db.close()).finally(() => { this.key.fill(0); this.csrfKey.fill(0); }); }
     state() { return this.db.exclusive(db => db.get('SELECT * FROM bootstrap_state WHERE id=1')); }
     async audit(db, action, actor = null, target = null, requestId = null) {
         await db.run('INSERT INTO security_audit(time, actor, action, target, request_id) VALUES(?,?,?,?,?)', [this.clock(), actor, action, target, requestId]);
@@ -152,6 +155,23 @@ export class AuthService {
             await db.run('DELETE FROM sessions WHERE digest=?', [session.digest]);
             await this.audit(db, 'session.revoked', session.user.id, null, requestId);
         });
+        this.revocations.emit('changed', session.user.id);
+    }
+    listSessions(session) {
+        return this.db.transaction(async db => {
+            await this.assertSession(db, session);
+            return (await db.all('SELECT digest,created_at,used_at,expires_at FROM sessions WHERE user_id=? AND expires_at>? AND used_at>? ORDER BY created_at DESC', [session.user.id, this.clock(), this.clock() - this.config.idleMs]))
+                .map(row => ({ id: row.digest, createdAt: row.created_at, usedAt: row.used_at, expiresAt: row.expires_at, current: row.digest === session.digest }));
+        });
+    }
+    async revokeSession(session, id, requestId) {
+        await this.db.transaction(async db => {
+            await this.assertSession(db, session);
+            const result = await db.run('DELETE FROM sessions WHERE digest=? AND user_id=?', [id, session.user.id]);
+            if (!result.changes) throw failure('NOT_FOUND');
+            await this.audit(db, 'session.revoked', session.user.id, null, requestId);
+        });
+        this.revocations.emit('changed', session.user.id);
     }
     async changePassword(session, currentPassword, password, requestId) {
         const row = await this.db.exclusive(db => db.get('SELECT p.hash,u.revision FROM password_credentials p JOIN users u ON u.id=p.user_id WHERE p.user_id=?', [session.user.id]));
@@ -166,6 +186,7 @@ export class AuthService {
             await db.run('DELETE FROM sessions WHERE user_id=?', [session.user.id]);
             await this.audit(db, 'password.changed', session.user.id, session.user.id, requestId);
         });
+        this.revocations.emit('changed', session.user.id);
     }
     listUsers() { return this.db.exclusive(async db => (await db.all('SELECT * FROM users ORDER BY username')).map(publicUser)); }
     async createUser(session, name, password, requestId) {
@@ -193,6 +214,7 @@ export class AuthService {
             await db.run('DELETE FROM sessions WHERE user_id=?', [id]);
             await this.audit(db, enabled ? 'account.enabled' : 'account.disabled', session.user.id, id, requestId);
         });
+        this.revocations.emit('changed', id);
     }
     preferences(userId) { return this.db.exclusive(async db => JSON.parse((await db.get('SELECT value FROM user_preferences WHERE user_id=?', [userId]))?.value || '{}')); }
     async savePreferences(userId, updates) {
