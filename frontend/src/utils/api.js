@@ -1,62 +1,76 @@
-export const API = "/api";
+/* eslint-disable i18next/no-literal-string -- API identifiers, codes and serialization are protocol data */
+export const API = '/api';
+let csrfToken = null;
+let authEnabled = null;
 
-export function getToken() { return localStorage.getItem('caddy_ui_token'); }
-export function setToken(token) {
-    if (token) localStorage.setItem('caddy_ui_token', token);
-    else localStorage.removeItem('caddy_ui_token');
+export class ApiError extends Error {
+    constructor(message, { code = 'REQUEST_FAILED', status = null, requestId = null } = {}) {
+        super(message);
+        Object.assign(this, { name: 'ApiError', code, status, requestId });
+    }
 }
-
-export function getAuthEnabled() {
-    const v = localStorage.getItem('caddy_ui_auth_enabled');
-    return v === null ? null : v === 'true';
+export function clearSession() { csrfToken = null; }
+function clearLegacyAuth() {
+    try { localStorage.removeItem('caddy_ui_token'); localStorage.removeItem('caddy_ui_auth_enabled'); } catch { /* Storage is optional for authentication. */ }
 }
-export function setAuthEnabled(v) { localStorage.setItem('caddy_ui_auth_enabled', String(v)); }
-
-export async function fetchSettings(onUnauth) {
-    return apiFetch('/settings', {}, onUnauth);
+export async function fetchAuthState() {
+    clearLegacyAuth();
+    const state = await apiFetch('/auth/status');
+    if (typeof state?.authEnabled !== 'boolean' || typeof state.initialized !== 'boolean' || typeof state.secure !== 'boolean') {
+        throw new ApiError('Invalid auth state', { code: 'CLIENT_PARSE_FAILED' });
+    }
+    if (state.user && (typeof state.user.id !== 'string' || typeof state.user.username !== 'string' || state.user.role !== 'administrator' || !state.user.enabled || typeof state.csrfToken !== 'string')) {
+        throw new ApiError('Invalid session state', { code: 'CLIENT_PARSE_FAILED' });
+    }
+    authEnabled = state.authEnabled;
+    csrfToken = state.csrfToken || null;
+    return state;
 }
-
-export async function saveSettings(updates, onUnauth) {
-    return apiFetch('/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-    }, onUnauth);
-}
-
-// Themes found under THEMES_PATH at startup -- read-only, managed as files.
-export async function fetchCustomThemes(onUnauth) {
-    return apiFetch('/custom-themes', {}, onUnauth);
-}
-
-export function getInstanceId() { return localStorage.getItem('caddy_ui_instance') || 'default'; }
-export function setInstanceId(id) { localStorage.setItem('caddy_ui_instance', id); }
+export function getInstanceId() { try { return localStorage.getItem('caddy_ui_instance') || 'default'; } catch { return 'default'; } }
+export function setInstanceId(id) { try { localStorage.setItem('caddy_ui_instance', id); } catch { /* Optional UI cache. */ } }
+export const fetchSettings = onUnauth => apiFetch('/settings', {}, onUnauth);
+export const fetchCustomThemes = onUnauth => apiFetch('/custom-themes', {}, onUnauth);
+export const saveSettings = (updates, onUnauth) => apiFetch('/settings', {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updates),
+}, onUnauth);
 
 export async function apiFetch(path, opts = {}, onUnauth) {
-    const token = getToken();
-    const headers = { ...(opts.headers || {}) };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    headers['X-Instance-Id'] = getInstanceId();
-    const res = await fetch(`${API}${path}`, { ...opts, headers });
-    if (res.status === 401) {
-        setToken(null);
-        if (onUnauth) onUnauth();
-        throw new Error('unauthorized');
-    }
-    if (!res.ok) {
-        const ct = res.headers.get("content-type") || "";
-        if (ct.includes("application/json")) {
-            const body = await res.json();
-            if (body.code === 'NO_INSTANCES') {
-                const err = new Error(body.error);
-                err.code = 'NO_INSTANCES';
-                throw err;
-            }
-            if (body.errors?.length) throw new Error(body.errors.join('\n'));
-            throw new Error(body.error || res.statusText);
+    clearLegacyAuth();
+    const method = opts.method || 'GET';
+    const headers = { ...opts.headers, 'X-Instance-Id': getInstanceId() };
+    const publicMutation = method === 'POST' && ['/auth/sessions', '/auth/bootstrap'].includes(path);
+    if (!['GET', 'HEAD'].includes(method) && !publicMutation) {
+        if (!csrfToken && authEnabled !== false) await fetchAuthState();
+        if (authEnabled && !csrfToken) {
+            onUnauth?.();
+            throw new ApiError('Session expired', { code: 'UNAUTHORIZED', status: 401 });
         }
-        throw new Error(res.statusText);
+        if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
     }
-    const ct = res.headers.get("content-type") || "";
-    return ct.includes("application/json") ? res.json() : res.text();
+    let res;
+    try { res = await fetch(API + path, { ...opts, method, headers, credentials: 'same-origin', cache: 'no-store' }); }
+    catch { throw new ApiError('Connection failed', { code: 'NETWORK_ERROR' }); }
+    let body;
+    try { body = res.headers.get('content-type')?.includes('application/json') ? await res.json() : await res.text(); }
+    catch { throw new ApiError('Invalid server response', { code: 'CLIENT_PARSE_FAILED', status: res.status }); }
+    if (!res.ok) {
+        if (res.status === 401 && !publicMutation) { clearSession(); onUnauth?.(); }
+        throw new ApiError(body?.error || res.statusText, {
+            code: body?.code || 'REQUEST_FAILED', status: res.status,
+            requestId: body?.requestId || res.headers.get('X-Request-ID'),
+        });
+    }
+    if (method === 'POST' && path === '/auth/sessions') { csrfToken = body.csrfToken; authEnabled = true; }
+    return body;
+}
+
+export async function downloadText(path, filename, onUnauth, type = 'text/plain') {
+    const text = await apiFetch(path, {}, onUnauth);
+    if (typeof text !== 'string') throw new ApiError('Invalid download response', { code: 'CLIENT_PARSE_FAILED' });
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

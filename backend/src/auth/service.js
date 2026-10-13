@@ -1,5 +1,5 @@
 import { createHash, createHmac, hkdfSync, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
-import { chmod, mkdir, readFile, lstat, rm, realpath } from 'node:fs/promises';
+import { chmod, mkdir, readFile, lstat, rm, realpath, readdir } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { openDatabase, migrate } from './database.js';
 import { privateWrite, readKey, wrapKey } from './keys.js';
@@ -21,6 +21,11 @@ export async function openAuth(config, { clock = Date.now } = {}) {
     if (config.mode === 'disabled') return null;
     await mkdir(config.dataPath, { recursive: true, mode: 0o700 });
     if (!(await lstat(config.dataPath)).isDirectory() || (await lstat(config.dataPath)).isSymbolicLink()) throw new Error('Auth directory must be a real directory');
+    const contents = await readdir(config.dataPath);
+    const files = ['auth.sqlite', 'auth.sqlite-wal', 'auth.sqlite-shm', 'auth.sqlite-journal', 'installation.json', 'recovery.json', 'provision.lock'];
+    if (contents.some(name => !files.includes(name) && !/^backup-[a-zA-Z0-9.-]+\.sqlite$/.test(name))) {
+        throw new Error('Auth data requires a dedicated directory without unrelated files');
+    }
     await chmod(config.dataPath, 0o700);
     await mkdir(dirname(config.keyPath), { recursive: true, mode: 0o700 });
     if (!isOutside(await realpath(config.dataPath), await realpath(dirname(config.keyPath)))) throw new Error('Database key location must be separate from the auth directory');

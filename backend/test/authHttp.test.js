@@ -59,6 +59,11 @@ async function signedIn() {
 }
 
 describe('HTTPS-only cookie authentication API', () => {
+    it('allows unprotected development only through explicit disabled configuration', async () => {
+        const next = vi.fn();
+        await createAuthMiddleware(null, authConfig({ CADDY_UI_AUTH_MODE: 'disabled' }))({}, {}, next);
+        expect(next).toHaveBeenCalledOnce();
+    });
     it('rejects direct HTTP and spoofed forwarding before claiming or logging in', async () => {
         const { auth, request } = await fixture({ trusted: false });
         const code = await auth.setupCode();
@@ -106,6 +111,8 @@ describe('HTTPS-only cookie authentication API', () => {
         expect((await mutate({})).status).toBe(403);
         expect((await mutate({ 'X-CSRF-Token': 'é'.repeat(csrf.length) })).status).toBe(403);
         expect((await mutate({ 'X-CSRF-Token': csrf })).status).toBe(201);
+        const roleRequest = await request('/api/accounts', { method: 'POST', body: { username: 'viewer', password, role: 'viewer' }, headers: { Cookie: cookie, 'X-CSRF-Token': csrf } });
+        expect(roleRequest.status).toBe(400);
     });
 
     it('revokes active streams and cookies on logout', async () => {

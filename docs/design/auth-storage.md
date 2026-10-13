@@ -50,6 +50,14 @@ previous cookie session on login, and closes live log streams on revocation or
 expiry. Recovery material appears only in the successful uncached claim response.
 HTTP API tests exercise those boundaries against a real local Express server.
 
-These factories remain unconnected to production login until the browser
-cutover checkpoint. TLS onboarding, recovery tooling and full-flow browser/image
-validation follow before release.
+The runtime/browser cutover now uses these factories. The first administrator
+claims over HTTPS, receives a transient owner recovery export, and signs in with
+the cookie protocol. Downloads preserve the selected instance without URL tokens.
+Client auth state comes from the server, and legacy localStorage credentials are
+removed. Explicit unprotected development is visibly marked and remains isolated
+in the disposable Caddy harness.
+
+The HTTPS setup/export/login/logout flow has been rendered and exercised in
+Chromium with a scoped test-certificate pin. This does not automate an OS CA
+installation. Remaining account UI/preferences wiring, local migration/recovery
+and full-flow image checks are required before release.

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { API, apiFetch, getToken } from "../utils/api.js";
+import { API, apiFetch } from "../utils/api.js";
 
 export default function Logs({ toast, onUnauth,  noInstances }) {
     const { t } = useTranslation();
@@ -52,10 +52,8 @@ export default function Logs({ toast, onUnauth,  noInstances }) {
 
     const toggleLive = () => {
         if (live) { esRef.current?.close(); esRef.current = null; setLive(false); return; }
-        const token = getToken();
         const streamPath = source === "caddy" ? "/logs/stream" : "/logs/app/stream";
-        const url = token ? `${API}${streamPath}?token=${token}` : `${API}${streamPath}`;
-        const es = new EventSource(url);
+        const es = new EventSource(`${API}${streamPath}`);
         es.onmessage = e => {
             const data = JSON.parse(e.data);
             const line = data.line || (data.entry ? JSON.stringify(data.entry) : null);

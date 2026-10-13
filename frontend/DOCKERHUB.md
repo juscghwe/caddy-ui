@@ -52,13 +52,24 @@ Add the following to your Caddyfile global block:
 ```bash
 mkdir -p /docker/caddy/logs
 mkdir -p /docker/caddy-ui
+mkdir -p /docker/caddy-ui-keys
 ```
 
-### 3. Generate a JWT secret (if using auth)
+### 3. Configure HTTPS for caddy/ui
 
-```bash
-openssl rand -base64 32
+If the UI is already behind HTTPS, keep that proxy and configure the external
+origin and trusted proxy identities below. Otherwise, add a route to your Caddyfile
+for a hostname you control (replace `caddy-ui.example.com` and configure its DNS):
+
+```caddy
+caddy-ui.example.com {
+    reverse_proxy caddy-ui-frontend:80
+}
 ```
+
+For private installations without a public domain, the optional
+[app-only gateway](deploy/README.md) provides internal-CA HTTPS with guided trust
+installation. Authentication requires HTTPS; no JWT signing secret is needed.
 
 ### 4. Update your compose file
 
@@ -82,27 +93,27 @@ services:
       - /docker/caddy/config:/config
       - /docker/caddy/logs:/var/log/caddy
     networks:
-      - caddy-ui
+      caddy-ui:
+        ipv4_address: 172.30.99.2
 
   caddy-ui-backend:
     image: zackwag/caddy-ui-backend:latest
     container_name: caddy-ui-backend
     restart: unless-stopped
-    ports:
-      - 9876:3001
     environment:
       - TZ=America/New_York
       # Optional -- enable installed additional UI languages (English is always available)
       - CADDY_UI_ADDITIONAL_LANGUAGES=de
-      # Optional -- leave unset to disable auth
-      - CADDY_UI_USER=admin
-      - CADDY_UI_PASSWORD=yourpassword
-      - JWT_SECRET=your-long-random-secret
+      - CADDY_ADMIN_URL=http://caddy:2019
+      - CADDY_UI_EXTERNAL_URL=https://caddy-ui.example.com
+      - CADDY_UI_TRUSTED_PROXIES=172.30.99.3/32
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/caddy-ui:/etc/caddy-ui
+      - /docker/caddy-ui-keys:/etc/caddy-ui-keys
     networks:
-      - caddy-ui
+      caddy-ui:
+        ipv4_address: 172.30.99.4
     depends_on:
       - caddy
 
@@ -112,17 +123,27 @@ services:
     restart: unless-stopped
     ports:
       - 9877:80
+    environment:
+      - CADDY_UI_TRUSTED_EDGE_IPS=172.30.99.2/32
     networks:
-      - caddy-ui
+      caddy-ui:
+        ipv4_address: 172.30.99.3
     depends_on:
       - caddy-ui-backend
 
 networks:
   caddy-ui:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.99.0/24
 ```
 
-The backend only needs two volumes: the **Docker socket** (to interact with Caddy containers via `docker exec` and discover new instances) and its own **config directory** (for instance registry, history, and settings). No Caddy volume mounts required — all Caddyfile, log, and certificate operations go through the Docker socket.
+The backend uses the **Docker socket**, its **persistent data directory**, and a
+separate **database-key directory**. Preserve the latter across recreation and
+protect it separately from database backups. No managed Caddy volume mounts are
+required. If the example's subnet conflicts with your network, choose an unused
+private subnet and update the three addresses and trusted-proxy settings together.
 
 ### 5. Deploy
 
@@ -130,7 +151,10 @@ The backend only needs two volumes: the **Docker socket** (to interact with Cadd
 docker compose up -d
 ```
 
-Open `http://your-server:9877` in your browser.
+Read the one-time setup code from `docker compose logs caddy-ui-backend`, then open
+the configured HTTPS origin to create the first administrator. Save the separately
+issued recovery export in your vault/password manager. The HTTP frontend address
+provides guidance and cannot authenticate users.
 
 ## Architecture
 caddy/ui runs as two services: a React frontend served by Nginx and a Node.js/Express backend. The frontend proxies API requests to the backend, which communicates with Caddy's admin API.

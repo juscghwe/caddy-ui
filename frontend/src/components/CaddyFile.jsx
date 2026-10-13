@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import PaneDivider from "./PaneDivider.jsx";
-import { apiFetch, getToken } from "../utils/api.js";
+import { apiFetch, downloadText } from "../utils/api.js";
 import { formatTs } from "../utils/format.js";
 import { collapseUnchanged, diffLines } from "../utils/lineDiff.js";
 
@@ -314,9 +314,12 @@ export default function CaddyFile({ toast, onUnauth, theme, confirm }) {
         catch (e) { toast.error(e.message); }
     };
 
-    const exportFile = () => {
-        const token = getToken();
-        window.open(token ? `/api/caddyfile?download=true&token=${token}` : `/api/caddyfile?download=true`, '_blank');
+    const exportFile = async () => {
+        try {
+            // eslint-disable-next-line i18next/no-literal-string -- Canonical Caddyfile export filename
+            await downloadText('/caddyfile?download=true', 'Caddyfile', onUnauth);
+        }
+        catch { toast.error(t('auth.failed')); }
     };
 
     const importFile = (e) => {

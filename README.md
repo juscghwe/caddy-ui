@@ -157,13 +157,24 @@ Add the following to your Caddyfile global block:
 ```bash
 mkdir -p /docker/caddy/logs
 mkdir -p /docker/caddy-ui
+mkdir -p /docker/caddy-ui-keys
 ```
 
-### 3. Generate a JWT secret (if using auth)
+### 3. Configure HTTPS for caddy/ui
 
-```bash
-openssl rand -base64 32
+If the UI is already behind HTTPS, keep that proxy and configure the external
+origin and trusted proxy identities below. Otherwise, add a route to your Caddyfile
+for a hostname you control (replace `caddy-ui.example.com` and configure its DNS):
+
+```caddy
+caddy-ui.example.com {
+    reverse_proxy caddy-ui-frontend:80
+}
 ```
+
+For private installations without a public domain, the optional
+[app-only gateway](deploy/README.md) provides internal-CA HTTPS with guided trust
+installation. Authentication requires HTTPS; no JWT signing secret is needed.
 
 ### 4. Update your compose file
 
@@ -187,27 +198,27 @@ services:
       - /docker/caddy/config:/config
       - /docker/caddy/logs:/var/log/caddy
     networks:
-      - caddy-ui
+      caddy-ui:
+        ipv4_address: 172.30.99.2
 
   caddy-ui-backend:
     image: zackwag/caddy-ui-backend:latest
     container_name: caddy-ui-backend
     restart: unless-stopped
-    ports:
-      - 9876:3001
     environment:
       - TZ=America/New_York
       # Optional -- enable installed additional UI languages (English is always available)
       - CADDY_UI_ADDITIONAL_LANGUAGES=de
-      # Optional -- leave unset to disable auth
-      - CADDY_UI_USER=admin
-      - CADDY_UI_PASSWORD=yourpassword
-      - JWT_SECRET=your-long-random-secret
+      - CADDY_ADMIN_URL=http://caddy:2019
+      - CADDY_UI_EXTERNAL_URL=https://caddy-ui.example.com
+      - CADDY_UI_TRUSTED_PROXIES=172.30.99.3/32
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/caddy-ui:/etc/caddy-ui
+      - /docker/caddy-ui-keys:/etc/caddy-ui-keys
     networks:
-      - caddy-ui
+      caddy-ui:
+        ipv4_address: 172.30.99.4
     depends_on:
       - caddy
 
@@ -217,17 +228,27 @@ services:
     restart: unless-stopped
     ports:
       - 9877:80
+    environment:
+      - CADDY_UI_TRUSTED_EDGE_IPS=172.30.99.2/32
     networks:
-      - caddy-ui
+      caddy-ui:
+        ipv4_address: 172.30.99.3
     depends_on:
       - caddy-ui-backend
 
 networks:
   caddy-ui:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.99.0/24
 ```
 
-The backend only needs two volumes: the **Docker socket** (to interact with Caddy containers via `docker exec` and discover new instances) and its own **config directory** (for instance registry, history, and settings). No Caddy volume mounts required — all Caddyfile, log, and certificate operations go through the Docker socket.
+The backend uses the **Docker socket**, its **persistent data directory**, and a
+separate **database-key directory**. Preserve the latter across recreation and
+protect it separately from database backups. No managed Caddy volume mounts are
+required. If the example's subnet conflicts with your network, choose an unused
+private subnet and update the three addresses and trusted-proxy settings together.
 
 ### 5. Deploy
 
@@ -235,7 +256,10 @@ The backend only needs two volumes: the **Docker socket** (to interact with Cadd
 docker compose up -d
 ```
 
-Open `http://your-server:9877` in your browser.
+Read the one-time setup code from `docker compose logs caddy-ui-backend`, then open
+the configured HTTPS origin to create the first administrator. Save the separately
+issued recovery export in your vault/password manager. The HTTP frontend address
+provides guidance and cannot authenticate users.
 
 <!-- dockerhub:both:end -->
 <!-- ANCHOR_END: quick-start -->
@@ -284,15 +308,24 @@ All backend variables have sensible defaults. Only set what you need to override
 | `CADDY_LOG_PATH` | `/var/log/caddy/access.log` | Path to Caddy's access log inside the container (only used with `CADDY_ADMIN_URL`) |
 | `CADDY_SERVER_NAME` | `srv0` | Server ID of the Caddy HTTP server new routes are added to, usually `srv0` (only used with `CADDY_ADMIN_URL`). Server IDs come from Caddy; set your own with the `name` option of the Caddyfile's global `servers` block |
 | `CADDY_UI_ADDITIONAL_LANGUAGES` | — | Comma-separated additional UI language codes to enable (for example `de,fr`). English is always enabled; only languages with an installed frontend locale catalog are shown. |
-| `CADDY_UI_PASSWORD` | — | Password for UI authentication |
+| `CADDY_UI_AUTH_MODE` | `required` | Require stored administrator accounts; `disabled` explicitly selects unprotected access for isolated trusted development |
+| `CADDY_UI_AUTH_DATA_PATH` | `/etc/caddy-ui/auth` | Encrypted account/session database and encrypted recovery bundle directory |
+| `CADDY_UI_AUTH_KEY_PATH` | `/etc/caddy-ui-keys/database.key` | Private 32-byte runtime key file, outside the auth data directory; generated only for a fresh installation |
+| `CADDY_UI_EXTERNAL_URL` | — | Canonical HTTPS origin, including a non-default port if used |
+| `CADDY_UI_TRUSTED_PROXIES` | `loopback` | Backend's comma-separated trusted proxy IPs/CIDRs; forwarding from other peers cannot establish HTTPS |
+| `CADDY_UI_TRUSTED_EDGE_IPS` | — | Frontend's comma-separated trusted HTTPS edge IPs/CIDRs; incoming HTTPS forwarding is discarded unless its peer is listed |
+| `CADDY_UI_SETUP_PORT` | `0` | Optional temporary read-only HTTP instruction/CA listener; disabled at zero and closed after administrator claiming |
+| `CADDY_UI_SETUP_HOST` | `127.0.0.1` | Bind address for the optional setup listener; LAN/container exposure requires an explicit override |
+| `CADDY_UI_SETUP_CA_PATH` | — | Fixed path to the app gateway's public CA certificate for setup download/fingerprint output |
+| `CADDY_UI_PASSWORD` | — | Deprecated legacy migration input; not a continuing account/password store |
 | `CADDY_UI_PUBLIC_METRICS` | `false` | Expose `/api/metrics/raw` without auth |
 | `CADDY_UI_UPDATE_CHECK` | `true` | Check hourly for newer caddy-ui images and show an "Update available" badge in the sidebar (plus a notification for new releases, if notifications are on). Reads a small `versions.json` from GitHub (`raw.githubusercontent.com`); set to `false` to disable |
 | `CADDY_UI_UPDATE_CHECK_URL` | `https://raw.githubusercontent.com/zackwag/caddy-ui/versions/versions.json` | Where the update check reads published image versions from |
-| `CADDY_UI_USER` | — | Username for UI authentication (leave unset to disable) |
+| `CADDY_UI_USER` | — | Deprecated legacy migration username; missing values never disable auth |
 | `DOCKER_SOCKET` | `/var/run/docker.sock` | Path to the Docker socket for container discovery and `docker exec` operations |
 | `HISTORY_PATH` | `/etc/caddy-ui/history` | Path to the Caddyfile snapshot directory |
 | `INSTANCES_PATH` | `/etc/caddy-ui/instances.json` | Path to the multi-instance configuration file (see [Multi-Instance](https://zackwag.github.io/caddy-ui/instances.html#multi-instance)) |
-| `JWT_SECRET` | — | Secret key for signing JWT tokens |
+| `JWT_SECRET` | — | Deprecated legacy migration input; browser sessions no longer use JWTs |
 | `LOG_LEVEL` | `info` | Log verbosity (`debug`, `info`, `warn`, `error`) |
 | `MAINTENANCE_PATH` | `/etc/caddy-ui/maintenance.json` | Path to the maintenance mode state file |
 | `NOTIFICATIONS_CONFIG_PATH` | `/etc/caddy-ui/notifications.json` | Path to the notification settings file |
@@ -314,9 +347,35 @@ All backend variables have sensible defaults. Only set what you need to override
 <!-- dockerhub:backend:start -->
 ## Authentication
 
-Authentication is disabled by default. Set `CADDY_UI_USER`, `CADDY_UI_PASSWORD`, and `JWT_SECRET` to enable it. When enabled, protected API endpoints require a valid JWT and the login screen appears automatically.
+Authentication is required by default. Configure `CADDY_UI_EXTERNAL_URL` and the
+trusted proxy hops, establish HTTPS, and exchange the one-time code printed by
+the local backend to create the first administrator. Existing HTTPS deployments
+go directly to this form; no certificate download or additional gateway is needed.
 
-`GET /api/auth/status` and `GET /api/version` remain public. `POST /api/auth/sessions` validates the configured credentials to issue a JWT; it does not require an existing token. With `CADDY_UI_PUBLIC_METRICS=true`, `GET /api/metrics` and `GET /api/metrics/raw` are also accessible without a JWT.
+Passwords use salted Argon2id verifiers in an encrypted SQLCipher database.
+Browser sessions use revocable HttpOnly/Secure/SameSite cookies; no session token
+is returned in JSON, kept in localStorage, or accepted in URLs. Mutations require
+the configured Origin and session-bound `X-CSRF-Token`. Sessions expire after
+30 minutes without API activity or 12 hours absolutely; logout, password changes
+and account disablement revoke access, including live log streams.
+
+The owner receives a database recovery code once over the established HTTPS
+connection, with a download for their vault/password manager. Keep this code
+separate from backups; recovery also needs the encrypted bundle and database.
+The existing TLS tab manages the selected Caddy instance's CA, which may differ
+from the certificate used to trust the UI itself.
+
+`GET /api/auth/status`, `GET /api/version`, and `GET /api/languages` remain public.
+With `CADDY_UI_PUBLIC_METRICS=true`, GET `/api/metrics` and `/api/metrics/raw` are
+explicitly public telemetry; other routes remain protected. Legacy bearer/query
+JWTs stop working at this cutover. Incomplete/conflicting auth configuration and
+missing/corrupt encrypted state fail rather than falling back to unprotected
+access. `CADDY_UI_AUTH_MODE=disabled` is an explicit, visibly marked choice for
+isolated trusted development.
+
+All accounts in this version are administrators. Per-instance permissions,
+passkeys and TOTP are separate follow-ups. The feature branch remains work in
+progress until local migration/recovery and full-flow verification are complete.
 <!-- dockerhub:backend:end -->
 <!-- ANCHOR_END: authentication -->
 
@@ -394,8 +453,16 @@ The status endpoint returns enriched data for use with [Homepage](https://gethom
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/auth/sessions` | Authenticate and receive a JWT token |
-| `GET` | `/api/auth/status` | Check if auth is enabled |
+| `POST` | `/api/auth/bootstrap` | Claim the initial administrator with the local one-time code, over HTTPS only |
+| `POST` | `/api/auth/sessions` | Authenticate and receive a protected session cookie and CSRF metadata |
+| `GET` | `/api/auth/status` | Read setup/transport status and current public session metadata |
+| `GET` | `/api/auth/sessions` | List the current user's active sessions |
+| `DELETE` | `/api/auth/sessions/current` | Revoke the current session and clear its cookie |
+| `DELETE` | `/api/auth/sessions/:id` | Revoke one of the current user's sessions |
+| `PUT` | `/api/auth/password` | Change the current password and revoke all of that user's sessions |
+| `GET` | `/api/accounts` | List administrator accounts |
+| `POST` | `/api/accounts` | Create another administrator; requires a recently established session |
+| `PATCH` | `/api/accounts/:id` | Enable/disable an administrator, protecting the last enabled administrator |
 | `GET` | `/api/metrics` | Parsed HTTP metrics for the Metrics tab |
 | `GET` | `/api/metrics/config` | Check if Caddy metrics directive is enabled |
 | `PUT` | `/api/metrics/config` | Enable or disable Caddy metrics directive |

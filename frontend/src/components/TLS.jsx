@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { apiFetch, getToken } from "../utils/api.js";
+import { apiFetch, downloadText } from "../utils/api.js";
 import { currentLocale } from "../utils/format.js";
 
 export default function TLS({ toast, onUnauth, confirm }) {
@@ -27,9 +27,12 @@ export default function TLS({ toast, onUnauth, confirm }) {
         } catch (e) { toast.error(e.message); }
     };
 
-    const downloadCA = () => {
-        const token = getToken();
-        window.open(token ? `/api/tls/ca?token=${token}` : `/api/tls/ca`, '_blank');
+    const downloadCA = async () => {
+        try {
+            // eslint-disable-next-line i18next/no-literal-string -- Certificate export filename and MIME type
+            await downloadText('/tls/ca', 'caddy-root-ca.crt', onUnauth, 'application/x-x509-ca-cert');
+        }
+        catch { toast.error(t('auth.failed')); }
     };
 
     const summary = {

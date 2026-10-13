@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { API, setToken } from "../utils/api.js";
+import { apiFetch } from "../utils/api.js";
+import { authErrorKey } from '../utils/authErrors.js';
 
 export default function Login({ onLogin, sessionExpired }) {
     const { t } = useTranslation();
@@ -10,21 +11,19 @@ export default function Login({ onLogin, sessionExpired }) {
     const [loading, setLoading] = useState(false);
 
     const login = async () => {
-        if (!username || !password) return;
+        if (loading || !username || !password) return;
         setLoading(true);
         setError("");
         try {
-            const res = await fetch(`${API}/auth/sessions`, {
+            await apiFetch('/auth/sessions', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
-            const data = await res.json();
-            if (!res.ok) { setError(data.error || t("login.failed")); return; }
-            setToken(data.token);
-            onLogin();
-        } catch {
-            setError(t("login.serverUnreachable"));
+            setPassword('');
+            await onLogin();
+        } catch (error) {
+            setError(t(authErrorKey(error)));
         } finally {
             setLoading(false);
         }
@@ -37,12 +36,12 @@ export default function Login({ onLogin, sessionExpired }) {
                 <div className="login-sub">{t("login.serverManager")}</div>
                 {error && <div className="login-error">{error}</div>}
                 <div className="field">
-                    <label>{t("login.username")}</label>
-                    <input value={username} onChange={e => setUsername(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} autoFocus autoComplete="username" />
+                    <label htmlFor="login-user">{t("login.username")}</label>
+                    <input id="login-user" value={username} onChange={e => setUsername(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} autoFocus autoComplete="username" />
                 </div>
                 <div className="field">
-                    <label>{t("login.password")}</label>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} autoComplete="current-password" />
+                    <label htmlFor="login-password">{t("login.password")}</label>
+                    <input id="login-password" type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} autoComplete="current-password" />
                 </div>
                 <button className="btn btn-primary btn--full" onClick={login} disabled={loading || !username || !password}>
                     {loading ? t("login.signingIn") : t("login.signIn")}

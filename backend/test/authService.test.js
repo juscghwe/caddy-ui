@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { authConfig } from '../src/auth/config.js';
@@ -121,5 +121,10 @@ describe('bootstrap and revocable administrator sessions', () => {
         await expect(openAuth(config)).rejects.toThrow();
         await rm(join(config.dataPath, 'auth.sqlite'));
         await expect(openAuth(config)).rejects.toThrow('never automatic reinitialization');
+    });
+    it('refuses to repurpose a directory containing unrelated data', async () => {
+        const { config } = await initialized();
+        await writeFile(join(config.dataPath, 'unrelated.json'), '{}');
+        await expect(openAuth(config)).rejects.toThrow('dedicated directory');
     });
 });

@@ -17,7 +17,8 @@ import ThemeWelcome from "./components/ThemeWelcome.jsx";
 import TLS from "./components/TLS.jsx";
 import { Toasts, useToast } from "./components/Toasts.jsx";
 import { css, THEME_LIST, THEME_VAR_KEYS } from "./styles.js";
-import { API, apiFetch, fetchCustomThemes, fetchSettings, getAuthEnabled, getInstanceId, getToken, saveSettings, setAuthEnabled, setToken } from "./utils/api.js";
+import { apiFetch, clearSession, fetchAuthState, fetchCustomThemes, fetchSettings, getInstanceId, saveSettings } from "./utils/api.js";
+import Setup from './components/Setup.jsx';
 import { useTranslation } from 'react-i18next';
 
 const DEFAULTS = {
@@ -52,11 +53,8 @@ export default function App() {
     const [instanceKey, setInstanceKey] = useState(getInstanceId);
     const [instanceListVersion, setInstanceListVersion] = useState(0);
     const [authEnabled, setAuthEnabledState] = useState(false);
-    const [authed, setAuthed] = useState(() => {
-        const cached = getAuthEnabled();
-        if (cached === null) return null;
-        return !cached || !!getToken();
-    });
+    const [authed, setAuthed] = useState(null);
+    const [authState, setAuthState] = useState(null);
     const [sessionExpired, setSessionExpired] = useState(false);
     const [language, setLanguage] = useState(DEFAULTS.language);
     const [enabledLanguages, setEnabledLanguages] = useState(['en']);
@@ -74,10 +72,11 @@ export default function App() {
     const { dialog: confirmDialog, confirm, resolve: resolveConfirm } = useConfirm();
 
     const onUnauth = useCallback(() => {
-        const wasAuthed = !!getToken();
-        setToken(null);
+        clearSession();
         setAuthed(false);
-        if (wasAuthed) setSessionExpired(true);
+        setSessionExpired(true);
+        setSettingsLoaded(false);
+        setShowThemeWelcome(false);
     }, []);
 
     useEffect(() => {
@@ -199,16 +198,30 @@ export default function App() {
         });
     };
 
-    useEffect(() => {
-        fetch(`${API}/auth/status`)
-            .then(r => r.json())
-            .then(d => {
-                setAuthEnabled(d.authEnabled);
-                setAuthEnabledState(d.authEnabled);
-                setAuthed(!d.authEnabled || !!getToken());
-            })
-            .catch(() => setAuthed(true));
+    const refreshAuth = useCallback(async () => {
+        try {
+            const state = await fetchAuthState();
+            setAuthState(state);
+            setAuthEnabledState(state.authEnabled);
+            setAuthed(!state.authEnabled || Boolean(state.user));
+            setSettingsLoaded(false);
+            setSessionExpired(false);
+        } catch {
+            setAuthState({ unavailable: true });
+            setAuthed(false);
+        }
     }, []);
+    useEffect(() => { void refreshAuth(); }, [refreshAuth]);
+    const signOut = async () => {
+        try {
+            await apiFetch('/auth/sessions/current', { method: 'DELETE' });
+            onUnauth();
+            setSessionExpired(false);
+        } catch (error) {
+            if (error.status === 401) { onUnauth(); setSessionExpired(false); }
+            else toast.error(t('auth.logoutFailed'));
+        }
+    };
 
     const fetchStatus = useCallback(() => {
         apiFetch("/status", {}, onUnauth).then((s) => {
@@ -256,8 +269,10 @@ export default function App() {
     return (
         <>
             <style>{css}</style>
-            {authed === null || !languageReady ? null : !authed ? (
-                <Login onLogin={() => { setAuthed(true); setSessionExpired(false); }} sessionExpired={sessionExpired} />
+            {authed === null || !languageReady ? null : authState?.unavailable || (authEnabled && (!authState?.secure || !authState?.initialized)) ? (
+                <Setup state={authState} onComplete={refreshAuth} />
+            ) : !authed ? (
+                <Login onLogin={refreshAuth} sessionExpired={sessionExpired} />
             ) : (
                 <div className="shell">
                     <div className={`sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
@@ -268,6 +283,7 @@ export default function App() {
                         onRefreshStatus={fetchStatus}
                         authEnabled={authEnabled}
                         onUnauth={onUnauth}
+                        onSignOut={signOut}
                         sidebarOpen={sidebarOpen}
                         setSidebarOpen={setSidebarOpen}
                         selectedInstanceId={instanceKey}
@@ -280,6 +296,7 @@ export default function App() {
                             <div className="topbar-left">
                                 <button className="hamburger" onClick={() => setSidebarOpen(o => !o)}>☰</button>
                                 <span className="page-title">{title}</span>
+                                {!authEnabled && <span className="badge badge-red">{t('auth.disabledWarning')}</span>}
                             </div>
                             <div className="btn-row">
                                 {language && enabledLanguages.length > 1 && (

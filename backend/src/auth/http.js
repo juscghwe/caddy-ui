@@ -73,13 +73,13 @@ export function createAuthRouter(auth, config) {
         message: { code: 'RATE_LIMITED', error: 'Too many authentication attempts' } });
 
     router.get('/status', action(async (req, res) => {
-        if (!auth) return res.json({ authEnabled: false, initialized: true, secure: false, user: null });
+        if (!auth) return res.json({ authEnabled: false, publicMetrics: config.publicMetrics, initialized: true, secure: false, user: null });
         const initialized = Boolean((await auth.state()).initialized);
         let secure = false;
         try { requireTransport(req, config); secure = true; } catch { /* HTTP can read onboarding instructions only. */ }
         if (secure && req.get('origin') && req.get('origin') !== config.origin) throw fail('FORBIDDEN');
         const session = secure && !Object.hasOwn(req.query, 'token') && req.headers.authorization === undefined ? await auth.session(cookieToken(req)) : null;
-        res.json({ authEnabled: true, initialized, secure, externalUrl: config.origin,
+        res.json({ authEnabled: true, publicMetrics: config.publicMetrics, initialized, secure, externalUrl: config.origin,
             user: session?.user || null, csrfToken: session?.csrfToken || null });
     }));
     router.post('/bootstrap', credentialLimit, action(async (req, res) => {
@@ -129,7 +129,10 @@ export function createAccountsRouter(auth, config) {
         next();
     });
     router.get('/', action(async (req, res) => res.json(await auth.listUsers())));
-    router.post('/', action(async (req, res) => res.status(201).json(await auth.createUser(req.session, req.body?.username, req.body?.password, req.diagnosticId))));
+    router.post('/', action(async (req, res) => {
+        if (req.body?.role !== undefined && req.body.role !== 'administrator') throw fail('VALIDATION_FAILED');
+        res.status(201).json(await auth.createUser(req.session, req.body?.username, req.body?.password, req.diagnosticId));
+    }));
     router.patch('/:id', action(async (req, res) => {
         await auth.setEnabled(req.session, req.params.id, req.body?.enabled, req.diagnosticId);
         res.json({ ok: true });

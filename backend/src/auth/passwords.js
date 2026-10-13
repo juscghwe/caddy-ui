@@ -11,7 +11,7 @@ export function username(value) {
 }
 
 export function validatePassword(value) {
-    if (typeof value !== 'string' || value.length < 12 || Buffer.byteLength(value) > 1024) {
+    if (typeof value !== 'string' || Array.from(value).length < 12 || Buffer.byteLength(value) > 1024) {
         throw Object.assign(new Error('Password must contain at least 12 characters and at most 1024 bytes'), { code: 'VALIDATION_FAILED' });
     }
     return value;

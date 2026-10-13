@@ -37,6 +37,7 @@ export function authConfig(env = process.env, { migration = false } = {}) {
     if (!Number.isInteger(setupPort) || setupPort < 0 || setupPort > 65535) throw new Error('Invalid CADDY_UI_SETUP_PORT');
     return {
         mode, dataPath, keyPath, origin, proxies, setupPort,
+        publicMetrics: env.CADDY_UI_PUBLIC_METRICS === 'true',
         setupHost: env.CADDY_UI_SETUP_HOST || '127.0.0.1',
         certificatePath: env.CADDY_UI_SETUP_CA_PATH ? resolve(env.CADDY_UI_SETUP_CA_PATH) : null,
         idleMs: 30 * 60_000, absoluteMs: 12 * 60 * 60_000,
