@@ -110,6 +110,7 @@ export class AuthService {
             await db.run('UPDATE bootstrap_state SET initialized=1,digest=NULL,expires_at=NULL WHERE id=1');
             await this.audit(db, 'setup.completed', id, id, requestId);
         });
+        this.revocations.emit('initialized');
         return { recoveryCode: recovery.code, installationId: this.installationId };
     }
 

@@ -1,9 +1,12 @@
+# syntax=docker/dockerfile:1
 FROM node:24-alpine
 
 ARG APP_VERSION=dev
 ENV APP_VERSION=$APP_VERSION
 
-RUN apk add --no-cache docker-cli
+RUN --mount=type=secret,id=proxy_ca \
+    if [ -f /run/secrets/proxy_ca ]; then export SSL_CERT_FILE=/run/secrets/proxy_ca; fi; \
+    apk add --no-cache docker-cli
 
 # Caddy binary for caddy fmt, validation and version detection in local mode
 # (instances without a container name). Docker mode uses the container's own.
@@ -12,7 +15,11 @@ COPY --from=caddy:latest /usr/bin/caddy /usr/bin/caddy
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN apk add --no-cache libcrypto3 \
+RUN --mount=type=secret,id=proxy_ca \
+    if [ -f /run/secrets/proxy_ca ]; then \
+        export SSL_CERT_FILE=/run/secrets/proxy_ca NODE_EXTRA_CA_CERTS=/run/secrets/proxy_ca; \
+    fi; \
+    apk add --no-cache libcrypto3 \
     && apk add --no-cache --virtual .auth-build python3 make g++ openssl-dev \
     && npm ci --omit=dev \
     && apk del .auth-build

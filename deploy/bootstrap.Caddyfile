@@ -1,0 +1,8 @@
+{
+    admin off
+}
+
+{$CADDY_UI_HOST} {
+    tls internal
+    reverse_proxy caddy-ui-frontend:80
+}

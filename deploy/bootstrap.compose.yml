@@ -1,0 +1,57 @@
+# Optional app-only HTTPS gateway. Does not change a managed Caddy installation.
+# Set CADDY_UI_HOST to the hostname/IP browsers will use.
+services:
+  caddy-ui-gateway:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    environment:
+      CADDY_UI_HOST: ${CADDY_UI_HOST:?Set the UI hostname or IP}
+    ports:
+      - "${CADDY_UI_HTTPS_PORT:-9877}:443"
+    volumes:
+      - ./bootstrap.Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-ui-tls:/data
+    networks:
+      caddy-ui:
+        ipv4_address: ${CADDY_UI_NETWORK_PREFIX:-172.30.99}.2
+
+  caddy-ui-frontend:
+    build: ../frontend
+    restart: unless-stopped
+    environment:
+      CADDY_UI_TRUSTED_EDGE_IPS: ${CADDY_UI_NETWORK_PREFIX:-172.30.99}.2/32
+    networks:
+      caddy-ui:
+        ipv4_address: ${CADDY_UI_NETWORK_PREFIX:-172.30.99}.3
+
+  caddy-ui-backend:
+    build: ../backend
+    restart: unless-stopped
+    environment:
+      CADDY_UI_AUTH_MODE: required
+      CADDY_UI_EXTERNAL_URL: https://${CADDY_UI_HOST:?Set the UI hostname or IP}:${CADDY_UI_HTTPS_PORT:-9877}
+      CADDY_UI_TRUSTED_PROXIES: ${CADDY_UI_NETWORK_PREFIX:-172.30.99}.3/32
+      CADDY_UI_SETUP_HOST: 0.0.0.0
+      CADDY_UI_SETUP_PORT: 9878
+      CADDY_UI_SETUP_CA_PATH: /ui-tls/caddy/pki/authorities/local/root.crt
+    ports:
+      - "${CADDY_UI_SETUP_BIND:-127.0.0.1}:9878:9878"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - caddy-ui-state:/etc/caddy-ui
+      - caddy-ui-keys:/etc/caddy-ui-keys
+      - caddy-ui-tls:/ui-tls:ro
+    networks:
+      caddy-ui:
+        ipv4_address: ${CADDY_UI_NETWORK_PREFIX:-172.30.99}.4
+
+networks:
+  caddy-ui:
+    ipam:
+      config:
+        - subnet: ${CADDY_UI_NETWORK_PREFIX:-172.30.99}.0/24
+
+volumes:
+  caddy-ui-state:
+  caddy-ui-keys:
+  caddy-ui-tls:
