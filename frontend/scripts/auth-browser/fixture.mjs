@@ -130,3 +130,13 @@ async function browserRequest(page, url, { method = 'GET', headers = {}, data } 
 
 
 export { fixture, signIn, signOut, saveRecovery, browserRequest, password };
+
+export async function openPage(page, url) {
+    try { await page.goto(url); }
+    catch (error) {
+        // A Docker bridge appearing during Chromium startup can invalidate its first navigation.
+        // Retry that specific network event once; certificate/application failures still fail.
+        if (!error.message.includes('net::ERR_NETWORK_CHANGED')) throw error;
+        await page.goto(url);
+    }
+}

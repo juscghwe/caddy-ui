@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { Harness, docker } from '../../../scripts/dev-caddy/harness.mjs';
-import { fixture, signIn, signOut, saveRecovery, browserRequest, password } from './fixture.mjs';
+import { fixture, openPage, signIn, signOut, saveRecovery, browserRequest, password } from './fixture.mjs';
 
 test('real Caddy: cookie-authenticated instance reads, Caddyfile save/download and selected CA', { skip: process.env.CADDY_UI_TEST_DOCKER !== 'true', timeout: 180_000 }, async () => {
     const harness = new Harness(randomBytes(8).toString('hex'));
@@ -12,7 +12,7 @@ test('real Caddy: cookie-authenticated instance reads, Caddyfile save/download a
         const beta = await harness.create('beta');
         const instances = [{ ...alpha.instance, id: 'alpha' }, { ...beta.instance, id: 'beta' }];
         await fixture(false, async ({ page, origin, code }) => {
-            await page.goto(origin);
+            await openPage(page, origin);
             try { await page.getByLabel('One-time setup code').waitFor(); }
             catch { throw new Error('Initial setup view was unavailable: ' + (await page.locator('body').innerText()).slice(0,1200)); }
             await page.getByLabel('One-time setup code').fill(code);
@@ -48,6 +48,20 @@ test('real Caddy: cookie-authenticated instance reads, Caddyfile save/download a
             assert.match(await readFile(await download.path(), 'utf8'), /Authenticated integration edit/);
             const logs = await browserRequest(page, origin + '/api/logs', { headers });
             assert.equal(logs.status(), 200);
+            await page.locator('.instance-dropdown-trigger').click();
+            await page.locator('.instance-dropdown-item').filter({ hasText: 'Dev beta' }).click();
+            await page.locator('.nav-item').filter({ hasText: 'Logs' }).click();
+            await page.locator('.logs-page').waitFor();
+            const pendingStream = page.waitForRequest(request => new URL(request.url()).pathname === '/api/logs/stream');
+            await page.getByRole('button', { name: /Live/ }).click();
+            const streamUrl = new URL((await pendingStream).url());
+            assert.equal(streamUrl.searchParams.get('instanceId'), 'beta');
+            assert.equal(streamUrl.searchParams.size, 1);
+            const requests = setInterval(() => { void fetch(beta.httpUrl + '/auth-stream-beta').catch(() => {}); }, 200);
+            try { await page.locator('.log-line').filter({ hasText: '/auth-stream-beta' }).first().waitFor(); }
+            finally { clearInterval(requests); }
+            await page.getByRole('button', { name: /Stop/ }).click();
+            assert.equal((await browserRequest(page, origin + '/api/logs/stream?instanceId=missing')).status(), 404);
             await signOut(page);
             assert.equal((await browserRequest(page, origin + '/api/caddyfile', { headers })).status(), 401);
             assert.equal((await browserRequest(page, origin + '/api/tls/ca', { headers })).status(), 401);

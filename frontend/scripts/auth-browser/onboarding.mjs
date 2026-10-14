@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { authConfig } from '../../../backend/src/auth/config.js';
 import { resetPassword } from '../../../backend/src/auth/maintenance.js';
-import { fixture, signIn, signOut, saveRecovery, password } from './fixture.mjs';
+import { fixture, openPage, signIn, signOut, saveRecovery, password } from './fixture.mjs';
 
 test('existing HTTPS: one-time bootstrap, accounts, revocation and no credential storage', { timeout: 120_000 }, async () => {
     await fixture(false, async ({ page, context, origin, plainOrigin, code, env, start, stop }) => {
-        await page.goto(plainOrigin); await page.getByRole('heading', { name: 'Configure HTTPS before signing in' }).waitFor();
+        await openPage(page, plainOrigin); await page.getByRole('heading', { name: 'Configure HTTPS before signing in' }).waitFor();
         assert.equal(await page.locator('input[type=password]').count(), 0);
-        await page.goto(origin); await page.getByRole('heading', { name: 'Create the first administrator' }).waitFor();
+        await openPage(page, origin); await page.getByRole('heading', { name: 'Create the first administrator' }).waitFor();
         await page.getByLabel('One-time setup code').fill(code); await page.getByLabel('Username', { exact: true }).fill('admin');
         await page.getByLabel('Password', { exact: true }).fill(password);
         await page.getByRole('button', { name: 'Create administrator', exact: true }).click();

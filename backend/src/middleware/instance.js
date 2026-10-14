@@ -7,7 +7,14 @@ export function instanceMiddleware(req, res, next) {
     }
 
     const instanceId = req.headers['x-instance-id'] || DEFAULT_INSTANCE_ID;
-    const instance = getInstance(instanceId);
+    // Native EventSource cannot send the selected-instance header. A non-secret
+    // registry ID selects only this stream; it never supplies a destination URL.
+    const streamSelection = req.method === 'GET' && req.path === '/logs/stream' && Object.hasOwn(req.query, 'instanceId');
+    const instance = streamSelection ? getInstances().find(item => item.id === req.query.instanceId) : getInstance(instanceId);
+    if (streamSelection && typeof req.query.instanceId !== 'string') {
+        return res.status(400).json({ error: 'Invalid stream instance', code: 'VALIDATION_FAILED' });
+    }
+    if (!instance) return res.status(404).json({ error: 'Instance not found', code: 'INSTANCE_NOT_FOUND' });
 
     try {
         req.instance = {

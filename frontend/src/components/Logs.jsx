@@ -75,7 +75,8 @@ export default function Logs({ toast, onUnauth,  noInstances }) {
     const toggleLive = () => {
         if (live) { esRef.current?.close(); esRef.current = null; setLive(false); return; }
         const streamPath = source === "caddy" ? "/logs/stream" : "/logs/app/stream";
-        const es = new EventSource(`${API}${streamPath}`);
+        const query = source === 'caddy' ? '?' + new URLSearchParams({ instanceId: getInstanceId() }) : '';
+        const es = new EventSource(`${API}${streamPath}${query}`);
         const streamKey = stateNotificationKey('logs.stream.' + source, getInstanceId());
         es.onmessage = e => {
             if (esRef.current !== es) return;
