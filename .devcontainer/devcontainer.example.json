@@ -3,9 +3,10 @@
     "image": "node:24-bookworm",
     "remoteUser": "node",
     "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": { "username": "node" },
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
     },
-    "postCreateCommand": "npm --prefix backend ci && npm --prefix frontend ci",
+    "postCreateCommand": "npm --prefix backend ci && npm --prefix frontend ci && npm exec --prefix frontend -- playwright install --with-deps chromium",
     "remoteEnv": {
         "REMOTE_CONTAINERS": "true"
     },

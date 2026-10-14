@@ -150,7 +150,7 @@ resets UI state without touching any Caddy volumes.
 Run harness lint with `npm run lint:dev-caddy` (requires backend dependencies)
 and lifecycle safety tests with `npm run test:dev-caddy`. They need no Docker
 Engine. `npm run test:dev-caddy:integration` runs real Caddy lifecycle and backend
-startup checks. Install backend dependencies and start Docker before running it;
+startup, registration and diagnostic checks. Install backend dependencies and start Docker before running it;
 the harness may pull the pinned image.
 
 ## Fixture infrastructure and startup guarantees
@@ -195,6 +195,42 @@ Scenario responsibilities:
 - `startup.mjs`: failed startup, cancellation, port ownership and namespace exclusivity.
 - `lifecycle.test.mjs` and `readiness.test.mjs`: cleanup and readiness checks without Docker.
 
-The root npm commands select these suites explicitly. Existing CI runs the
-Docker-free safety checks through `test:dev-caddy`; real-container startup
-checks can be run locally with `test:dev-caddy:integration`.
+The root npm commands select these suites explicitly. CI runs Docker-free
+safety checks plus the real-container and browser suites. The required `Test`
+check includes the integration job, so unit success cannot hide a container or
+browser failure. Workflows also run when coverage is stacked on
+`test/integration-fixtures`.
+
+## API and browser coverage
+
+The coverage layer uses the fixture infrastructure above:
+
+- `test/integration/api.mjs` checks registration versus container lifecycle and instance isolation.
+- `test/integration/diagnostics.mjs` checks public error contracts and correlated backend logs.
+- `frontend/e2e/fixture.mjs` adds Vite, Chromium, a browser context and bounded diagnostics to the same resource owner.
+- `frontend/e2e/error-logging.mjs` contains UI actions and assertions for feedback, live logs, recovery, network loss and locale fallback.
+
+Install application dependencies and Chromium before running browser checks:
+
+```sh
+npm ci --prefix backend
+npm ci --prefix frontend
+npm exec --prefix frontend -- playwright install --with-deps chromium
+npm run test:dev-caddy:integration
+npm run test:dev-caddy:e2e
+```
+
+The browser-suite hook prepares editor mode once with a bounded timeout. Every
+scenario gets its own entire stack, including registry, page, locale and
+viewport. This costs more startup time than a shared stack but allows scenarios
+to be selected or reordered without inheriting another test's state. Uncaught
+JavaScript errors are checked during each scenario's teardown.
+
+Browser startup retries only Chromium's transient `ERR_NETWORK_CHANGED` error;
+assertions run once. Live-log checks complete the initial snapshot before
+emitting new markers, and locale fallback checks verify the active locale and
+loaded catalog first. The suite uses Vite's development server; production-image
+packaging remains a separate check.
+
+Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to use an installed Chromium executable
+in a managed environment. Otherwise Playwright uses its downloaded Chromium.
