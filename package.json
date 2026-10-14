@@ -7,6 +7,8 @@
         "dev:instances": "node scripts/dev-caddy/cli.mjs",
         "test:dev-caddy": "node --test scripts/dev-caddy/*.test.mjs",
         "test:dev-caddy:integration": "node --test scripts/dev-caddy/integration.mjs",
-        "lint:dev-caddy": "node backend/node_modules/eslint/bin/eslint.js --config backend/eslint.config.js scripts/dev-caddy"
+        "lint:dev-caddy": "node backend/node_modules/eslint/bin/eslint.js --config backend/eslint.config.js scripts/dev-caddy",
+        "test:auth-proxy": "node --test scripts/auth/proxy.mjs",
+        "lint:auth": "node backend/node_modules/eslint/bin/eslint.js --config backend/eslint.config.js scripts/auth"
     }
 }

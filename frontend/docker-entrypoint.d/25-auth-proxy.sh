@@ -8,6 +8,16 @@ for peer in $(printf '%s' "${CADDY_UI_TRUSTED_EDGE_IPS:-}" | tr ',' ' '); do
     case "$peer" in
         *[!0-9a-fA-F:./]*|0.0.0.0/0|::/0) echo 'Invalid trusted edge IP/CIDR' >&2; exit 1 ;;
     esac
+    case "$peer" in
+        */*)
+            mask="${peer##*/}"
+            case "$mask" in ''|*[!0-9]*) echo 'Invalid trusted edge mask' >&2; exit 1 ;; esac
+            case "$peer" in *:*) maximum=128 ;; *) maximum=32 ;; esac
+            if [ "$mask" -lt 1 ] || [ "$mask" -gt "$maximum" ]; then
+                echo 'Trusted edge mask must select specific addresses' >&2; exit 1
+            fi
+            ;;
+    esac
     printf '    %s 1;\n' "$peer" >> "$temporary"
 done
 cat >> "$temporary" <<'NGINX'
