@@ -4,7 +4,9 @@ Status: implemented on the feature branch; final browser/CI and deployment-image
 verification are in progress. This is not a merged/released feature.
 
 Branch: `feat/bootstrap-and-login`, created from upstream `main` at
-`07af6c35ed605f5f5f30c66970ca509d4dc0b951` (#221).
+`07af6c35ed605f5f5f30c66970ca509d4dc0b951` (#221), then integrated with
+`23d748569a1a22a47cc07623b1762424eb46315a` after #222 merged. Pushed
+implementation checkpoints retain their hashes through this merge.
 
 ## Scope and release boundary
 
@@ -14,7 +16,7 @@ are a follow-up, as agreed with the contributor. Prepare identities and storage
 for that extension without presenting permissions that are not enforced.
 
 This is a change to authentication defaults and deployment requirements. Release
-it with an explicit upgrade guide and a breaking-change PR title. Keep #221's diagnostic contracts, and incorporate #222/#223 when available; rebase this branch onto their merged versions rather than copying
+it with an explicit upgrade guide and a breaking-change PR title. Keep #221's diagnostic contracts, and incorporate #222/#223 when available; integrate their merged versions rather than copying
 their commits or replacing their diagnostic contracts.
 
 The planning commit introduces no runtime changes. Implementation commits should

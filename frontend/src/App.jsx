@@ -71,6 +71,7 @@ export default function App() {
     const [settingsLoaded, setSettingsLoaded] = useState(false);
     const [showThemeWelcome, setShowThemeWelcome] = useState(false);
     const toast = useToast();
+    const { clearStates } = toast;
     const { dialog: confirmDialog, confirm, resolve: resolveConfirm } = useConfirm();
 
     const onUnauth = useCallback(() => {
@@ -255,6 +256,7 @@ export default function App() {
     }, [authed, fetchStatus, instanceKey]);
 
     const handleInstanceChange = useCallback((id) => {
+        clearStates();
         if (id) {
             setInstanceKey(id);
             navigate('/dashboard', { replace: true });
@@ -263,7 +265,7 @@ export default function App() {
         setNoInstances(false);
         setStatus(null);
         fetchStatus();
-    }, [fetchStatus, navigate]);
+    }, [fetchStatus, navigate, clearStates]);
 
     const basePath = '/' + location.pathname.split('/')[1];
     const title = t(TITLE_KEYS[basePath] || 'pages.dashboard');

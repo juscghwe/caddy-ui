@@ -1,7 +1,9 @@
+import { localizeError } from "../utils/errorMessages.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInstanceStatus } from "../hooks/useInstanceStatus.js";
-import { apiFetch } from "../utils/api.js";
+import { apiFetch, getInstanceId } from "../utils/api.js";
+import { stateNotificationKey } from "../utils/notificationCenter.js";
 
 // eslint-disable-next-line i18next/no-literal-string -- Example Caddy admin endpoint
 const ADMIN_URL_PLACEHOLDER = "http://caddy:2019";
@@ -17,7 +19,7 @@ const EMPTY_FORM = {
 };
 
 export default function Instances({ toast, onUnauth, confirm, onInstanceChange }) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const [instances, setInstances] = useState([]);
     const instanceStatus = useInstanceStatus(onUnauth);
     const [loading, setLoading] = useState(true);
@@ -38,22 +40,26 @@ export default function Instances({ toast, onUnauth, confirm, onInstanceChange }
     toastRef.current = toast;
 
     const load = useCallback(() => {
-        apiFetch("/instances", {}, onUnauth).then(setInstances).catch(e => toastRef.current.error(e.message)).finally(() => setLoading(false));
-    }, [onUnauth]);
+        const key = stateNotificationKey('instances.load', getInstanceId());
+        apiFetch("/instances", {}, onUnauth)
+            .then(data => { toastRef.current.recover(key); setInstances(data); })
+            .catch(e => toastRef.current.error(localizeError(e, t), e, { mode: 'state', key }))
+            .finally(() => setLoading(false));
+    }, [onUnauth, t]);
 
     const discover = useCallback(async () => {
         setDiscovering(true);
         try {
             const containers = await apiFetch("/instances/discover", {}, onUnauth);
             setDiscovered(containers);
-            if (containers.length === 0) toastRef.current.success(i18n.t("instances.noNewContainers"));
+            if (containers.length === 0) toastRef.current.success(t("instances.noNewContainers"));
         } catch (e) {
-            toastRef.current.error(e.message);
+            toastRef.current.error(localizeError(e, t), e);
             setDiscovered(null);
         } finally {
             setDiscovering(false);
         }
-    }, [onUnauth, i18n]);
+    }, [onUnauth, t]);
 
     const didAutoDiscover = useRef(false);
 
@@ -162,7 +168,7 @@ export default function Instances({ toast, onUnauth, confirm, onInstanceChange }
             load();
             if (onInstanceChange) onInstanceChange();
         } catch (e) {
-            toast.error(e.message);
+            toast.error(localizeError(e, t), e);
         } finally {
             setSaving(false);
         }
@@ -176,7 +182,7 @@ export default function Instances({ toast, onUnauth, confirm, onInstanceChange }
             load();
             if (onInstanceChange) onInstanceChange();
         } catch (e) {
-            toast.error(e.message);
+            toast.error(localizeError(e, t), e);
         }
     };
 

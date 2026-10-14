@@ -46,3 +46,10 @@ describe('browser session protocol', () => {
         expect(unauth).toHaveBeenCalledOnce();
     });
 });
+
+import { authErrorKey } from '../src/utils/authErrors.js';
+it('uses the central auth error registry without accepting inherited property names', () => {
+    expect(authErrorKey({ code: 'HTTPS_REQUIRED' })).toBe('auth.httpsRequired');
+    expect(authErrorKey({ code: 'UNAUTHORIZED' })).toBe('login.failed');
+    expect(authErrorKey({ code: '__proto__' })).toBe('auth.failed');
+});

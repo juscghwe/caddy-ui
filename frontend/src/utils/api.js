@@ -55,8 +55,8 @@ export async function apiFetch(path, opts = {}, onUnauth) {
     catch { throw new ApiError('Invalid server response', { code: 'CLIENT_PARSE_FAILED', status: res.status }); }
     if (!res.ok) {
         if (res.status === 401 && !publicMutation) { clearSession(); onUnauth?.(); }
-        throw new ApiError(body?.error || res.statusText, {
-            code: body?.code || 'REQUEST_FAILED', status: res.status,
+        throw new ApiError(body?.errors?.join('\n') || body?.error || res.statusText, {
+            code: body?.code || (res.status === 401 ? 'UNAUTHORIZED' : 'REQUEST_FAILED'), status: res.status,
             requestId: body?.requestId || res.headers.get('X-Request-ID'),
         });
     }
