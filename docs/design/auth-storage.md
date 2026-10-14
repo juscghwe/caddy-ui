@@ -61,8 +61,10 @@ The HTTPS setup/export/login/logout flow has been rendered and exercised in
 Chromium with a scoped test-certificate pin. This does not automate an OS CA
 installation. Administrator creation/disablement, password changes, session revocation and
 per-account preferences now have a browser UI. Local migration/recovery, encrypted
-backups and actual database-key rotation are implemented. Full-flow browser/CI
-and image verification remain in progress.
+backups and actual database-key rotation are implemented. Permanent browser,
+real-Caddy and nginx checks pass locally. Frontend image verification passes; the
+backend Alpine image check is blocked by the sandbox package-host policy. See
+[auth-verification.md](auth-verification.md) for the evidence and remaining check.
 
 ## Dependency provenance
 

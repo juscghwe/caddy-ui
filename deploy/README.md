@@ -60,6 +60,6 @@ networks. Both the gateway's source identity and the backend's trusted frontend
 identity follow that prefix. The backend has Docker-socket access and can read the
 gateway's TLS volume; it remains a highly trusted infrastructure service.
 
-For builds behind a certificate-injecting proxy, the backend Dockerfile accepts
+For builds behind a certificate-injecting proxy, both application Dockerfiles accept
 an optional BuildKit secret named `proxy_ca`. Mount the trusted CA for the install
 steps; it is not copied into the resulting image. Ordinary builds need no secret.

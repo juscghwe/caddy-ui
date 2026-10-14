@@ -108,6 +108,34 @@ jobs:
       - name: Verify proxy trust and generated Compose deployment
         run: npm run test:auth-proxy
 
+      - name: Lint authentication integration harness
+        run: npm run lint:auth
+
+      - name: Build deployment images
+        run: |
+          docker build --tag caddy-ui-backend:auth-test backend
+          docker build --tag caddy-ui-frontend:auth-test frontend
+
+      - name: Verify encrypted storage and password hashing in the runtime image
+        run: |
+          docker run --rm --interactive \
+            --tmpfs /auth:mode=0700 --tmpfs /keys:mode=0700 \
+            caddy-ui-backend:auth-test node --input-type=module - <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFile } from 'node:fs/promises';
+          import { authConfig } from './src/auth/config.js';
+          import { openAuth } from './src/auth/service.js';
+          const config = authConfig({ CADDY_UI_AUTH_DATA_PATH: '/auth', CADDY_UI_AUTH_KEY_PATH: '/keys/database.key' });
+          const auth = await openAuth(config);
+          try {
+            await auth.claim({ code: await auth.setupCode(), username: 'admin', password: 'runtime-image-test-password' });
+            const login = await auth.login('admin', 'runtime-image-test-password');
+            assert.equal((await auth.session(login.token)).user.username, 'admin');
+            assert(!(await readFile('/auth/auth.sqlite')).includes(Buffer.from('runtime-image-test-password')));
+            process.stdout.write('SQLCipher and Argon2id runtime-image check passed\n');
+          } finally { await auth.close(); }
+          NODE
+
   lint:
     runs-on: ubuntu-latest
     name: Lint (${{ matrix.project }})

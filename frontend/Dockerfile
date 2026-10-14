@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:24-alpine AS build
 
 ARG APP_VERSION=dev
@@ -5,8 +6,10 @@ ENV VITE_APP_VERSION=$APP_VERSION
 
 WORKDIR /app
 
-COPY package.json .
-RUN npm install
+COPY package.json package-lock.json ./
+RUN --mount=type=secret,id=proxy_ca \
+    if [ -f /run/secrets/proxy_ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/proxy_ca; fi; \
+    npm ci
 
 COPY index.html .
 COPY vite.config.js .
@@ -14,7 +17,9 @@ COPY caddyui-logo.ico caddyui-logo.svg caddyui-logo.png ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 
-RUN npm run build
+RUN --mount=type=secret,id=proxy_ca \
+    if [ -f /run/secrets/proxy_ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/proxy_ca; fi; \
+    NODE_USE_ENV_PROXY=1 npm run build
 
 FROM nginx:alpine
 

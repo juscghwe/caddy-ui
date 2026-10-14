@@ -1,7 +1,9 @@
 # Secure bootstrap and administrator login
 
-Status: implemented on the feature branch; final browser/CI and deployment-image
-verification are in progress. This is not a merged/released feature.
+Status: implemented on the feature branch, with local unit/browser/Caddy/proxy
+checks passing. The backend Alpine image check remains blocked in the sandbox
+and is included in CI. See [auth-verification.md](auth-verification.md).
+This is not a merged/released feature.
 
 Branch: `feat/bootstrap-and-login`, created from upstream `main` at
 `07af6c35ed605f5f5f30c66970ca509d4dc0b951` (#221), then integrated with
