@@ -23,7 +23,7 @@ caddy/ui is a self-hosted management interface for Caddy. It runs as two Docker 
 - **Notifications** — Push alerts via ntfy, Discord, Slack, Pushover, or custom webhook when upstreams go offline/online, routes go down/recover (with route checks on), or TLS certs are expiring. Configurable debounce and per-trigger opt-in
 - **26 Themes + Custom Themes** — Choose from 13 dark and 13 light palettes (VT2026, Dracula, Nord, Catppuccin, Tokyo Night, Gruvbox, One Dark Pro, Solarized, Material, GitHub, Ayu, Night Owl, Metro, and more), or drop your own into [`THEMES_PATH`](https://zackwag.github.io/caddy-ui/themes.html#custom-themes) for a fully custom palette. Pick one palette for dark mode and one for light mode, then toggle between them with one click. First-run welcome modal helps new users choose. Preferences stored server-side in `settings.json`
 - **URL-Based Navigation** — Full browser history support, bookmarkable URLs, and deep links (e.g. `/routes?filter=srv0`)
-- **Authentication** — Optional JWT-based login screen protecting the UI and authenticated API routes
+- **Authentication** — HTTPS bootstrap, administrator accounts and revocable secure-cookie sessions
 - **Multi-Instance** — Manage multiple Caddy instances from a single UI. Auto-discover Caddy containers on your Docker network, add/edit/remove instances from the Instances page, and switch between them with the sidebar instance switcher
 - **Mobile Friendly** — Responsive layout with collapsible sidebar
 

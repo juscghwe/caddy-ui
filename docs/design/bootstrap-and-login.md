@@ -1,6 +1,7 @@
 # Secure bootstrap and administrator login
 
-Status: implementation plan, not shipped behavior.
+Status: implemented on the feature branch; final browser/CI and deployment-image
+verification are in progress. This is not a merged/released feature.
 
 Branch: `feat/bootstrap-and-login`, created from upstream `main` at
 `07af6c35ed605f5f5f30c66970ca509d4dc0b951` (#221).
@@ -13,9 +14,7 @@ are a follow-up, as agreed with the contributor. Prepare identities and storage
 for that extension without presenting permissions that are not enforced.
 
 This is a change to authentication defaults and deployment requirements. Release
-it with an explicit upgrade guide and a breaking-change PR title. Merge #222
-before implementing frontend changes and adopt #223's integration/browser harness
-when available; rebase this branch onto their merged versions rather than copying
+it with an explicit upgrade guide and a breaking-change PR title. Keep #221's diagnostic contracts, and incorporate #222/#223 when available; rebase this branch onto their merged versions rather than copying
 their commits or replacing their diagnostic contracts.
 
 The planning commit introduces no runtime changes. Implementation commits should
@@ -334,7 +333,8 @@ resolve the separate admin-URL/SSRF policy discussion.
 Treat the legacy environment values as migration input, not a continuing account
 database. Offer an explicit local import operation: validate a complete legacy
 configuration, hash the password, create an administrator transactionally, and
-mark setup completed. Do not print credentials or put them in command arguments.
+stage activation for the one-time HTTPS exchange. Only that exchange completes
+setup and delivers the owner recovery code. Do not print credentials or put them in command arguments.
 Do not reopen bootstrap or repeat imports on restart. Tell operators to remove
 the original password and obsolete JWT signing secret from their deployment.
 
@@ -409,3 +409,16 @@ Discuss the proposed operator/viewer capability matrix, secret-bearing reads,
 shared Caddy installations and invitation/recovery policy with Zack before the
 separate permission feature. TOTP, passkeys and external OIDC are follow-ups;
 keep interfaces extensible without implementing all three in this branch.
+
+## Implemented cutover decisions
+
+- Node 24 is the supported runtime, matching the backend image and binding
+  maintainer CI. CI will use that runtime rather than imply Node 22 support.
+- Legacy import stages the existing identity; login remains blocked until the
+  owner completes the one-time HTTPS claim and receives recovery material.
+- Local maintenance requires a stopped backend and explicit offline acknowledgment.
+  Prepared restore/rotation state makes startup fail closed until local completion.
+- The integration inventory includes Prometheus and the Homepage status widget.
+  Prometheus retains its explicit public-telemetry option. Scoped machine
+  credentials are a documented follow-up; no broad bearer or public status
+  exception is introduced to preserve an insecure widget example.

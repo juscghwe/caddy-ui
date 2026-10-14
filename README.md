@@ -83,7 +83,7 @@ instances, optional authentication, and responsive dark/light themes.
 - **Notifications** — Push alerts via ntfy, Discord, Slack, Pushover, or custom webhook when upstreams go offline/online, routes go down/recover (with route checks on), or TLS certs are expiring. Configurable debounce and per-trigger opt-in
 - **26 Themes + Custom Themes** — Choose from 13 dark and 13 light palettes (VT2026, Dracula, Nord, Catppuccin, Tokyo Night, Gruvbox, One Dark Pro, Solarized, Material, GitHub, Ayu, Night Owl, Metro, and more), or drop your own into [`THEMES_PATH`](https://zackwag.github.io/caddy-ui/themes.html#custom-themes) for a fully custom palette. Pick one palette for dark mode and one for light mode, then toggle between them with one click. First-run welcome modal helps new users choose. Preferences stored server-side in `settings.json`
 - **URL-Based Navigation** — Full browser history support, bookmarkable URLs, and deep links (e.g. `/routes?filter=srv0`)
-- **Authentication** — Optional JWT-based login screen protecting the UI and authenticated API routes
+- **Authentication** — HTTPS bootstrap, administrator accounts and revocable secure-cookie sessions
 - **Multi-Instance** — Manage multiple Caddy instances from a single UI. Auto-discover Caddy containers on your Docker network, add/edit/remove instances from the Instances page, and switch between them with the sidebar instance switcher
 - **Mobile Friendly** — Responsive layout with collapsible sidebar
 <!-- dockerhub:frontend:end -->
@@ -109,7 +109,7 @@ instances, optional authentication, and responsive dark/light themes.
 - Tails and streams access logs via SSE
 - Parses and updates log configuration in the global Caddyfile block
 - Persists server labels and route notes to disk
-- Optional JWT authentication for protected API endpoints
+- Required-by-default account authentication for management APIs
 - Caddy process info and HTTP metrics via Prometheus endpoint
 - Metrics enable/disable toggle that modifies the Caddyfile global block
 - Optional public `/api/metrics/raw` endpoint for Prometheus scraping
@@ -379,9 +379,11 @@ operational checks remain deployment settings. Administrator creation/enablement
 changes require a session established within the last five minutes. The last
 enabled administrator cannot be disabled.
 
+Local deployment-owner commands provide explicit legacy import, password/key
+recovery, encrypted backup/restore and key rotation. Stop the backend before
+using them; see the [authentication and upgrade guide](https://zackwag.github.io/caddy-ui/authentication.html).
 All accounts in this version are administrators. Per-instance permissions,
-passkeys and TOTP are separate follow-ups. The feature branch remains work in
-progress until local migration/recovery and full-flow verification are complete.
+scoped machine credentials, passkeys and TOTP are separate follow-ups.
 <!-- dockerhub:backend:end -->
 <!-- ANCHOR_END: authentication -->
 
@@ -421,7 +423,11 @@ Upstreams that haven't been checked in 5 minutes, and routes that haven't been c
 <!-- dockerhub:backend:start -->
 ## Homepage Widget
 
-The status endpoint returns enriched data for use with [Homepage](https://gethomepage.dev):
+The status endpoint returns enriched data for use with [Homepage](https://gethomepage.dev).
+The unauthenticated example below requires an isolated deployment with explicitly
+disabled authentication. Required mode needs a browser session; scoped machine
+credentials are a follow-up. Do not expose status publicly or disable auth on a
+network-facing deployment to make this widget work:
 
 ```yaml
 - Caddy:

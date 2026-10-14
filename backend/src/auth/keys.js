@@ -9,6 +9,8 @@ export async function privateWrite(file, data) {
         const handle = await open(temporary, 'wx', 0o600);
         try { await handle.writeFile(data); await handle.sync(); } finally { await handle.close(); }
         await rename(temporary, file);
+        const directory = await open(dirname(file), 'r');
+        try { await directory.sync(); } finally { await directory.close(); }
     } finally { await rm(temporary, { force: true }); }
 }
 

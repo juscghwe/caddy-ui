@@ -6,7 +6,8 @@
         "start": "node src/index.js",
         "dev": "node --watch src/index.js",
         "test": "vitest run",
-        "lint": "eslint ."
+        "lint": "eslint .",
+        "auth": "node src/auth/cli.js"
     },
     "dependencies": {
         "@journeyapps/sqlcipher": "6.0.0",

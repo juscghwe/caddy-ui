@@ -5,6 +5,7 @@
     - [Screenshots](screenshots.md)
     - [Architecture](architecture.md)
 - [Setup](setup.md)
+- [Authentication and recovery](authentication.md)
 - [Configuration](configuration.md)
     - [Instances](instances.md)
     - [Custom themes](themes.md)

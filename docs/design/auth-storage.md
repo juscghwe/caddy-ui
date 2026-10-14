@@ -60,5 +60,26 @@ in the disposable Caddy harness.
 The HTTPS setup/export/login/logout flow has been rendered and exercised in
 Chromium with a scoped test-certificate pin. This does not automate an OS CA
 installation. Administrator creation/disablement, password changes, session revocation and
-per-account preferences now have a browser UI. Local migration/recovery and
-full-flow image checks remain required before release.
+per-account preferences now have a browser UI. Local migration/recovery, encrypted
+backups and actual database-key rotation are implemented. Full-flow browser/CI
+and image verification remain in progress.
+
+## Dependency provenance
+
+`@journeyapps/sqlcipher` is a third-party Node binding, not a Zetetic-published
+Node package. JourneyApps maintains a fork of `node-sqlite3` with bundled SQLCipher.
+The application therefore trusts the binding publisher as well as the engine and
+its OpenSSL/build dependencies. Version 6.0.0 is pinned with npm tarball integrity
+in the lockfile; this protects repeatability, not against a malicious pinned release.
+
+On 2026-10-14 the 23 installed binding/library/dependency source files matched
+JourneyApps tag `v6.0.0`, commit `5240d730c9c91a9f8d9f324ea4d547c4eedab17c`.
+The npm provenance statement names that same commit and release workflow.
+Automated signature verification could not finish because downloading its trust
+metadata received HTTP 403 in the sandbox; it is not reported as verified.
+An amalgamation generated locally from upstream SQLCipher tag `v4.14.0`, commit
+`778ab890cfc30c3631212dcceb0295498abdcd3e`, differed from the package
+amalgamation only in generated source-identification comments/SQLITE_SOURCE_ID.
+This establishes the observed source correspondence, not a complete security audit.
+The package compiles from source at install time; native compilation executes its
+reviewed build script and still belongs to the build trust boundary.

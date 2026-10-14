@@ -2,6 +2,12 @@
 
 ## Building from Source
 
+Native source builds use Node 24. The SQLCipher binding compiles from source on
+Linux/macOS; Linux requires Python, make, a C++ compiler and OpenSSL development
+headers (`build-essential libssl-dev pkg-config` on Debian/Ubuntu). The Dockerfile
+installs its compilation tools temporarily and retains the runtime crypto library.
+Windows users can use the Linux container.
+
 ```bash
 cd backend && docker build -t caddy-ui-backend .
 cd frontend && docker build -t caddy-ui-frontend .

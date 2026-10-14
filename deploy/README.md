@@ -1,7 +1,6 @@
 # Optional caddy/ui HTTPS gateway
 
-This example is work in progress on `feat/bootstrap-and-login`. Use it after the
-runtime/browser cutover checkpoint. It provisions HTTPS for the UI itself without
+This example provisions HTTPS for the UI itself without
 changing any Caddy installation you manage.
 
 If the UI is already behind HTTPS, keep that proxy. Configure the canonical

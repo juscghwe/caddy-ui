@@ -74,12 +74,13 @@ export function createAuthRouter(auth, config) {
 
     router.get('/status', action(async (req, res) => {
         if (!auth) return res.json({ authEnabled: false, publicMetrics: config.publicMetrics, initialized: true, secure: false, user: null });
-        const initialized = Boolean((await auth.state()).initialized);
+        const state = await auth.state();
+        const initialized = Boolean(state.initialized);
         let secure = false;
         try { requireTransport(req, config); secure = true; } catch { /* HTTP can read onboarding instructions only. */ }
         if (secure && req.get('origin') && req.get('origin') !== config.origin) throw fail('FORBIDDEN');
         const session = secure && !Object.hasOwn(req.query, 'token') && req.headers.authorization === undefined ? await auth.session(cookieToken(req)) : null;
-        res.json({ authEnabled: true, publicMetrics: config.publicMetrics, initialized, secure, externalUrl: config.origin,
+        res.json({ authEnabled: true, publicMetrics: config.publicMetrics, initialized, migrationPending: !initialized && state.pendingUsers === 1, secure, externalUrl: config.origin,
             user: session?.user || null, csrfToken: session?.csrfToken || null });
     }));
     router.post('/bootstrap', credentialLimit, action(async (req, res) => {

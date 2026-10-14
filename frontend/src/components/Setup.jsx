@@ -21,7 +21,7 @@ export default function Setup({ state, onComplete }) {
         try {
             const result = await apiFetch('/auth/bootstrap', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code, username, password }),
+                body: JSON.stringify(state.migrationPending ? { code } : { code, username, password }),
             });
             setCode(''); setPassword(''); setRecovery(result);
         } catch (error) { setErrorKey(authErrorKey(error)); }
@@ -59,17 +59,17 @@ export default function Setup({ state, onComplete }) {
             <label><input type="checkbox" checked={saved} onChange={event => setSaved(event.target.checked)} />{t('auth.savedRecovery')}</label>
             <button className="btn" disabled={!saved} onClick={finish}>{t('auth.continueLogin')}</button>
         </> : <form onSubmit={claim}>
-            <h2>{t('auth.setupTitle')}</h2>
-            <p>{t('auth.setupGuide')}</p>
+            <h2>{t(state.migrationPending ? 'auth.migrationTitle' : 'auth.setupTitle')}</h2>
+            <p>{t(state.migrationPending ? 'auth.migrationGuide' : 'auth.setupGuide')}</p>
             {errorKey && <div className="login-error" role="alert">{t(errorKey)}</div>}
             <div className="field"><label htmlFor="setup-code">{t('auth.setupCode')}</label>
                 <input id="setup-code" value={code} onChange={event => setCode(event.target.value)} autoComplete="off" required /></div>
-            <div className="field"><label htmlFor="setup-user">{t('login.username')}</label>
+            {!state.migrationPending && <><div className="field"><label htmlFor="setup-user">{t('login.username')}</label>
                 <input id="setup-user" value={username} onChange={event => setUsername(event.target.value)} autoComplete="username" maxLength={64} required /></div>
             <div className="field"><label htmlFor="setup-password">{t('login.password')}</label>
                 <input id="setup-password" type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete="new-password" minLength={12} maxLength={1024} required /></div>
-            <p>{t('auth.passwordGuide')}</p>
-            <button className="btn btn-primary" disabled={loading}>{t(loading ? 'auth.creating' : 'auth.createAdmin')}</button>
+            <p>{t('auth.passwordGuide')}</p></>}
+            <button className="btn btn-primary" disabled={loading}>{t(loading ? 'auth.creating' : state.migrationPending ? 'auth.completeMigration' : 'auth.createAdmin')}</button>
         </form>}
     </div></div>;
 }

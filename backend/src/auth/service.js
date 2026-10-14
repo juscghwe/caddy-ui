@@ -19,6 +19,7 @@ async function exists(file) {
 
 export async function openAuth(config, { clock = Date.now, initialPreferences = {} } = {}) {
     if (config.mode === 'disabled') return null;
+    if (await exists(config.keyPath + '.transition')) throw new Error('Pending auth storage transition; stop the server and use local auth complete-transition or inspect/cancel-transition');
     await mkdir(config.dataPath, { recursive: true, mode: 0o700 });
     if (!(await lstat(config.dataPath)).isDirectory() || (await lstat(config.dataPath)).isSymbolicLink()) throw new Error('Auth directory must be a real directory');
     const contents = await readdir(config.dataPath);
@@ -70,7 +71,7 @@ export class AuthService {
     }
 
     close() { return this.closing ??= this.db.exclusive(db => db.close()).finally(() => { this.key.fill(0); this.csrfKey.fill(0); }); }
-    state() { return this.db.exclusive(db => db.get('SELECT * FROM bootstrap_state WHERE id=1')); }
+    state() { return this.db.exclusive(db => db.get('SELECT *, (SELECT count(*) FROM users) AS pendingUsers FROM bootstrap_state WHERE id=1')); }
     async audit(db, action, actor = null, target = null, requestId = null) {
         await db.run('INSERT INTO security_audit(time, actor, action, target, request_id) VALUES(?,?,?,?,?)', [this.clock(), actor, action, target, requestId]);
         await db.run('DELETE FROM security_audit WHERE time < ?', [this.clock() - 90 * 24 * 60 * 60_000]);
@@ -99,20 +100,27 @@ export class AuthService {
                 await this.audit(db, 'setup.denied', null, null, requestId);
                 return false;
             }
-            return true;
+            return { pendingUsers: (await db.get('SELECT count(*) AS n FROM users')).n };
         });
         if (!accepted) throw failure('SETUP_INVALID');
-        const normalized = username(name);
-        const hash = await hashPassword(password);
-        const id = randomUUID();
+        if (accepted.pendingUsers > 1) throw failure('SETUP_INVALID');
+        if (accepted.pendingUsers && (name !== undefined || password !== undefined)) throw failure('VALIDATION_FAILED');
+        const normalized = accepted.pendingUsers ? null : username(name);
+        const hash = accepted.pendingUsers ? null : await hashPassword(password);
+        let id = randomUUID();
         const recovery = wrapKey(this.key, this.installationId);
         await this.db.transaction(async db => {
             const state = await db.get('SELECT * FROM bootstrap_state WHERE id=1');
             if (state.initialized) throw failure('SETUP_COMPLETE');
             if (state.expires_at <= this.clock() || state.attempts >= 10 || !sameDigest(state.digest, digest(code))) throw failure('SETUP_INVALID');
             await privateWrite(join(this.config.dataPath, 'recovery.json'), JSON.stringify(recovery.bundle));
-            await db.run('INSERT INTO users(id, username, created_at) VALUES(?,?,?)', [id, normalized, this.clock()]);
-            await db.run('INSERT INTO password_credentials(user_id, hash, changed_at) VALUES(?,?,?)', [id, hash, this.clock()]);
+            const users = await db.all('SELECT id FROM users');
+            if (users.length !== accepted.pendingUsers) throw failure('SETUP_INVALID');
+            if (users.length) id = users[0].id;
+            else {
+                await db.run('INSERT INTO users(id, username, created_at) VALUES(?,?,?)', [id, normalized, this.clock()]);
+                await db.run('INSERT INTO password_credentials(user_id, hash, changed_at) VALUES(?,?,?)', [id, hash, this.clock()]);
+            }
             await db.run('INSERT INTO user_preferences(user_id,value) VALUES(?,?)', [id, JSON.stringify(this.initialPreferences)]);
             await db.run('UPDATE bootstrap_state SET initialized=1,digest=NULL,expires_at=NULL WHERE id=1');
             await this.audit(db, 'setup.completed', id, id, requestId);
@@ -122,6 +130,7 @@ export class AuthService {
     }
 
     async login(name, password, requestId) {
+        if (!(await this.state()).initialized) throw failure('SETUP_REQUIRED');
         let normalized;
         try { normalized = username(name); } catch { normalized = ''; }
         const user = await this.db.exclusive(db => db.get('SELECT u.*,p.hash FROM users u JOIN password_credentials p ON u.id=p.user_id WHERE username=?', [normalized]));
@@ -133,6 +142,7 @@ export class AuthService {
         const rehashed = needsRehash(user.hash) ? await hashPassword(password) : null;
         const token = randomBytes(32).toString('base64url');
         await this.db.transaction(async db => {
+            if (!(await db.get('SELECT initialized FROM bootstrap_state WHERE id=1')).initialized) throw failure('SETUP_REQUIRED');
             const current = await db.get('SELECT u.*,p.hash FROM users u JOIN password_credentials p ON u.id=p.user_id WHERE u.id=?', [user.id]);
             if (!current?.enabled || current.revision !== user.revision || current.hash !== user.hash) throw failure('UNAUTHORIZED');
             if (rehashed) await db.run('UPDATE password_credentials SET hash=? WHERE user_id=?', [rehashed, user.id]);
