@@ -15,6 +15,10 @@ const DEFAULT_SETTINGS = {
     routeCheckExcludes: [],
 };
 
+export const PERSONAL_SETTINGS = Object.freeze(['firstTimeRun', 'theme', 'language', 'darkPalette', 'lightPalette', 'routeColumns']);
+export const personalSettings = settings => Object.fromEntries(PERSONAL_SETTINGS.filter(key => Object.hasOwn(settings, key)).map(key => [key, settings[key]]));
+export const defaultPersonalSettings = () => personalSettings(DEFAULT_SETTINGS);
+
 let _settings = null;
 let _writeLock = Promise.resolve();
 

@@ -22,6 +22,7 @@ const NAV = [
     { path: "/metrics", labelKey: "sidebar.nav.metrics", icon: "∿" },
     { path: "/notifications", labelKey: "sidebar.nav.notifications", icon: "⊘" },
     { path: "/instances", labelKey: "sidebar.nav.instances", icon: "⊞" },
+    { path: "/accounts", labelKey: "sidebar.nav.accounts", icon: "⚿" },
 ];
 
 export default function Sidebar({ currentPath, status, onRefreshStatus, authEnabled, onUnauth, onSignOut, sidebarOpen, setSidebarOpen, selectedInstanceId, onInstanceChange, instanceListVersion }) {
@@ -110,7 +111,7 @@ export default function Sidebar({ currentPath, status, onRefreshStatus, authEnab
                 );
             })()}
             <nav className="nav">
-                {NAV.map(n => (
+                {NAV.filter(n => authEnabled || n.path !== '/accounts').map(n => (
                     <div
                         key={n.path}
                         className={`nav-item ${currentPath === n.path ? "active" : ""}`}

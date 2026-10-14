@@ -19,6 +19,7 @@ import { Toasts, useToast } from "./components/Toasts.jsx";
 import { css, THEME_LIST, THEME_VAR_KEYS } from "./styles.js";
 import { apiFetch, clearSession, fetchAuthState, fetchCustomThemes, fetchSettings, getInstanceId, saveSettings } from "./utils/api.js";
 import Setup from './components/Setup.jsx';
+import Accounts from './components/Accounts.jsx';
 import { useTranslation } from 'react-i18next';
 
 const DEFAULTS = {
@@ -41,6 +42,7 @@ const TITLE_KEYS = {
     '/metrics': 'pages.metrics',
     '/notifications': 'pages.notifications',
     '/instances': 'pages.instances',
+    '/accounts': 'pages.accounts',
 };
 
 export default function App() {
@@ -242,7 +244,7 @@ export default function App() {
     // caddy/ui logs dont depend on instance, so Logs stays reachable alongside Instances.
     useEffect(() => {
         const path = '/' + location.pathname.split('/')[1];
-        if (noInstances && path !== '/logs' && path !== '/instances') navigate('/instances', { replace: true });
+        if (noInstances && !['/logs', '/instances', '/accounts'].includes(path)) navigate('/instances', { replace: true });
     }, [noInstances, location.pathname, navigate]);
 
     useEffect(() => {
@@ -328,6 +330,7 @@ export default function App() {
                                 <Route path="/metrics" element={<Metrics toast={toast} onUnauth={onUnauth} routeChecks={routeChecks} onRouteChecksChange={changeRouteChecks} routeCheckExcludes={routeCheckExcludes} onRouteCheckExcludesChange={changeRouteCheckExcludes} />} />
                                 <Route path="/notifications" element={<Notifications toast={toast} onUnauth={onUnauth} />} />
                                 <Route path="/instances" element={<Instances toast={toast} onUnauth={onUnauth} confirm={confirm} onInstanceChange={handleInstanceChange} />} />
+                                {authEnabled && <Route path="/accounts" element={<Accounts currentUser={authState.user} onUnauth={onUnauth} />} />}
                                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
                             </Routes>
                         </div>

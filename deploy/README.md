@@ -23,6 +23,8 @@ docker compose -f deploy/bootstrap.compose.yml logs caddy-ui-backend
 The web origin is `https://192.168.1.10:9877` by default. Change
 `CADDY_UI_HTTPS_PORT` if needed. Hostnames require working local DNS/hosts entries.
 Do not use a container name that your browser cannot resolve.
+Prefer a dedicated UI hostname. Browser cookies are scoped to a host, not a port;
+do not share that hostname/IP with untrusted HTTPS services on other ports.
 
 The optional read-only HTTP instruction/CA listener is published on
 `127.0.0.1:9878`. Reach it locally or through an SSH forward. If LAN access is

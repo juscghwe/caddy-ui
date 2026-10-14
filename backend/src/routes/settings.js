@@ -2,12 +2,17 @@ import { Router } from 'express';
 import { normalizeLanguageSetting } from '../languages.js';
 import { sanitizeHostList } from '../routeChecks.js';
 import { runRouteChecks } from '../routeMonitor.js';
-import { getSettings, saveSettings } from '../settings.js';
+import { getSettings, saveSettings, personalSettings, defaultPersonalSettings, PERSONAL_SETTINGS } from '../settings.js';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    res.json(getSettings());
+async function combinedSettings(req) {
+    if (!req.user) return getSettings();
+    return { ...getSettings(), ...defaultPersonalSettings(), ...await req.app.locals.auth.preferences(req.user.id) };
+}
+
+router.get('/', async (req, res) => {
+    res.json(await combinedSettings(req));
 });
 
 router.put('/', async (req, res) => {
@@ -27,7 +32,13 @@ router.put('/', async (req, res) => {
         if ('routeChecks' in updates) updates.routeChecks = updates.routeChecks === true;
         if ('routeCheckExcludes' in updates) updates.routeCheckExcludes = sanitizeHostList(updates.routeCheckExcludes);
         const wasChecking = getSettings().routeChecks;
-        const settings = await saveSettings(updates);
+        if (req.user) {
+            const personal = personalSettings(updates);
+            const shared = Object.fromEntries(Object.entries(updates).filter(([key]) => !PERSONAL_SETTINGS.includes(key)));
+            if (Object.keys(personal).length) await req.app.locals.auth.savePreferences(req.user.id, personal, req.session);
+            if (Object.keys(shared).length) await saveSettings(shared);
+        } else await saveSettings(updates);
+        const settings = await combinedSettings(req);
         if (settings.routeChecks && !wasChecking) runRouteChecks();
         res.json(settings);
     } catch (err) {

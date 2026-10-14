@@ -17,7 +17,7 @@ async function exists(file) {
     try { await lstat(file); return true; } catch (error) { if (error.code === 'ENOENT') return false; throw error; }
 }
 
-export async function openAuth(config, { clock = Date.now } = {}) {
+export async function openAuth(config, { clock = Date.now, initialPreferences = {} } = {}) {
     if (config.mode === 'disabled') return null;
     await mkdir(config.dataPath, { recursive: true, mode: 0o700 });
     if (!(await lstat(config.dataPath)).isDirectory() || (await lstat(config.dataPath)).isSymbolicLink()) throw new Error('Auth directory must be a real directory');
@@ -51,7 +51,7 @@ export async function openAuth(config, { clock = Date.now } = {}) {
         if (typeof installationId !== 'string' || !/^[a-f0-9-]{36}$/.test(installationId)) throw new Error('Invalid installation identity');
         db = await openDatabase(databasePath, key);
         await migrate(db);
-        const service = new AuthService(config, db, key, installationId, clock);
+        const service = new AuthService(config, db, key, installationId, clock, initialPreferences);
         service.dummyHash = await hashPassword(randomBytes(32).toString('hex'));
         return service;
     } catch (error) {
@@ -62,8 +62,8 @@ export async function openAuth(config, { clock = Date.now } = {}) {
 }
 
 export class AuthService {
-    constructor(config, db, key, installationId, clock) {
-        Object.assign(this, { config, db, key, installationId, clock });
+    constructor(config, db, key, installationId, clock, initialPreferences = {}) {
+        Object.assign(this, { config, db, key, installationId, clock, initialPreferences });
         this.csrfKey = Buffer.from(hkdfSync('sha256', key, installationId, 'caddy-ui/csrf/v1', 32));
         this.revocations = new EventEmitter();
         this.revocations.setMaxListeners(0);
@@ -76,9 +76,10 @@ export class AuthService {
         await db.run('DELETE FROM security_audit WHERE time < ?', [this.clock() - 90 * 24 * 60 * 60_000]);
         await db.run('DELETE FROM security_audit WHERE id NOT IN (SELECT id FROM security_audit ORDER BY id DESC LIMIT 10000)');
     }
-    async assertSession(db, session) {
+    async assertSession(db, session, { recent = false } = {}) {
         const row = await db.get('SELECT s.*,u.enabled,u.revision AS current_revision FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.digest=? AND s.user_id=?', [session.digest, session.user.id]);
         if (!row || !row.enabled || row.revision !== row.current_revision || row.expires_at <= this.clock() || row.used_at <= this.clock() - this.config.idleMs) throw failure('UNAUTHORIZED');
+        if (recent && this.clock() - row.created_at > 5 * 60_000) throw failure('AUTH_REAUTH_REQUIRED');
     }
     async setupCode() {
         const code = 'cui-setup-v1-' + randomBytes(32).toString('base64url');
@@ -112,6 +113,7 @@ export class AuthService {
             await privateWrite(join(this.config.dataPath, 'recovery.json'), JSON.stringify(recovery.bundle));
             await db.run('INSERT INTO users(id, username, created_at) VALUES(?,?,?)', [id, normalized, this.clock()]);
             await db.run('INSERT INTO password_credentials(user_id, hash, changed_at) VALUES(?,?,?)', [id, hash, this.clock()]);
+            await db.run('INSERT INTO user_preferences(user_id,value) VALUES(?,?)', [id, JSON.stringify(this.initialPreferences)]);
             await db.run('UPDATE bootstrap_state SET initialized=1,digest=NULL,expires_at=NULL WHERE id=1');
             await this.audit(db, 'setup.completed', id, id, requestId);
         });
@@ -201,7 +203,7 @@ export class AuthService {
         const hash = await hashPassword(password);
         const id = randomUUID();
         await this.db.transaction(async db => {
-            await this.assertSession(db, session);
+            await this.assertSession(db, session, { recent: true });
             if (await db.get('SELECT id FROM users WHERE username=?', [normalized])) throw failure('CONFLICT');
             await db.run('INSERT INTO users(id,username,created_at) VALUES(?,?,?)', [id, normalized, this.clock()]);
             await db.run('INSERT INTO password_credentials(user_id,hash,changed_at) VALUES(?,?,?)', [id, hash, this.clock()]);
@@ -213,7 +215,7 @@ export class AuthService {
         if (typeof enabled !== 'boolean') throw failure('VALIDATION_FAILED');
         if (this.clock() - session.createdAt > 5 * 60_000) throw failure('AUTH_REAUTH_REQUIRED');
         await this.db.transaction(async db => {
-            await this.assertSession(db, session);
+            await this.assertSession(db, session, { recent: true });
             if (!await db.get('SELECT id FROM users WHERE id=?', [id])) throw failure('NOT_FOUND');
             if (!enabled && (await db.get('SELECT count(*) AS n FROM users WHERE enabled=1 AND id<>?', [id])).n === 0) throw failure('LAST_ADMIN');
             await db.run('UPDATE users SET enabled=?,revision=revision+1 WHERE id=?', [Number(enabled), id]);
@@ -223,8 +225,9 @@ export class AuthService {
         this.revocations.emit('changed', id);
     }
     preferences(userId) { return this.db.exclusive(async db => JSON.parse((await db.get('SELECT value FROM user_preferences WHERE user_id=?', [userId]))?.value || '{}')); }
-    async savePreferences(userId, updates) {
+    async savePreferences(userId, updates, session) {
         return this.db.transaction(async db => {
+            if (session) await this.assertSession(db, session);
             const value = { ...JSON.parse((await db.get('SELECT value FROM user_preferences WHERE user_id=?', [userId]))?.value || '{}'), ...updates };
             await db.run('INSERT INTO user_preferences VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET value=excluded.value', [userId, JSON.stringify(value)]);
             return value;

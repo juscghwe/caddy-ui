@@ -9,6 +9,8 @@ import { openAuth } from '../src/auth/service.js';
 import { createAuthMiddleware, createAuthRouter, createAccountsRouter } from '../src/auth/http.js';
 import { diagnosticMiddleware } from '../src/errorReporting.js';
 import logger from '../src/logger.js';
+import settingsRouter from '../src/routes/settings.js';
+import { getSettings } from '../src/settings.js';
 
 const password = 'a sufficiently strong password';
 const cleanups = [];
@@ -27,6 +29,8 @@ async function fixture({ trusted = true } = {}) {
     app.use('/api/auth', createAuthRouter(auth, config));
     app.use('/api/accounts', createAccountsRouter(auth, config));
     const guard = createAuthMiddleware(auth, config);
+    app.locals.auth = auth;
+    app.use('/api/settings', guard, settingsRouter);
     app.get('/api/protected', guard, (req, res) => res.json({ user: req.user.username }));
     app.get('/api/logs/app/stream', guard, (req, res) => {
         res.setHeader('Content-Type', 'text/event-stream');
@@ -127,5 +131,15 @@ describe('HTTPS-only cookie authentication API', () => {
         const ended = await reader.read();
         expect(ended.done).toBe(true);
         expect((await request('/api/protected', { headers: { Cookie: cookie } })).status).toBe(401);
+    });
+    it('keeps personal preferences independent and does not rewrite shared settings for them', async () => {
+        const { request, cookie, csrf } = await signedIn();
+        await request('/api/accounts', { method: 'POST', body: { username: 'other', password }, headers: { Cookie: cookie, 'X-CSRF-Token': csrf } });
+        const other = await request('/api/auth/sessions', { method: 'POST', body: { username: 'other', password } });
+        const otherCookie = other.cookie.split(';')[0];
+        expect((await request('/api/settings', { method: 'PUT', body: { theme: 'light' }, headers: { Cookie: cookie, 'X-CSRF-Token': csrf } })).status).toBe(200);
+        expect((await request('/api/settings', { headers: { Cookie: cookie } })).data.theme).toBe('light');
+        expect((await request('/api/settings', { headers: { Cookie: otherCookie } })).data.theme).toBe('dark');
+        expect(getSettings().theme).toBe('dark');
     });
 });

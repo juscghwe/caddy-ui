@@ -2,7 +2,7 @@
 
 The identity foundation uses `@journeyapps/sqlcipher` 6.0.0 (BSD-3-Clause),
 bundling SQLCipher 4.14.0/SQLite 3.51.3, and `argon2` 0.45.1 (MIT).
-It is not yet connected to production login. The rollout plan remains in
+The runtime and browser now use this store. The rollout plan remains in
 [bootstrap-and-login.md](bootstrap-and-login.md).
 
 The SQLCipher adapter builds from source on Linux/macOS. Native Windows builds
@@ -33,7 +33,7 @@ Storage tests exercise persisted ciphertext/WAL, wrong-key refusal, transactions
 schema constraints, authenticated recovery/tampering, private key files and salted
 password verification.
 
-The next service checkpoint adds runtime key provisioning outside the data
+The service provisions the runtime key outside the data
 directory, an installation marker, explicit configuration/transport validation,
 one-time administrator claiming and the wrapped owner recovery bundle. Session
 credentials are random 256-bit values stored only as SHA-256 digests; CSRF tokens
@@ -59,5 +59,6 @@ in the disposable Caddy harness.
 
 The HTTPS setup/export/login/logout flow has been rendered and exercised in
 Chromium with a scoped test-certificate pin. This does not automate an OS CA
-installation. Remaining account UI/preferences wiring, local migration/recovery
-and full-flow image checks are required before release.
+installation. Administrator creation/disablement, password changes, session revocation and
+per-account preferences now have a browser UI. Local migration/recovery and
+full-flow image checks remain required before release.

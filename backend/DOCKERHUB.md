@@ -210,7 +210,7 @@ All backend variables have sensible defaults. Only set what you need to override
 | `PORT` | `3001` | Port the backend listens on |
 | `ROUTE_NOTES_PATH` | `/etc/caddy-ui/route-notes.json` | Path to the route notes file |
 | `SERVER_NAMES_PATH` | `/etc/caddy-ui/server-names.json` | Path to the per-instance server labels file |
-| `SETTINGS_PATH` | `/etc/caddy-ui/settings.json` | Path to the UI settings file (theme preferences, column visibility) |
+| `SETTINGS_PATH` | `/etc/caddy-ui/settings.json` | Shared operational settings and legacy initial-administrator preference seed; authenticated display preferences are stored per user in encrypted storage |
 | `THEMES_PATH` | `/etc/caddy-ui/themes` | Path to the custom themes directory (see [Custom Themes](https://zackwag.github.io/caddy-ui/themes.html#custom-themes)) |
 | `UPTIME_HISTORY_PATH` | `/etc/caddy-ui/uptime-history.json` | Path to the persisted upstream and route uptime history file |
 | `UPTIME_HISTORY_RETENTION_DAYS` | `7` | How many days of upstream and route health checks to retain |
@@ -244,6 +244,12 @@ JWTs stop working at this cutover. Incomplete/conflicting auth configuration and
 missing/corrupt encrypted state fail rather than falling back to unprotected
 access. `CADDY_UI_AUTH_MODE=disabled` is an explicit, visibly marked choice for
 isolated trusted development.
+
+The Accounts screen manages administrators, password changes and session
+revocation. Personal themes/language/display preferences belong to each user;
+operational checks remain deployment settings. Administrator creation/enablement
+changes require a session established within the last five minutes. The last
+enabled administrator cannot be disabled.
 
 All accounts in this version are administrators. Per-instance permissions,
 passkeys and TOTP are separate follow-ups. The feature branch remains work in
