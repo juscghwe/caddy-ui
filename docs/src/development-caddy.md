@@ -149,7 +149,52 @@ resets UI state without touching any Caddy volumes.
 
 Run harness lint with `npm run lint:dev-caddy` (requires backend dependencies)
 and lifecycle safety tests with `npm run test:dev-caddy`. They need no Docker
-Engine. `npm run test:dev-caddy:integration` is an opt-in real-container smoke test. It
-uses a fresh namespace and purges only its own resources in a finally block,
-covering `/health`, `/error`, reload, logging, restart/recreation persistence and
-independent simultaneous instances. It requires Docker and may pull the pinned image.
+Engine. `npm run test:dev-caddy:integration` runs real Caddy lifecycle and backend
+startup checks. Install backend dependencies and start Docker before running it;
+the harness may pull the pinned image.
+
+## Fixture infrastructure and startup guarantees
+
+Development commands live in `scripts/dev-caddy/`. Automated fixture code lives
+in `test/integration/` and reuses the same ownership-checked Docker harness.
+Read the support code in this order:
+
+| File | Responsibility |
+| --- | --- |
+| `scripts/dev-caddy/harness.mjs` | Docker operations, ownership checks and isolated backend environment paths. |
+| `test/integration/lifecycle.mjs` | Resource acquisition, cancellation and reverse-order cleanup, without service-specific dependencies. |
+| `test/integration/stack.mjs` | Claim namespace, create Caddy, seed temporary state, start backend, discover its bound port, and wait for HTTP readiness. |
+
+`FixtureScope.run` tracks a step that must finish before cleanup. `acquire` also
+registers disposal of its result, including resources that arrive after
+cancellation. `defer` registers cleanup for partial creations, such as a volume
+left behind by a failed container creation. `close` is idempotent, waits for
+pending steps, and attempts every disposer in reverse order. Bookkeeping is
+private; callers use these methods and the scope's signal.
+
+`useTestStack` registers the owner with a Node test before acquisition begins.
+`createTestStack` accepts an existing owner when another fixture adds services.
+Each fixture uses temporary backend state and fresh Docker resources; it does
+not read or change `.dev-caddy` or require a running development stack.
+
+The fixture atomically claims its namespace with a stopped Docker container
+named `caddy-ui-test-<namespace>-lease`. Separate test-fixture labels keep this
+lease out of the Caddy instance set. The lease is removed after all other cleanup
+layers, so concurrent clients cannot acquire the same namespace. If a process
+is killed without cleanup, inspect the lease and verify its owner has stopped
+before manually removing that specific container.
+
+The backend binds `PORT=0` and reports its OS-assigned port over Node IPC. It
+retains ownership of the socket throughout startup; HTTP readiness then checks
+the fixture-specific version. Listen failures remain fatal and diagnostics
+include the backend's drained output.
+
+Scenario responsibilities:
+
+- `caddy.mjs`: real Caddy reload, isolation, retained data and restart/recreation.
+- `startup.mjs`: failed startup, cancellation, port ownership and namespace exclusivity.
+- `lifecycle.test.mjs` and `readiness.test.mjs`: cleanup and readiness checks without Docker.
+
+The root npm commands select these suites explicitly. Existing CI runs the
+Docker-free safety checks through `test:dev-caddy`; real-container startup
+checks can be run locally with `test:dev-caddy:integration`.
