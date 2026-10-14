@@ -52,28 +52,29 @@ export default function Accounts({ currentUser, onUnauth }) {
     });
     const enabled = users.filter(user => user.enabled).length;
     return <div>
-        <h2>{t('auth.accountsTitle')}</h2>
+        <section className="card"><h2 className="card-title">{t('auth.accountsTitle')}</h2>
         <p>{t('auth.adminAuthority')}</p>
         {errorKey && <div className="login-error" role="alert">{t(errorKey)}</div>}
-        <table className="routes-table"><thead><tr><th>{t('login.username')}</th><th>{t('auth.accountState')}</th><th>{t('auth.actions')}</th></tr></thead>
+        <div className="table-wrap"><table className="table"><thead><tr><th>{t('login.username')}</th><th>{t('auth.accountState')}</th><th>{t('auth.actions')}</th></tr></thead>
             <tbody>{users.map(user => <tr key={user.id}><td>{user.username}</td><td>{t(user.enabled ? 'auth.enabled' : 'auth.disabled')}</td>
-                <td><button className="btn" disabled={busy || (user.enabled && enabled === 1)} onClick={() => enable(user)}>{t(user.enabled ? 'auth.disableAccount' : 'auth.enableAccount')}</button></td></tr>)}</tbody></table>
-        <form onSubmit={create}>
+                <td><button className="btn" disabled={busy || (user.enabled && enabled === 1)} onClick={() => enable(user)}>{t(user.enabled ? 'auth.disableAccount' : 'auth.enableAccount')}</button></td></tr>)}</tbody></table></div>
+        </section><form className="card" onSubmit={create}>
             <h3>{t('auth.createAdmin')}</h3>
             <div className="field"><label htmlFor="account-user">{t('login.username')}</label><input id="account-user" value={username} onChange={event => setUsername(event.target.value)} autoComplete="off" maxLength={64} required /></div>
             <div className="field"><label htmlFor="account-password">{t('auth.newPassword')}</label><input id="account-password" type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete="new-password" minLength={12} maxLength={1024} required /></div>
             <button className="btn btn-primary" disabled={busy}>{t('auth.createAdmin')}</button>
         </form>
-        <form onSubmit={changePassword}>
+        <form className="card" onSubmit={changePassword}>
             <h3>{t('auth.changePassword')}</h3>
             <div className="field"><label htmlFor="current-password">{t('auth.currentPassword')}</label><input id="current-password" type="password" value={currentPassword} onChange={event => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></div>
             <div className="field"><label htmlFor="new-password">{t('auth.newPassword')}</label><input id="new-password" type="password" value={newPassword} onChange={event => setNewPassword(event.target.value)} autoComplete="new-password" minLength={12} maxLength={1024} required /></div>
             <button className="btn btn-primary" disabled={busy}>{t('auth.changePassword')}</button>
         </form>
-        <h3>{t('auth.sessionsTitle')}</h3>
-        <table className="routes-table"><thead><tr><th>{t('auth.session')}</th><th>{t('auth.created')}</th><th>{t('auth.expires')}</th><th>{t('auth.actions')}</th></tr></thead>
+        <section className="card"><h3 className="card-title">{t('auth.sessionsTitle')}</h3>
+        <div className="table-wrap"><table className="table"><thead><tr><th>{t('auth.session')}</th><th>{t('auth.created')}</th><th>{t('auth.expires')}</th><th>{t('auth.actions')}</th></tr></thead>
             <tbody>{sessions.map(session => <tr key={session.id}><td>{t(session.current ? 'auth.currentSession' : 'auth.otherSession')}</td>
                 <td>{formatTs(new Date(session.createdAt).toISOString())}</td><td>{formatTs(new Date(session.expiresAt).toISOString())}</td>
-                <td><button className="btn" disabled={busy} onClick={() => revoke(session)}>{t('auth.revoke')}</button></td></tr>)}</tbody></table>
+                <td><button className="btn" disabled={busy} onClick={() => revoke(session)}>{t('auth.revoke')}</button></td></tr>)}</tbody></table></div>
+        </section>
     </div>;
 }
