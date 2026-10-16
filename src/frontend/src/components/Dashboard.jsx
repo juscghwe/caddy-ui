@@ -143,7 +143,12 @@ export default function Dashboard({ status, toast, onUnauth }) {
                                     {status.servers.map(s => (
                                         <tr key={s.name} className="row-clickable" onClick={() => navigate(`/routes?filter=${s.name}`)} title={t("dashboard.showRoutesOn", { server: s.name })}>
                                             <td>{names[s.name] || <span className="cell-muted">—</span>}</td>
-                                            <td className="mono">{s.name}</td>
+                                            <td>
+                                                <span className="mono">{s.name}</span>
+                                                {status.instance && <span className="mono inline-muted" title={status.instance.id}>
+                                                    <UtilityIcon name="dot" size={6} />{" "}{status.instance.name || status.instance.id}
+                                                </span>}
+                                            </td>
                                             <td className="mono cell-muted">{s.listen?.join(", ") || t("dashboard.noListeners")}</td>
                                             <td><span className="badge badge-blue">{s.routeCount}</span></td>
                                             <td><span className="badge badge-green">{t("dashboard.active")}</span></td>
@@ -177,7 +182,12 @@ export default function Dashboard({ status, toast, onUnauth }) {
                         <div className="server-facts">
                             <div>
                                 <span className="field-label">{t("dashboard.serverId")}</span>
-                                <div className="data-val mono">{editingServer.name}</div>
+                                <div className="data-val">
+                                    <span className="mono">{editingServer.name}</span>
+                                    {status.instance && <span className="mono inline-muted" title={status.instance.id}>
+                                        <UtilityIcon name="dot" size={6} />{" "}{status.instance.name || status.instance.id}
+                                    </span>}
+                                </div>
                             </div>
                             <div>
                                 <span className="field-label">{t("dashboard.listensOn")}</span>

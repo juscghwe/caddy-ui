@@ -83,6 +83,7 @@ router.get('/', async (req, res) => {
 
         res.json({
             online: true,
+            instance: { id: req.instance.id, name: req.instance.name },
             serverCount: servers.length,
             routeCount,
             upstreamsOnline,
