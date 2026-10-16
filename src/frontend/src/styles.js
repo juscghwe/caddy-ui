@@ -1868,6 +1868,7 @@ export const css = `
   .sort-icon--active { margin-left: 4px; color: var(--accent); }
 
   .col-actions { width: 100px; text-align: right; }
+  .route-actions { flex-wrap: nowrap; }
   .col-actions-sm { width: 60px; text-align: right; }
 
   .cell-muted { color: var(--muted); font-size: 10px; }

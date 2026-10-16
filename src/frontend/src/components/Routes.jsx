@@ -624,7 +624,7 @@ export default function Routes({ toast, onUnauth, confirm, theme, routeColumns, 
                                                 )}
                                                 {columns.id && <td className="mono cell-muted">{r["@id"] || "—"}</td>}
                                                 <td className="col-actions">
-                                                    <div className="btn-row flex-end">
+                                                    <div className="btn-row flex-end route-actions">
                                                         {!hasId && (
                                                             <button
                                                                 className="btn btn-ghost btn--icon"
