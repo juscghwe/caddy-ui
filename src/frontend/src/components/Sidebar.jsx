@@ -16,8 +16,8 @@ const displayVersion = (version) => /^\d/.test(version) ? `v${version}` : versio
 
 const NAV = [
     { path: "/dashboard", labelKey: "sidebar.nav.dashboard", icon: "dashboard" },
-    { path: "/caddyfile", labelKey: "sidebar.nav.caddyfile", icon: "caddyfile" },
     { path: "/routes", labelKey: "sidebar.nav.routes", icon: "routes" },
+    { path: "/caddyfile", labelKey: "sidebar.nav.caddyfile", icon: "caddyfile" },
     { path: "/tls", labelKey: "sidebar.nav.tls", icon: "tls" },
     { path: "/logs", labelKey: "sidebar.nav.logs", icon: "logs" },
     { path: "/metrics", labelKey: "sidebar.nav.metrics", icon: "metrics" },
