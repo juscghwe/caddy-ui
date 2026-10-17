@@ -8,7 +8,7 @@
 
 The backend is one Node.js/Express process. Its Docker image runs `node src/index.js`; there is no internal management gateway, message broker, database server or separate worker service. The diagrams group existing files by responsibility. These groups are a reading aid: the code does **not** currently enforce a clean layered architecture.
 
-The [architecture proposal](caddy-ui-architecture-proposal.md) describes intended changes. This document records the starting point for discussing and reviewing those changes. Frontend internals and deployment architecture will be mapped separately.
+The [architecture proposal](caddy-ui-architecture-proposal.md) describes intended changes. This document records the starting point for discussing and reviewing those changes. The [frontend companion](frontend-current-architecture.md) maps browser-side responsibilities at the same revision; deployment architecture will be mapped separately.
 
 ## Reading the diagrams
 
