@@ -1,8 +1,9 @@
 # caddy/ui architecture workspace
 
-This branch holds architecture proposals and plans for independently reviewable implementation slices.
+This branch holds architecture proposals, current implementation maps and plans for independently reviewable implementation slices.
 
 - [Architecture and boundary proposal](caddy-ui-architecture-proposal.md)
+- [Current backend: modules, contracts and responsibility diagrams](backend-current-architecture.md)
 - [Implementation slice documents](slices/README.md)
 
 The guiding principle is a small, dependable, Caddyfile-first tool. Clear responsibilities, contracts, testing and recovery should support that simplicity.
