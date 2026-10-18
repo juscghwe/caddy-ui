@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="6a-light-c-bold-u-title 6a-light-c-bold-u-desc">
+  <title id="6a-light-c-bold-u-title">6a-light-c-bold-u</title>
+  <desc id="6a-light-c-bold-u-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="6a-light-c-bold-u-background" width="64" height="64" fill="#14161C" />
+  <g id="6a-light-c-bold-u-artwork" fill="#00E5A0">
+    <g id="6a-light-c-bold-u-type" transform="translate(1.304515 45.887608) scale(49.951969)">
+      <g id="6a-light-c-bold-u-type-letters" fill="#00E5A0">
+        <title>cu</title>
+        <text id="6a-light-c-bold-u-type-letters-weight-300" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="300" font-kerning="none" style="font-variant-ligatures:none">c</text>
+        <text id="6a-light-c-bold-u-type-letters-weight-700" x="0.6" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="700" font-kerning="none" style="font-variant-ligatures:none">u</text>
+      </g>
+    </g>
+  </g>
+</svg>

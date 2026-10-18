@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="6b-bold-slash-ui-title 6b-bold-slash-ui-desc">
+  <title id="6b-bold-slash-ui-title">6b-bold-slash-ui</title>
+  <desc id="6b-bold-slash-ui-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="6b-bold-slash-ui-background" width="64" height="64" fill="#14161C" />
+  <g id="6b-bold-slash-ui-artwork" fill="#00E5A0">
+    <g id="6b-bold-slash-ui-slash" transform="translate(4.748899 42.090308) scale(30.837004)">
+      <g id="6b-bold-slash-ui-slash-letters" fill="#00E5A0">
+        <title>/</title>
+        <text id="6b-bold-slash-ui-slash-letters-weight-700" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="700" font-kerning="none" style="font-variant-ligatures:none">/</text>
+      </g>
+    </g>
+    <g id="6b-bold-slash-ui-ui" transform="translate(22.109389 43.952142) scale(30.993619)">
+      <g id="6b-bold-slash-ui-ui-letters" fill="#00E5A0">
+        <title>ui</title>
+        <text id="6b-bold-slash-ui-ui-letters-weight-700" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="700" font-kerning="none" style="font-variant-ligatures:none">ui</text>
+      </g>
+    </g>
+  </g>
+</svg>

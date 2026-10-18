@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="2c-ui-plus-cursor-title 2c-ui-plus-cursor-desc">
+  <title id="2c-ui-plus-cursor-title">2c-ui-plus-cursor</title>
+  <desc id="2c-ui-plus-cursor-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="2c-ui-plus-cursor-background" width="64" height="64" fill="#14161C" />
+  <g id="2c-ui-plus-cursor-artwork" fill="#00E5A0">
+    <g id="2c-ui-plus-cursor-type" transform="translate(1.371154 45.074519) scale(35.576923)">
+      <g id="2c-ui-plus-cursor-type-letters" fill="#00E5A0">
+        <title>ui</title>
+        <g id="2c-ui-plus-cursor-type-letters-glyph-0-u" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+          <path d="M434 80H430Q415 44 379.5 16.0Q344 -12 279 -12Q195 -12 148.5 38.5Q102 89 102 183V516H159V193Q159 113 193.5 76.0Q228 39 294 39Q321 39 346.0 46.0Q371 53 390.5 67.0Q410 81 422.0 102.5Q434 124 434 153V516H491V0H434Z" />
+        </g>
+        <g id="2c-ui-plus-cursor-type-letters-glyph-1-i" transform="translate(0.600000 0) scale(0.001000 -0.001000)">
+          <path d="M332 654Q305 654 293.5 665.5Q282 677 282 694V707Q282 724 293.5 735.5Q305 747 332 747Q359 747 370.5 735.5Q382 724 382 707V694Q382 677 370.5 665.5Q359 654 332 654ZM110 49H304V467H110V516H361V49H542V0H110Z" />
+        </g>
+      </g>
+    </g>
+    <rect id="2c-ui-plus-cursor-cursor" x="47" y="17" width="10" height="35" fill="#00E5A0" />
+  </g>
+</svg>

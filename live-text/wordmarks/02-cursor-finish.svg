@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="164" viewBox="0 0 800 164" role="img" aria-labelledby="02-cursor-finish-title 02-cursor-finish-desc">
+  <title id="02-cursor-finish-title">02-cursor-finish</title>
+  <desc id="02-cursor-finish-desc">Light IBM Plex Mono lettering and separate block cursor. Transparent background. Clean vector reconstruction of the design study.</desc>
+  <g id="wordmark02" transform="translate(31.912500 120.500000) scale(137.500000)">
+    <g id="wordmark02-type" fill="#00E5A0">
+      <title>caddy/ui</title>
+      <text id="wordmark02-type-weight-300" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="300" font-kerning="none" style="font-variant-ligatures:none">caddy/ui</text>
+      <rect id="wordmark02-block-cursor" x="4.91" y="-0.72" width="0.35" height="0.72" fill="#00E5A0" />
+    </g>
+  </g>
+</svg>

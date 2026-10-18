@@ -1,0 +1,10 @@
+{
+  "source": "https://github.com/google/fonts/tree/main/ofl/ibmplexmono",
+  "font_files_unmodified": true,
+  "sha256": {
+    "fonts/IBM-Plex-Mono-OFL.txt": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+    "fonts/IBMPlexMono-Bold.ttf": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be",
+    "fonts/IBMPlexMono-Light.ttf": "780bcf65509d72a35ec114b57bcbe220dc6b77d8ea2e9b25e294be3c570c5025",
+    "fonts/IBMPlexMono-SemiBold.ttf": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46"
+  }
+}

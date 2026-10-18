@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="6a-light-c-bold-u-title 6a-light-c-bold-u-desc">
+  <title id="6a-light-c-bold-u-title">6a-light-c-bold-u</title>
+  <desc id="6a-light-c-bold-u-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="6a-light-c-bold-u-background" width="64" height="64" fill="#14161C" />
+  <g id="6a-light-c-bold-u-artwork" fill="#00E5A0">
+    <g id="6a-light-c-bold-u-type" transform="translate(1.304515 45.887608) scale(49.951969)">
+      <g id="6a-light-c-bold-u-type-letters" fill="#00E5A0">
+        <title>cu</title>
+        <g id="6a-light-c-bold-u-type-letters-glyph-0-c" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+          <path d="M320 -12Q212 -12 153.0 59.0Q94 130 94 258Q94 386 153.5 457.0Q213 528 319 528Q391 528 437.0 495.5Q483 463 503 412L457 389Q441 432 406.0 455.0Q371 478 319 478Q240 478 197.5 427.5Q155 377 155 294V222Q155 139 197.5 88.5Q240 38 320 38Q375 38 412.0 63.0Q449 88 469 133L511 106Q489 55 442.0 21.5Q395 -12 320 -12Z" />
+        </g>
+        <g id="6a-light-c-bold-u-type-letters-glyph-1-u" transform="translate(0.600000 0) scale(0.001000 -0.001000)">
+          <path d="M387 94H381Q364 50 327.5 19.0Q291 -12 229 -12Q192 -12 161.0 0.5Q130 13 108.0 38.0Q86 63 73.5 99.0Q61 135 61 182V516H209V202Q209 102 296 102Q313 102 329.5 106.5Q346 111 358.5 120.5Q371 130 379.0 144.0Q387 158 387 177V516H535V0H387Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

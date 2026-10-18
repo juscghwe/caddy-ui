@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="6c-stacked-c-slash-ui-title 6c-stacked-c-slash-ui-desc">
+  <title id="6c-stacked-c-slash-ui-title">6c-stacked-c-slash-ui</title>
+  <desc id="6c-stacked-c-slash-ui-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="6c-stacked-c-slash-ui-background" width="64" height="64" fill="#14161C" />
+  <g id="6c-stacked-c-slash-ui-artwork" fill="#00E5A0">
+    <g id="6c-stacked-c-slash-ui-c" transform="translate(5.555556 30.466667) scale(44.444444)">
+      <g id="6c-stacked-c-slash-ui-c-letters" fill="#00E5A0">
+        <title>c</title>
+        <g id="6c-stacked-c-slash-ui-c-letters-glyph-0-c" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+          <path d="M320 -12Q212 -12 153.0 59.0Q94 130 94 258Q94 386 153.5 457.0Q213 528 319 528Q391 528 437.0 495.5Q483 463 503 412L457 389Q441 432 406.0 455.0Q371 478 319 478Q240 478 197.5 427.5Q155 377 155 294V222Q155 139 197.5 88.5Q240 38 320 38Q375 38 412.0 63.0Q449 88 469 133L511 106Q489 55 442.0 21.5Q395 -12 320 -12Z" />
+        </g>
+      </g>
+    </g>
+    <g id="6c-stacked-c-slash-ui-slash" transform="translate(19.809577 45.082405) scale(35.634744)">
+      <g id="6c-stacked-c-slash-ui-slash-letters" fill="#00E5A0">
+        <title>/</title>
+        <g id="6c-stacked-c-slash-ui-slash-letters-glyph-0-slash" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+          <path d="M78 -138 407 760H522L193 -138Z" />
+        </g>
+      </g>
+    </g>
+    <g id="6c-stacked-c-slash-ui-ui" transform="translate(26.387420 55.268004) scale(26.435734)">
+      <g id="6c-stacked-c-slash-ui-ui-letters" fill="#00E5A0">
+        <title>ui</title>
+        <g id="6c-stacked-c-slash-ui-ui-letters-glyph-0-u" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+          <path d="M387 94H381Q364 50 327.5 19.0Q291 -12 229 -12Q192 -12 161.0 0.5Q130 13 108.0 38.0Q86 63 73.5 99.0Q61 135 61 182V516H209V202Q209 102 296 102Q313 102 329.5 106.5Q346 111 358.5 120.5Q371 130 379.0 144.0Q387 158 387 177V516H535V0H387Z" />
+        </g>
+        <g id="6c-stacked-c-slash-ui-ui-letters-glyph-1-i" transform="translate(0.600000 0) scale(0.001000 -0.001000)">
+          <path d="M332 582Q282 582 262.5 602.5Q243 623 243 652V681Q243 711 262.5 731.0Q282 751 332 751Q382 751 401.5 731.0Q421 711 421 681V652Q421 623 401.5 602.5Q382 582 332 582ZM94 115H258V401H94V516H406V115H558V0H94Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="6c-stacked-c-slash-ui-title 6c-stacked-c-slash-ui-desc">
+  <title id="6c-stacked-c-slash-ui-title">6c-stacked-c-slash-ui</title>
+  <desc id="6c-stacked-c-slash-ui-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="6c-stacked-c-slash-ui-background" width="64" height="64" fill="#14161C" />
+  <g id="6c-stacked-c-slash-ui-artwork" fill="#00E5A0">
+    <g id="6c-stacked-c-slash-ui-c" transform="translate(5.555556 30.466667) scale(44.444444)">
+      <g id="6c-stacked-c-slash-ui-c-letters" fill="#00E5A0">
+        <title>c</title>
+        <text id="6c-stacked-c-slash-ui-c-letters-weight-300" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="300" font-kerning="none" style="font-variant-ligatures:none">c</text>
+      </g>
+    </g>
+    <g id="6c-stacked-c-slash-ui-slash" transform="translate(19.809577 45.082405) scale(35.634744)">
+      <g id="6c-stacked-c-slash-ui-slash-letters" fill="#00E5A0">
+        <title>/</title>
+        <text id="6c-stacked-c-slash-ui-slash-letters-weight-600" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="600" font-kerning="none" style="font-variant-ligatures:none">/</text>
+      </g>
+    </g>
+    <g id="6c-stacked-c-slash-ui-ui" transform="translate(26.387420 55.268004) scale(26.435734)">
+      <g id="6c-stacked-c-slash-ui-ui-letters" fill="#00E5A0">
+        <title>ui</title>
+        <text id="6c-stacked-c-slash-ui-ui-letters-weight-700" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="700" font-kerning="none" style="font-variant-ligatures:none">ui</text>
+      </g>
+    </g>
+  </g>
+</svg>

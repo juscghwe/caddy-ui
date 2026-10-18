@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="164" viewBox="0 0 800 164" role="img" aria-labelledby="02-cursor-finish-title 02-cursor-finish-desc">
+  <title id="02-cursor-finish-title">02-cursor-finish</title>
+  <desc id="02-cursor-finish-desc">Light IBM Plex Mono lettering and separate block cursor. Transparent background. Clean vector reconstruction of the design study.</desc>
+  <g id="wordmark02" transform="translate(31.912500 120.500000) scale(137.500000)">
+    <g id="wordmark02-type" fill="#00E5A0">
+      <title>caddy/ui</title>
+      <g id="wordmark02-type-glyph-0-c" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+        <path d="M320 -12Q212 -12 153.0 59.0Q94 130 94 258Q94 386 153.5 457.0Q213 528 319 528Q391 528 437.0 495.5Q483 463 503 412L457 389Q441 432 406.0 455.0Q371 478 319 478Q240 478 197.5 427.5Q155 377 155 294V222Q155 139 197.5 88.5Q240 38 320 38Q375 38 412.0 63.0Q449 88 469 133L511 106Q489 55 442.0 21.5Q395 -12 320 -12Z" />
+      </g>
+      <g id="wordmark02-type-glyph-1-a" transform="translate(0.600000 0) scale(0.001000 -0.001000)">
+        <path d="M479 0Q444 0 429.0 17.0Q414 34 412 63V81H407Q390 40 351.0 14.0Q312 -12 245 -12Q164 -12 117.5 27.5Q71 67 71 139Q71 173 82.5 200.5Q94 228 119.5 247.0Q145 266 185.0 276.5Q225 287 283 287H409V350Q409 415 373.5 447.0Q338 479 275 479Q169 479 127 394L88 422Q108 467 155.5 497.5Q203 528 278 528Q366 528 416.0 482.5Q466 437 466 356V50H543V0ZM254 36Q287 36 315.0 44.0Q343 52 364.0 66.5Q385 81 397.0 102.0Q409 123 409 149V244H283Q202 244 166.5 219.5Q131 195 131 153V127Q131 82 164.5 59.0Q198 36 254 36Z" />
+      </g>
+      <g id="wordmark02-type-glyph-2-d" transform="translate(1.200000 0) scale(0.001000 -0.001000)">
+        <path d="M436 82H433Q411 40 371.5 14.0Q332 -12 273 -12Q176 -12 122.0 57.5Q68 127 68 258Q68 389 122.0 458.5Q176 528 273 528Q332 528 371.5 502.0Q411 476 433 434H436V740H493V0H436ZM292 39Q321 39 347.0 47.0Q373 55 393.0 70.0Q413 85 424.5 107.0Q436 129 436 156V360Q436 387 424.5 409.0Q413 431 393.0 446.0Q373 461 347.0 469.0Q321 477 292 477Q214 477 171.5 428.0Q129 379 129 294V222Q129 137 171.5 88.0Q214 39 292 39Z" />
+      </g>
+      <g id="wordmark02-type-glyph-3-d" transform="translate(1.800000 0) scale(0.001000 -0.001000)">
+        <path d="M436 82H433Q411 40 371.5 14.0Q332 -12 273 -12Q176 -12 122.0 57.5Q68 127 68 258Q68 389 122.0 458.5Q176 528 273 528Q332 528 371.5 502.0Q411 476 433 434H436V740H493V0H436ZM292 39Q321 39 347.0 47.0Q373 55 393.0 70.0Q413 85 424.5 107.0Q436 129 436 156V360Q436 387 424.5 409.0Q413 431 393.0 446.0Q373 461 347.0 469.0Q321 477 292 477Q214 477 171.5 428.0Q129 379 129 294V222Q129 137 171.5 88.0Q214 39 292 39Z" />
+      </g>
+      <g id="wordmark02-type-glyph-4-y" transform="translate(2.400000 0) scale(0.001000 -0.001000)">
+        <path d="M478 516H535L266 -140Q253 -171 233.5 -185.5Q214 -200 173 -200H87V-151H204L272 14L65 516H124L299 83H303Z" />
+      </g>
+      <g id="wordmark02-type-glyph-5-slash" transform="translate(3.000000 0) scale(0.001000 -0.001000)">
+        <path d="M96 -138 453 760H504L147 -138Z" />
+      </g>
+      <g id="wordmark02-type-glyph-6-u" transform="translate(3.600000 0) scale(0.001000 -0.001000)">
+        <path d="M434 80H430Q415 44 379.5 16.0Q344 -12 279 -12Q195 -12 148.5 38.5Q102 89 102 183V516H159V193Q159 113 193.5 76.0Q228 39 294 39Q321 39 346.0 46.0Q371 53 390.5 67.0Q410 81 422.0 102.5Q434 124 434 153V516H491V0H434Z" />
+      </g>
+      <g id="wordmark02-type-glyph-7-i" transform="translate(4.200000 0) scale(0.001000 -0.001000)">
+        <path d="M332 654Q305 654 293.5 665.5Q282 677 282 694V707Q282 724 293.5 735.5Q305 747 332 747Q359 747 370.5 735.5Q382 724 382 707V694Q382 677 370.5 665.5Q359 654 332 654ZM110 49H304V467H110V516H361V49H542V0H110Z" />
+      </g>
+      <rect id="wordmark02-block-cursor" x="4.91" y="-0.72" width="0.35" height="0.72" fill="#00E5A0" />
+    </g>
+  </g>
+</svg>

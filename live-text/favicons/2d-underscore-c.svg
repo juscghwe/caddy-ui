@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="2d-underscore-c-title 2d-underscore-c-desc">
+  <title id="2d-underscore-c-title">2d-underscore-c</title>
+  <desc id="2d-underscore-c-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="2d-underscore-c-background" width="64" height="64" fill="#14161C" />
+  <g id="2d-underscore-c-artwork" fill="#00E5A0">
+    <g id="2d-underscore-c-type" transform="translate(4.574074 45.288889) scale(59.259259)">
+      <g id="2d-underscore-c-type-letters" fill="#00E5A0">
+        <title>c</title>
+        <text id="2d-underscore-c-type-letters-weight-300" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="300" font-kerning="none" style="font-variant-ligatures:none">c</text>
+      </g>
+    </g>
+    <rect id="2d-underscore-c-underscore" x="39" y="45" width="17" height="6" fill="#00E5A0" />
+  </g>
+</svg>

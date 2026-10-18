@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="164" viewBox="0 0 800 164" role="img" aria-labelledby="07-bracket-baseline-title 07-bracket-baseline-desc">
+  <title id="07-bracket-baseline-title">07-bracket-baseline</title>
+  <desc id="07-bracket-baseline-desc">Custom geometric lowercase lettering with separate lower corner marks. All artwork consists of editable paths. This is not a stock font.</desc>
+  <g id="wordmark07" fill="#00E5A0">
+    <g id="wordmark07-letters" transform="translate(58 16) scale(1.55)">
+      <g id="wordmark07-glyph-0-c" transform="translate(0 0)">
+        <path d="M12 18H44V26H16L10 32V46L16 52H44V60H12L2 50V28Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-1-a" transform="translate(55 0)">
+        <path d="M10 18H38L48 28V60H10L0 50V39L10 29H40V28L36 26H10Z M13 38L8 43V47L13 52H40V38Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-2-d" transform="translate(110 0)">
+        <path d="M40 0H48V60H12L2 50V28L12 18H40Z M16 26L10 32V46L16 52H40V26Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-3-d" transform="translate(165 0)">
+        <path d="M40 0H48V60H12L2 50V28L12 18H40Z M16 26L10 32V46L16 52H40V26Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-4-y" transform="translate(220 0)">
+        <path d="M2 18H10V42L15 47H40V18H48V68L38 78H14V70H34L40 64V55H12L2 45Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-5-slash" transform="translate(275 0)">
+        <path d="M0 70L27 -2H37L10 70Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-6-u" transform="translate(322 0)">
+        <path d="M2 18H10V46L16 52H34L40 46V18H48V50L38 60H12L2 50Z" fill-rule="evenodd" />
+      </g>
+      <g id="wordmark07-glyph-7-i" transform="translate(377 0)">
+        <path d="M20 0H30V10H20Z M12 18H30V52H42V60H8V52H22V26H12Z" fill-rule="evenodd" />
+      </g>
+    </g>
+    <g id="wordmark07-baseline-corners">
+      <path id="wordmark07-left-corner" d="M20 113H28V139H56V147H20Z" />
+      <path id="wordmark07-right-corner" d="M736 113H744V147H708V139H736Z" />
+    </g>
+  </g>
+</svg>

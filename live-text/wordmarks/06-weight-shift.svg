@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="164" viewBox="0 0 800 164" role="img" aria-labelledby="06-weight-shift-title 06-weight-shift-desc">
+  <title id="06-weight-shift-title">06-weight-shift</title>
+  <desc id="06-weight-shift-desc">IBM Plex Mono Light caddy and Bold /ui. Transparent background. Each outlined glyph can be edited independently.</desc>
+  <g id="wordmark06" transform="translate(66.425000 120.500000) scale(137.500000)">
+    <g id="wordmark06-letters" fill="#00E5A0">
+      <title>caddy/ui</title>
+      <text id="wordmark06-letters-weight-300" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="300" font-kerning="none" style="font-variant-ligatures:none">caddy</text>
+      <text id="wordmark06-letters-weight-700" x="3.0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="700" font-kerning="none" style="font-variant-ligatures:none">/ui</text>
+    </g>
+  </g>
+</svg>

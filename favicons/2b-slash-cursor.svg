@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="2b-slash-cursor-title 2b-slash-cursor-desc">
+  <title id="2b-slash-cursor-title">2b-slash-cursor</title>
+  <desc id="2b-slash-cursor-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="2b-slash-cursor-background" width="64" height="64" fill="#14161C" />
+  <g id="2b-slash-cursor-artwork" fill="#00E5A0">
+    <g id="2b-slash-cursor-type" transform="translate(7.132517 47.930958) scale(51.224944)">
+      <g id="2b-slash-cursor-type-letters" fill="#00E5A0">
+        <title>/</title>
+        <g id="2b-slash-cursor-type-letters-glyph-0-slash" transform="translate(0.000000 0) scale(0.001000 -0.001000)">
+          <path d="M96 -138 453 760H504L147 -138Z" />
+        </g>
+      </g>
+    </g>
+    <rect id="2b-slash-cursor-cursor" x="42" y="17" width="12" height="35" fill="#00E5A0" />
+  </g>
+</svg>

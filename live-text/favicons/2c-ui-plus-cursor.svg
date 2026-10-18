@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="2c-ui-plus-cursor-title 2c-ui-plus-cursor-desc">
+  <title id="2c-ui-plus-cursor-title">2c-ui-plus-cursor</title>
+  <desc id="2c-ui-plus-cursor-desc">Editable favicon study. Background, lettering and cursor are separate objects. 64-unit SVG viewBox; inspect at actual 16 and 32 px before production use.</desc>
+  <rect id="2c-ui-plus-cursor-background" width="64" height="64" fill="#14161C" />
+  <g id="2c-ui-plus-cursor-artwork" fill="#00E5A0">
+    <g id="2c-ui-plus-cursor-type" transform="translate(1.371154 45.074519) scale(35.576923)">
+      <g id="2c-ui-plus-cursor-type-letters" fill="#00E5A0">
+        <title>ui</title>
+        <text id="2c-ui-plus-cursor-type-letters-weight-300" x="0" y="0" font-family="IBM Plex Mono" font-size="1" font-weight="300" font-kerning="none" style="font-variant-ligatures:none">ui</text>
+      </g>
+    </g>
+    <rect id="2c-ui-plus-cursor-cursor" x="47" y="17" width="10" height="35" fill="#00E5A0" />
+  </g>
+</svg>
