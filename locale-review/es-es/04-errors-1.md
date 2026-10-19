@@ -10,17 +10,17 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **English:** Could not reach backend
 
-**Draft:** No se ha podido conectar con el backend
+**Draft:** No se ha podido conectar con el servidor
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 032 · `errors.languageLoadFailed`
 
 **English:** Could not load that language. Try reloading the page.
 
-**Draft:** No se ha podido cargar ese idioma. Prueba a recargar la página.
+**Draft:** No se ha podido cargar ese idioma. Intenta volver a cargar la página.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 033 · `errors.generic`
 
@@ -28,7 +28,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** La operación ha fallado. Consulta los registros de la aplicación para obtener más información.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 034 · `errors.network`
 
@@ -36,15 +36,15 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** No se puede conectar con el servidor. Comprueba tu conexión.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 035 · `errors.unauthorized`
 
 **English:** Your session has expired. Please sign in again.
 
-**Draft:** Tu sesión ha caducado. Vuelve a iniciar sesión.
+**Draft:** Tu sesión ha caducado. Inicia sesión de nuevo.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 036 · `errors.forbidden`
 
@@ -52,15 +52,15 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** No tienes permiso para realizar esta operación.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 037 · `errors.csrfInvalid`
 
 **English:** Your request context expired or changed. Retry the action, or reload and sign in again.
 
-**Draft:** El contexto de tu solicitud ha caducado o ha cambiado. Repite la acción o recarga la página y vuelve a iniciar sesión.
+**Draft:** El contexto de tu solicitud ha caducado o ha cambiado. Vuelve a intentar la acción o actualiza la página e inicia sesión de nuevo.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 038 · `errors.authPersistenceFailed`
 
@@ -68,15 +68,15 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** No se han podido guardar las credenciales. Comprueba los permisos de almacenamiento de autenticación y el espacio disponible en disco antes de volver a intentarlo.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 039 · `errors.webhookDestinationBlocked`
 
 **English:** Notifications cannot be sent to loopback or link-local addresses. Use an address the backend reaches over the network, such as a LAN IP or Docker service name.
 
-**Draft:** No se pueden enviar notificaciones a direcciones de bucle local o de enlace local. Usa una dirección a la que el backend pueda acceder por la red, como una IP de la LAN o el nombre de un servicio de Docker.
+**Draft:** No se pueden enviar notificaciones a direcciones de bucle invertido ni a direcciones locales de enlace. Usa una dirección a la que el backend pueda acceder por la red, como una dirección IP de LAN o un nombre de servicio de Docker.
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 040 · `errors.notificationSendFailed`
 
