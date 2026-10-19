@@ -1,0 +1,2566 @@
+{
+  "sourceCommit": "c4b0e32a59917d84e769721cc83254bc1cfd4ee5",
+  "sourcePath": "src/frontend/src/i18n/locales/en.js",
+  "entries": [
+    {
+      "number": 1,
+      "key": "test.languageLoaded",
+      "english": "English loaded"
+    },
+    {
+      "number": 2,
+      "key": "common.save",
+      "english": "Save"
+    },
+    {
+      "number": 3,
+      "key": "common.cancel",
+      "english": "Cancel"
+    },
+    {
+      "number": 4,
+      "key": "common.confirm",
+      "english": "Confirm"
+    },
+    {
+      "number": 5,
+      "key": "common.loading",
+      "english": "Loading..."
+    },
+    {
+      "number": 6,
+      "key": "common.saving",
+      "english": "Saving..."
+    },
+    {
+      "number": 7,
+      "key": "common.refresh",
+      "english": "Refresh"
+    },
+    {
+      "number": 8,
+      "key": "common.refreshing",
+      "english": "Refreshing..."
+    },
+    {
+      "number": 9,
+      "key": "common.enable",
+      "english": "Enable"
+    },
+    {
+      "number": 10,
+      "key": "common.disable",
+      "english": "Disable"
+    },
+    {
+      "number": 11,
+      "key": "common.enabledUpper",
+      "english": "ENABLED"
+    },
+    {
+      "number": 12,
+      "key": "common.disabledUpper",
+      "english": "DISABLED"
+    },
+    {
+      "number": 13,
+      "key": "common.enabled",
+      "english": "Enabled"
+    },
+    {
+      "number": 14,
+      "key": "common.disabled",
+      "english": "Disabled"
+    },
+    {
+      "number": 15,
+      "key": "common.clearSearch",
+      "english": "Clear search"
+    },
+    {
+      "number": 16,
+      "key": "common.export",
+      "english": "Export"
+    },
+    {
+      "number": 17,
+      "key": "common.on",
+      "english": "On"
+    },
+    {
+      "number": 18,
+      "key": "common.off",
+      "english": "Off"
+    },
+    {
+      "number": 19,
+      "key": "common.close",
+      "english": "Close"
+    },
+    {
+      "number": 20,
+      "key": "common.delete",
+      "english": "Delete"
+    },
+    {
+      "number": 21,
+      "key": "common.checking",
+      "english": "Checking..."
+    },
+    {
+      "number": 22,
+      "key": "common.notAvailable",
+      "english": "N/A"
+    },
+    {
+      "number": 23,
+      "key": "pages.dashboard",
+      "english": "Dashboard"
+    },
+    {
+      "number": 24,
+      "key": "pages.caddyfile",
+      "english": "Caddyfile Editor"
+    },
+    {
+      "number": 25,
+      "key": "pages.routes",
+      "english": "Route Manager"
+    },
+    {
+      "number": 26,
+      "key": "pages.tls",
+      "english": "TLS Certificates"
+    },
+    {
+      "number": 27,
+      "key": "pages.logs",
+      "english": "Access Logs"
+    },
+    {
+      "number": 28,
+      "key": "pages.metrics",
+      "english": "Metrics"
+    },
+    {
+      "number": 29,
+      "key": "pages.notifications",
+      "english": "Notifications"
+    },
+    {
+      "number": 30,
+      "key": "pages.instances",
+      "english": "Instances"
+    },
+    {
+      "number": 31,
+      "key": "errors.backendUnreachable",
+      "english": "Could not reach backend"
+    },
+    {
+      "number": 32,
+      "key": "errors.languageLoadFailed",
+      "english": "Could not load that language. Try reloading the page."
+    },
+    {
+      "number": 33,
+      "key": "errors.generic",
+      "english": "The operation failed. See the application logs for details."
+    },
+    {
+      "number": 34,
+      "key": "errors.network",
+      "english": "Cannot reach the server. Check your connection."
+    },
+    {
+      "number": 35,
+      "key": "errors.unauthorized",
+      "english": "Your session has expired. Please sign in again."
+    },
+    {
+      "number": 36,
+      "key": "errors.forbidden",
+      "english": "You do not have permission to perform this operation."
+    },
+    {
+      "number": 37,
+      "key": "errors.csrfInvalid",
+      "english": "Your request context expired or changed. Retry the action, or reload and sign in again."
+    },
+    {
+      "number": 38,
+      "key": "errors.authPersistenceFailed",
+      "english": "Credentials could not be saved. Check the authentication storage permissions and available disk space before retrying."
+    },
+    {
+      "number": 39,
+      "key": "errors.webhookDestinationBlocked",
+      "english": "Notifications cannot be sent to loopback or link-local addresses. Use an address the backend reaches over the network, such as a LAN IP or Docker service name."
+    },
+    {
+      "number": 40,
+      "key": "errors.notificationSendFailed",
+      "english": "Could not send the notification. See the application logs for details."
+    },
+    {
+      "number": 41,
+      "key": "errors.logFileMissing",
+      "english": "The log file was not found."
+    },
+    {
+      "number": 42,
+      "key": "errors.logStreamError",
+      "english": "Could not stream Caddy logs. See the application logs for details."
+    },
+    {
+      "number": 43,
+      "key": "errors.rateLimited",
+      "english": "Too many requests. Please try again later."
+    },
+    {
+      "number": 44,
+      "key": "errors.validationFailed",
+      "english": "Validation failed. Check the configuration and application logs."
+    },
+    {
+      "number": 45,
+      "key": "errors.notFound",
+      "english": "The requested resource was not found."
+    },
+    {
+      "number": 46,
+      "key": "errors.conflict",
+      "english": "The operation conflicts with the current configuration."
+    },
+    {
+      "number": 47,
+      "key": "errors.upstreamUnavailable",
+      "english": "The Caddy server is unavailable."
+    },
+    {
+      "number": 48,
+      "key": "errors.metricsUnavailable",
+      "english": "Metrics are temporarily unavailable."
+    },
+    {
+      "number": 49,
+      "key": "errors.validationWarning",
+      "english": "Validation completed with warnings. See the application logs."
+    },
+    {
+      "number": 50,
+      "key": "errors.operationWarning",
+      "english": "The operation completed with warnings. See the application logs."
+    },
+    {
+      "number": 51,
+      "key": "errors.viewLogs",
+      "english": "View logs"
+    },
+    {
+      "number": 52,
+      "key": "errors.caddyfileReadFailed",
+      "english": "Could not read the Caddyfile."
+    },
+    {
+      "number": 53,
+      "key": "errors.caddyfileWriteFailed",
+      "english": "Could not write the Caddyfile. Nothing was changed."
+    },
+    {
+      "number": 54,
+      "key": "errors.caddyfileChangeRejected",
+      "english": "Caddy rejected the change, so the previous Caddyfile was restored."
+    },
+    {
+      "number": 55,
+      "key": "errors.caddyfileRollbackFailed",
+      "english": "Caddy rejected the change and the previous Caddyfile could not be restored. The file on disk does not match what Caddy is running."
+    },
+    {
+      "number": 56,
+      "key": "errors.caddyfileHistoryReadFailed",
+      "english": "Could not read the Caddyfile history."
+    },
+    {
+      "number": 57,
+      "key": "errors.routeNotesReadFailed",
+      "english": "Could not read route notes. Saved notes were left unchanged."
+    },
+    {
+      "number": 58,
+      "key": "errors.routeNotesSaveFailed",
+      "english": "Could not save the route note."
+    },
+    {
+      "number": 59,
+      "key": "errors.caddyReloadFailed",
+      "english": "Could not reload Caddy."
+    },
+    {
+      "number": 60,
+      "key": "errors.instanceNotFound",
+      "english": "The instance was not found."
+    },
+    {
+      "number": 61,
+      "key": "errors.instanceSelectionInvalid",
+      "english": "The selected instance no longer exists. Switched to an available instance."
+    },
+    {
+      "number": 62,
+      "key": "errors.instanceConnectionFailed",
+      "english": "Could not connect to the Caddy instance."
+    },
+    {
+      "number": 63,
+      "key": "errors.instanceDiscoveryFailed",
+      "english": "Could not discover Caddy containers."
+    },
+    {
+      "number": 64,
+      "key": "errors.instanceSaveFailed",
+      "english": "Could not save the instance."
+    },
+    {
+      "number": 65,
+      "key": "errors.instanceRemoveFailed",
+      "english": "Could not remove the instance."
+    },
+    {
+      "number": 66,
+      "key": "errors.certificateDeleteDenied",
+      "english": "This certificate cannot be deleted."
+    },
+    {
+      "number": 67,
+      "key": "errors.certificateDeleteFailed",
+      "english": "Could not delete the certificate."
+    },
+    {
+      "number": 68,
+      "key": "errors.certificateReadFailed",
+      "english": "Could not read certificates."
+    },
+    {
+      "number": 69,
+      "key": "errors.certificateCaUnavailable",
+      "english": "The root CA certificate is unavailable."
+    },
+    {
+      "number": 70,
+      "key": "errors.metricsConfigFailed",
+      "english": "Could not update metrics configuration."
+    },
+    {
+      "number": 71,
+      "key": "errors.noInstances",
+      "english": "No Caddy instances are configured."
+    },
+    {
+      "number": 72,
+      "key": "errors.clientParseFailed",
+      "english": "Could not process the server response."
+    },
+    {
+      "number": 73,
+      "key": "errors.invalidLocalState",
+      "english": "The local application state is invalid."
+    },
+    {
+      "number": 74,
+      "key": "sidebar.toggleNavigation",
+      "english": "Toggle navigation"
+    },
+    {
+      "number": 75,
+      "key": "sidebar.serverManager",
+      "english": "Server Manager"
+    },
+    {
+      "number": 76,
+      "key": "sidebar.connected",
+      "english": "connected"
+    },
+    {
+      "number": 77,
+      "key": "sidebar.unreachable",
+      "english": "unreachable"
+    },
+    {
+      "number": 78,
+      "key": "sidebar.checking",
+      "english": "checking..."
+    },
+    {
+      "number": 79,
+      "key": "sidebar.refreshStatus",
+      "english": "Refresh status"
+    },
+    {
+      "number": 80,
+      "key": "sidebar.selectInstance",
+      "english": "Select instance"
+    },
+    {
+      "number": 81,
+      "key": "sidebar.signOut",
+      "english": "Sign out"
+    },
+    {
+      "number": 82,
+      "key": "sidebar.updatePartFrontend",
+      "english": "frontend {{version}}"
+    },
+    {
+      "number": 83,
+      "key": "sidebar.updatePartBackend",
+      "english": "backend {{version}}"
+    },
+    {
+      "number": 84,
+      "key": "sidebar.availableUpdates",
+      "english": "Available: {{parts}}"
+    },
+    {
+      "number": 85,
+      "key": "sidebar.updateAvailable",
+      "english": "Update available"
+    },
+    {
+      "number": 86,
+      "key": "sidebar.versionDetails",
+      "english": "frontend {{frontend}} · backend {{backend}}"
+    },
+    {
+      "number": 87,
+      "key": "sidebar.backendVersion",
+      "english": " (backend {{version}})"
+    },
+    {
+      "number": 88,
+      "key": "sidebar.nav.dashboard",
+      "english": "Dashboard"
+    },
+    {
+      "number": 89,
+      "key": "sidebar.nav.caddyfile",
+      "english": "Caddyfile"
+    },
+    {
+      "number": 90,
+      "key": "sidebar.nav.routes",
+      "english": "Routes"
+    },
+    {
+      "number": 91,
+      "key": "sidebar.nav.tls",
+      "english": "TLS"
+    },
+    {
+      "number": 92,
+      "key": "sidebar.nav.logs",
+      "english": "Logs"
+    },
+    {
+      "number": 93,
+      "key": "sidebar.nav.metrics",
+      "english": "Metrics"
+    },
+    {
+      "number": 94,
+      "key": "sidebar.nav.notifications",
+      "english": "Notifications"
+    },
+    {
+      "number": 95,
+      "key": "sidebar.nav.instances",
+      "english": "Instances"
+    },
+    {
+      "number": 96,
+      "key": "apiTokens.title",
+      "english": "API tokens"
+    },
+    {
+      "number": 97,
+      "key": "apiTokens.hint",
+      "english": "Read-only credentials for integrations. Choose specific Caddy instances and permissions. Tokens cannot change configuration, read logs or manage credentials."
+    },
+    {
+      "number": 98,
+      "key": "apiTokens.name",
+      "english": "Token name"
+    },
+    {
+      "number": 99,
+      "key": "apiTokens.scopes",
+      "english": "Permissions"
+    },
+    {
+      "number": 100,
+      "key": "apiTokens.status",
+      "english": "Read status (Homepage)"
+    },
+    {
+      "number": 101,
+      "key": "apiTokens.metrics",
+      "english": "Read metrics (Prometheus)"
+    },
+    {
+      "number": 102,
+      "key": "apiTokens.instances",
+      "english": "Allowed instances"
+    },
+    {
+      "number": 103,
+      "key": "apiTokens.noInstances",
+      "english": "Add a Caddy instance before creating an API token."
+    },
+    {
+      "number": 104,
+      "key": "apiTokens.expiry",
+      "english": "Expires after"
+    },
+    {
+      "number": 105,
+      "key": "apiTokens.days",
+      "english": "{{days}} days"
+    },
+    {
+      "number": 106,
+      "key": "apiTokens.create",
+      "english": "Create token"
+    },
+    {
+      "number": 107,
+      "key": "apiTokens.oneTime",
+      "english": "Save this token now. It will not be shown again. Send it in the Authorization: Bearer header, never in a URL. Use HTTPS where possible; HTTP cannot protect it from network interception."
+    },
+    {
+      "number": 108,
+      "key": "apiTokens.secret",
+      "english": "API token"
+    },
+    {
+      "number": 109,
+      "key": "apiTokens.saved",
+      "english": "I have saved the token"
+    },
+    {
+      "number": 110,
+      "key": "apiTokens.discard",
+      "english": "Discard and revoke token"
+    },
+    {
+      "number": 111,
+      "key": "apiTokens.existing",
+      "english": "Issued tokens"
+    },
+    {
+      "number": 112,
+      "key": "apiTokens.empty",
+      "english": "No API tokens have been issued."
+    },
+    {
+      "number": 113,
+      "key": "apiTokens.expiresAt",
+      "english": "Expires: {{date}}"
+    },
+    {
+      "number": 114,
+      "key": "apiTokens.revoke",
+      "english": "Revoke"
+    },
+    {
+      "number": 115,
+      "key": "apiTokens.revokeNamed",
+      "english": "Revoke {{name}}"
+    },
+    {
+      "number": 116,
+      "key": "login.serverManager",
+      "english": "Server Manager"
+    },
+    {
+      "number": 117,
+      "key": "login.sessionExpired",
+      "english": "Your session has expired. Please sign in again."
+    },
+    {
+      "number": 118,
+      "key": "login.failed",
+      "english": "Login failed"
+    },
+    {
+      "number": 119,
+      "key": "login.serverUnreachable",
+      "english": "Could not reach the server"
+    },
+    {
+      "number": 120,
+      "key": "login.username",
+      "english": "Username"
+    },
+    {
+      "number": 121,
+      "key": "login.password",
+      "english": "Password"
+    },
+    {
+      "number": 122,
+      "key": "login.signingIn",
+      "english": "Signing in..."
+    },
+    {
+      "number": 123,
+      "key": "login.signIn",
+      "english": "Sign in"
+    },
+    {
+      "number": 124,
+      "key": "login.retry",
+      "english": "Retry"
+    },
+    {
+      "number": 125,
+      "key": "login.setupTitle",
+      "english": "Create administrator"
+    },
+    {
+      "number": 126,
+      "key": "login.setupHint",
+      "english": "Choose credentials for this installation. Existing configuration and settings are preserved."
+    },
+    {
+      "number": 127,
+      "key": "login.enrollmentHint",
+      "english": "Save your administrator credentials here. Once setup succeeds, the old environment credentials are no longer used."
+    },
+    {
+      "number": 128,
+      "key": "login.legacyHint",
+      "english": "Sign in with your existing credentials to finish the new login setup."
+    },
+    {
+      "number": 129,
+      "key": "login.confirmPassword",
+      "english": "Confirm password"
+    },
+    {
+      "number": 130,
+      "key": "login.passwordHint",
+      "english": "Use at least 12 characters. Passwords may contain up to 1024 bytes."
+    },
+    {
+      "number": 131,
+      "key": "login.passwordMismatch",
+      "english": "The passwords do not match."
+    },
+    {
+      "number": 132,
+      "key": "login.saving",
+      "english": "Saving..."
+    },
+    {
+      "number": 133,
+      "key": "login.completeSetup",
+      "english": "Complete setup"
+    },
+    {
+      "number": 134,
+      "key": "login.saveRecoveryKey",
+      "english": "Save your recovery key"
+    },
+    {
+      "number": 135,
+      "key": "login.recoveryKey",
+      "english": "Recovery key"
+    },
+    {
+      "number": 136,
+      "key": "login.recoveryKeyHint",
+      "english": "Store this key somewhere safe. It is shown only once and can reset your password. Using it replaces the key and signs out all browsers."
+    },
+    {
+      "number": 137,
+      "key": "login.savedRecoveryKey",
+      "english": "I have saved my recovery key"
+    },
+    {
+      "number": 138,
+      "key": "login.continue",
+      "english": "Continue"
+    },
+    {
+      "number": 139,
+      "key": "login.recoveryTitle",
+      "english": "Reset administrator password"
+    },
+    {
+      "number": 140,
+      "key": "login.recoveryHint",
+      "english": "Enter your recovery key and choose a new password. You will receive a replacement recovery key."
+    },
+    {
+      "number": 141,
+      "key": "login.resetPassword",
+      "english": "Reset password"
+    },
+    {
+      "number": 142,
+      "key": "login.backToLogin",
+      "english": "Back to sign in"
+    },
+    {
+      "number": 143,
+      "key": "login.forgotPassword",
+      "english": "Use recovery key"
+    },
+    {
+      "number": 144,
+      "key": "languagePicker.chooseLanguage",
+      "english": "Choose language"
+    },
+    {
+      "number": 145,
+      "key": "themePicker.switchToLight",
+      "english": "Switch to light mode"
+    },
+    {
+      "number": 146,
+      "key": "themePicker.switchToDark",
+      "english": "Switch to dark mode"
+    },
+    {
+      "number": 147,
+      "key": "themePicker.chooseThemes",
+      "english": "Choose themes"
+    },
+    {
+      "number": 148,
+      "key": "themePicker.darkTheme",
+      "english": "Dark theme"
+    },
+    {
+      "number": 149,
+      "key": "themePicker.lightTheme",
+      "english": "Light theme"
+    },
+    {
+      "number": 150,
+      "key": "themePicker.builtIn",
+      "english": "Built-in"
+    },
+    {
+      "number": 151,
+      "key": "themePicker.custom",
+      "english": "Custom"
+    },
+    {
+      "number": 152,
+      "key": "themePicker.exportTitle",
+      "english": "Download {{label}} as a custom theme file for the themes/{{mode}}/ folder"
+    },
+    {
+      "number": 153,
+      "key": "themePicker.exportJson",
+      "english": "Export {{label}} as JSON"
+    },
+    {
+      "number": 154,
+      "key": "themeWelcome.title",
+      "english": "Choose your themes"
+    },
+    {
+      "number": 155,
+      "key": "themeWelcome.hint",
+      "english": "Pick a palette for each mode. You can change these anytime from the top bar."
+    },
+    {
+      "number": 156,
+      "key": "themeWelcome.dark",
+      "english": "Dark"
+    },
+    {
+      "number": 157,
+      "key": "themeWelcome.light",
+      "english": "Light"
+    },
+    {
+      "number": 158,
+      "key": "themeWelcome.darkTheme",
+      "english": "Dark theme"
+    },
+    {
+      "number": 159,
+      "key": "themeWelcome.lightTheme",
+      "english": "Light theme"
+    },
+    {
+      "number": 160,
+      "key": "themeWelcome.builtIn",
+      "english": "Built-in"
+    },
+    {
+      "number": 161,
+      "key": "themeWelcome.custom",
+      "english": "Custom"
+    },
+    {
+      "number": 162,
+      "key": "themeWelcome.preview",
+      "english": "Preview"
+    },
+    {
+      "number": 163,
+      "key": "themeWelcome.accent",
+      "english": "Accent"
+    },
+    {
+      "number": 164,
+      "key": "themeWelcome.info",
+      "english": "Info"
+    },
+    {
+      "number": 165,
+      "key": "themeWelcome.highlight",
+      "english": "Highlight"
+    },
+    {
+      "number": 166,
+      "key": "themeWelcome.danger",
+      "english": "Danger"
+    },
+    {
+      "number": 167,
+      "key": "themeWelcome.warn",
+      "english": "Warn"
+    },
+    {
+      "number": 168,
+      "key": "themeWelcome.language",
+      "english": "Language"
+    },
+    {
+      "number": 169,
+      "key": "themeWelcome.apply",
+      "english": "Apply"
+    },
+    {
+      "number": 170,
+      "key": "dashboard.labelSaved",
+      "english": "Label saved"
+    },
+    {
+      "number": 171,
+      "key": "dashboard.labelRemoved",
+      "english": "Label removed"
+    },
+    {
+      "number": 172,
+      "key": "dashboard.status",
+      "english": "Status"
+    },
+    {
+      "number": 173,
+      "key": "dashboard.online",
+      "english": "ONLINE"
+    },
+    {
+      "number": 174,
+      "key": "dashboard.offline",
+      "english": "OFFLINE"
+    },
+    {
+      "number": 175,
+      "key": "dashboard.caddyServer",
+      "english": "Caddy server"
+    },
+    {
+      "number": 176,
+      "key": "dashboard.servers",
+      "english": "Servers"
+    },
+    {
+      "number": 177,
+      "key": "dashboard.activeHttpServers",
+      "english": "Active HTTP servers"
+    },
+    {
+      "number": 178,
+      "key": "dashboard.tls",
+      "english": "TLS"
+    },
+    {
+      "number": 179,
+      "key": "dashboard.enabled",
+      "english": "ENABLED"
+    },
+    {
+      "number": 180,
+      "key": "dashboard.disabled",
+      "english": "DISABLED"
+    },
+    {
+      "number": 181,
+      "key": "dashboard.certificateManagement",
+      "english": "Certificate management"
+    },
+    {
+      "number": 182,
+      "key": "dashboard.upstreams",
+      "english": "Upstreams"
+    },
+    {
+      "number": 183,
+      "key": "dashboard.offlineCount_one",
+      "english": "{{count}} offline"
+    },
+    {
+      "number": 184,
+      "key": "dashboard.offlineCount_other",
+      "english": "{{count}} offline"
+    },
+    {
+      "number": 185,
+      "key": "dashboard.allOnline",
+      "english": "All online"
+    },
+    {
+      "number": 186,
+      "key": "dashboard.process",
+      "english": "Process"
+    },
+    {
+      "number": 187,
+      "key": "dashboard.metricsNotEnabled",
+      "english": "Metrics not enabled"
+    },
+    {
+      "number": 188,
+      "key": "dashboard.enableInMetrics",
+      "english": "Enable in Metrics"
+    },
+    {
+      "number": 189,
+      "key": "dashboard.version",
+      "english": "Version"
+    },
+    {
+      "number": 190,
+      "key": "dashboard.uptime",
+      "english": "Uptime"
+    },
+    {
+      "number": 191,
+      "key": "dashboard.heap",
+      "english": "Heap"
+    },
+    {
+      "number": 192,
+      "key": "dashboard.systemMemory",
+      "english": "{{value}} MB sys"
+    },
+    {
+      "number": 193,
+      "key": "dashboard.lastReload",
+      "english": "Last Reload"
+    },
+    {
+      "number": 194,
+      "key": "dashboard.httpServers",
+      "english": "HTTP Servers"
+    },
+    {
+      "number": 195,
+      "key": "dashboard.label",
+      "english": "Label"
+    },
+    {
+      "number": 196,
+      "key": "dashboard.serverId",
+      "english": "Server ID"
+    },
+    {
+      "number": 197,
+      "key": "dashboard.serverIdHint",
+      "english": "Assigned by Caddy (srv0, srv1, … by default). Set your own with the name option of the Caddyfile's global servers block."
+    },
+    {
+      "number": 198,
+      "key": "dashboard.listensOn",
+      "english": "Listens on"
+    },
+    {
+      "number": 199,
+      "key": "dashboard.routes",
+      "english": "Routes"
+    },
+    {
+      "number": 200,
+      "key": "dashboard.showRoutesOn",
+      "english": "Show routes on {{server}}"
+    },
+    {
+      "number": 201,
+      "key": "dashboard.noListeners",
+      "english": "no listeners"
+    },
+    {
+      "number": 202,
+      "key": "dashboard.active",
+      "english": "active"
+    },
+    {
+      "number": 203,
+      "key": "dashboard.editLabel",
+      "english": "Edit Label"
+    },
+    {
+      "number": 204,
+      "key": "dashboard.connectionError",
+      "english": "Connection Error"
+    },
+    {
+      "number": 205,
+      "key": "dashboard.labelPlaceholder",
+      "english": "e.g. \"HTTPS Sites\" or \"Internal Services\""
+    },
+    {
+      "number": 206,
+      "key": "dashboard.labelHint",
+      "english": "Only shown in caddy/ui. Leave blank to remove it. To change the Server ID itself, set <code>name</code> in your Caddyfile's global <code>servers</code> option."
+    },
+    {
+      "number": 207,
+      "key": "instances.title",
+      "english": "Instances"
+    },
+    {
+      "number": 208,
+      "key": "instances.noNewContainers",
+      "english": "No new Caddy containers found"
+    },
+    {
+      "number": 209,
+      "key": "instances.nameAndAdminRequired",
+      "english": "Name and Admin URL are required"
+    },
+    {
+      "number": 210,
+      "key": "instances.added",
+      "english": "Instance added"
+    },
+    {
+      "number": 211,
+      "key": "instances.updated",
+      "english": "Instance updated"
+    },
+    {
+      "number": 212,
+      "key": "instances.removed",
+      "english": "Instance removed"
+    },
+    {
+      "number": 213,
+      "key": "instances.removeConfirm",
+      "english": "Remove instance \"{{name}}\"? This cannot be undone."
+    },
+    {
+      "number": 214,
+      "key": "instances.scanning",
+      "english": "Scanning..."
+    },
+    {
+      "number": 215,
+      "key": "instances.discover",
+      "english": "Discover"
+    },
+    {
+      "number": 216,
+      "key": "instances.addInstance",
+      "english": "Add Instance"
+    },
+    {
+      "number": 217,
+      "key": "instances.editInstance",
+      "english": "Edit Instance"
+    },
+    {
+      "number": 218,
+      "key": "instances.discoveredContainers",
+      "english": "Discovered Containers"
+    },
+    {
+      "number": 219,
+      "key": "instances.discoveredHint",
+      "english": "Caddy containers found on the Docker network that aren't registered yet."
+    },
+    {
+      "number": 220,
+      "key": "instances.add",
+      "english": "Add"
+    },
+    {
+      "number": 221,
+      "key": "instances.edit",
+      "english": "Edit"
+    },
+    {
+      "number": 222,
+      "key": "instances.remove",
+      "english": "Remove"
+    },
+    {
+      "number": 223,
+      "key": "instances.adminUrl",
+      "english": "Admin URL"
+    },
+    {
+      "number": 224,
+      "key": "instances.container",
+      "english": "Container"
+    },
+    {
+      "number": 225,
+      "key": "instances.local",
+      "english": "local"
+    },
+    {
+      "number": 226,
+      "key": "instances.configPath",
+      "english": "Config Path"
+    },
+    {
+      "number": 227,
+      "key": "instances.newRoutesGoTo",
+      "english": "New routes go to"
+    },
+    {
+      "number": 228,
+      "key": "instances.notInCaddyHint",
+      "english": "New routes can't be added until this matches one of Caddy's servers"
+    },
+    {
+      "number": 229,
+      "key": "instances.notInCaddy",
+      "english": "not in Caddy"
+    },
+    {
+      "number": 230,
+      "key": "instances.logPath",
+      "english": "Log Path"
+    },
+    {
+      "number": 231,
+      "key": "instances.dataPath",
+      "english": "Data Path"
+    },
+    {
+      "number": 232,
+      "key": "instances.welcome",
+      "english": "Welcome to caddy/ui"
+    },
+    {
+      "number": 233,
+      "key": "instances.emptyHint",
+      "english": "No Caddy instances configured yet. Click Discover to find Caddy containers on your Docker network, or add one manually."
+    },
+    {
+      "number": 234,
+      "key": "instances.discoverContainers",
+      "english": "Discover Containers"
+    },
+    {
+      "number": 235,
+      "key": "instances.addManually",
+      "english": "Add Manually"
+    },
+    {
+      "number": 236,
+      "key": "instances.name",
+      "english": "Name"
+    },
+    {
+      "number": 237,
+      "key": "instances.namePlaceholder",
+      "english": "e.g. Production Caddy"
+    },
+    {
+      "number": 238,
+      "key": "instances.containerName",
+      "english": "Container Name"
+    },
+    {
+      "number": 239,
+      "key": "instances.localModePlaceholder",
+      "english": "Leave empty for local mode"
+    },
+    {
+      "number": 240,
+      "key": "instances.localModeHint",
+      "english": "Leave empty if Caddy files are mounted locally instead of accessed via Docker."
+    },
+    {
+      "number": 241,
+      "key": "instances.none",
+      "english": "(none)"
+    },
+    {
+      "number": 242,
+      "key": "instances.serverHint",
+      "english": "The Caddy server (by Server ID, e.g. srv0) that new routes are added to. Server IDs come from Caddy; add labels on the Dashboard."
+    },
+    {
+      "number": 243,
+      "key": "instances.caddyfilePath",
+      "english": "Caddyfile Path"
+    },
+    {
+      "number": 244,
+      "key": "tls.deleteConfirm",
+      "english": "Delete {{status}} cert for {{domain}}?"
+    },
+    {
+      "number": 245,
+      "key": "tls.delete",
+      "english": "Delete"
+    },
+    {
+      "number": 246,
+      "key": "tls.deleted",
+      "english": "Deleted cert for {{domain}}"
+    },
+    {
+      "number": 247,
+      "key": "tls.expiredUpper",
+      "english": "EXPIRED"
+    },
+    {
+      "number": 248,
+      "key": "tls.expiringUpper",
+      "english": "EXPIRING"
+    },
+    {
+      "number": 249,
+      "key": "tls.orphanedUpper",
+      "english": "ORPHANED"
+    },
+    {
+      "number": 250,
+      "key": "tls.supersededUpper",
+      "english": "SUPERSEDED"
+    },
+    {
+      "number": 251,
+      "key": "tls.validUpper",
+      "english": "VALID"
+    },
+    {
+      "number": 252,
+      "key": "tls.total",
+      "english": "Total"
+    },
+    {
+      "number": 253,
+      "key": "tls.managedCerts",
+      "english": "Managed certs"
+    },
+    {
+      "number": 254,
+      "key": "tls.valid",
+      "english": "Valid"
+    },
+    {
+      "number": 255,
+      "key": "tls.healthy",
+      "english": "Healthy"
+    },
+    {
+      "number": 256,
+      "key": "tls.expiring",
+      "english": "Expiring"
+    },
+    {
+      "number": 257,
+      "key": "tls.within14Days",
+      "english": "Within 14 days"
+    },
+    {
+      "number": 258,
+      "key": "tls.expired",
+      "english": "Expired"
+    },
+    {
+      "number": 259,
+      "key": "tls.needsRenewal",
+      "english": "Needs renewal"
+    },
+    {
+      "number": 260,
+      "key": "tls.loadingCertificates",
+      "english": "Loading certificates..."
+    },
+    {
+      "number": 261,
+      "key": "tls.rootCaCertificate",
+      "english": "Root CA Certificate"
+    },
+    {
+      "number": 262,
+      "key": "tls.rootCaHint",
+      "english": "Install this on your devices to trust internal TLD domains (e.g. <tld>.internal</tld>, <tld>.home</tld>) served by Caddy's built-in CA. Required after a fresh Caddy install or server rebuild."
+    },
+    {
+      "number": 263,
+      "key": "tls.iosInstruction",
+      "english": "Open the file → Settings → Profile Downloaded → Install"
+    },
+    {
+      "number": 264,
+      "key": "tls.macosInstruction",
+      "english": "Open Keychain Access → drag in cert → set to Always Trust"
+    },
+    {
+      "number": 265,
+      "key": "tls.androidInstruction",
+      "english": "Settings → Security → Install from storage"
+    },
+    {
+      "number": 266,
+      "key": "tls.windowsInstruction",
+      "english": "Double-click cert → Install Certificate → Trusted Root CAs"
+    },
+    {
+      "number": 267,
+      "key": "tls.downloadRootCa",
+      "english": "Download Root CA"
+    },
+    {
+      "number": 268,
+      "key": "tls.certificates",
+      "english": "Certificates"
+    },
+    {
+      "number": 269,
+      "key": "tls.orphanedCount_one",
+      "english": "{{count}} orphaned"
+    },
+    {
+      "number": 270,
+      "key": "tls.orphanedCount_other",
+      "english": "{{count}} orphaned"
+    },
+    {
+      "number": 271,
+      "key": "tls.supersededCount_one",
+      "english": "{{count}} superseded"
+    },
+    {
+      "number": 272,
+      "key": "tls.supersededCount_other",
+      "english": "{{count}} superseded"
+    },
+    {
+      "number": 273,
+      "key": "tls.noOrphaned",
+      "english": "No orphaned certificates"
+    },
+    {
+      "number": 274,
+      "key": "tls.noSuperseded",
+      "english": "No superseded certificates"
+    },
+    {
+      "number": 275,
+      "key": "tls.noCertificates",
+      "english": "No certificates in this category"
+    },
+    {
+      "number": 276,
+      "key": "tls.domain",
+      "english": "Domain"
+    },
+    {
+      "number": 277,
+      "key": "tls.issuer",
+      "english": "Issuer"
+    },
+    {
+      "number": 278,
+      "key": "tls.expires",
+      "english": "Expires"
+    },
+    {
+      "number": 279,
+      "key": "tls.days",
+      "english": "Days"
+    },
+    {
+      "number": 280,
+      "key": "tls.status",
+      "english": "Status"
+    },
+    {
+      "number": 281,
+      "key": "tls.internal",
+      "english": "Internal"
+    },
+    {
+      "number": 282,
+      "key": "tls.auto",
+      "english": "auto"
+    },
+    {
+      "number": 283,
+      "key": "tls.daysShort",
+      "english": "{{count}}d"
+    },
+    {
+      "number": 284,
+      "key": "tls.filter.valid",
+      "english": "valid"
+    },
+    {
+      "number": 285,
+      "key": "tls.filter.expiring",
+      "english": "expiring"
+    },
+    {
+      "number": 286,
+      "key": "tls.filter.expired",
+      "english": "expired"
+    },
+    {
+      "number": 287,
+      "key": "tls.filter.orphaned",
+      "english": "orphaned"
+    },
+    {
+      "number": 288,
+      "key": "tls.filter.superseded",
+      "english": "superseded"
+    },
+    {
+      "number": 289,
+      "key": "logs.caddySource",
+      "english": "Caddy"
+    },
+    {
+      "number": 290,
+      "key": "logs.caddyUnavailable",
+      "english": "Add a Caddy instance to view its access logs"
+    },
+    {
+      "number": 291,
+      "key": "logs.configuration",
+      "english": "Log Configuration"
+    },
+    {
+      "number": 292,
+      "key": "logs.configSaved",
+      "english": "Log config saved and reloaded"
+    },
+    {
+      "number": 293,
+      "key": "logs.logging",
+      "english": "Logging"
+    },
+    {
+      "number": 294,
+      "key": "logs.format",
+      "english": "Format"
+    },
+    {
+      "number": 295,
+      "key": "logs.level",
+      "english": "Level"
+    },
+    {
+      "number": 296,
+      "key": "logs.logFilePath",
+      "english": "Log File Path"
+    },
+    {
+      "number": 297,
+      "key": "logs.rollSize",
+      "english": "Roll Size"
+    },
+    {
+      "number": 298,
+      "key": "logs.rollKeep",
+      "english": "Roll Keep"
+    },
+    {
+      "number": 299,
+      "key": "logs.searchPlaceholder",
+      "english": "Search logs..."
+    },
+    {
+      "number": 300,
+      "key": "logs.lineCount_one",
+      "english": "{{count}} line"
+    },
+    {
+      "number": 301,
+      "key": "logs.lineCount_other",
+      "english": "{{count}} lines"
+    },
+    {
+      "number": 302,
+      "key": "logs.lineCountFiltered",
+      "english": "{{filtered}} / {{total}} lines"
+    },
+    {
+      "number": 303,
+      "key": "logs.stop",
+      "english": "Stop"
+    },
+    {
+      "number": 304,
+      "key": "logs.live",
+      "english": "Live"
+    },
+    {
+      "number": 305,
+      "key": "logs.noMatchingLines",
+      "english": "No lines match the current filter"
+    },
+    {
+      "number": 306,
+      "key": "logs.noLinesLoaded",
+      "english": "No log lines loaded"
+    },
+    {
+      "number": 307,
+      "key": "metrics.fetchFailed",
+      "english": "Failed to fetch metrics"
+    },
+    {
+      "number": 308,
+      "key": "metrics.enabledToast",
+      "english": "Metrics enabled"
+    },
+    {
+      "number": 309,
+      "key": "metrics.disabledToast",
+      "english": "Metrics disabled"
+    },
+    {
+      "number": 310,
+      "key": "metrics.configuration",
+      "english": "Metrics Configuration"
+    },
+    {
+      "number": 311,
+      "key": "metrics.caddyMetrics",
+      "english": "Caddy Metrics"
+    },
+    {
+      "number": 312,
+      "key": "metrics.caddyMetricsHint",
+      "english": "Enables the Prometheus metrics endpoint on Caddy's admin API"
+    },
+    {
+      "number": 313,
+      "key": "metrics.publicEndpoint",
+      "english": "Public Metrics Endpoint"
+    },
+    {
+      "number": 314,
+      "key": "metrics.scrapeUrl",
+      "english": "Scrape URL:"
+    },
+    {
+      "number": 315,
+      "key": "metrics.publicMetricsHint",
+      "english": "Set CADDY_UI_PUBLIC_METRICS=true to enable unauthenticated Prometheus scraping"
+    },
+    {
+      "number": 316,
+      "key": "metrics.loading",
+      "english": "Loading metrics..."
+    },
+    {
+      "number": 317,
+      "key": "metrics.notEnabled",
+      "english": "Metrics not enabled"
+    },
+    {
+      "number": 318,
+      "key": "metrics.enableInMetrics",
+      "english": "Enable in Metrics"
+    },
+    {
+      "number": 319,
+      "key": "metrics.totalRequests",
+      "english": "Total Requests"
+    },
+    {
+      "number": 320,
+      "key": "metrics.sinceProcessStart",
+      "english": "Since process start"
+    },
+    {
+      "number": 321,
+      "key": "metrics.requestsPerSecond",
+      "english": "Requests / sec"
+    },
+    {
+      "number": 322,
+      "key": "metrics.avgOverUptime",
+      "english": "Avg over uptime"
+    },
+    {
+      "number": 323,
+      "key": "metrics.avgResponse",
+      "english": "Avg Response"
+    },
+    {
+      "number": 324,
+      "key": "metrics.meanResponseTime",
+      "english": "Mean response time"
+    },
+    {
+      "number": 325,
+      "key": "metrics.statusCodes",
+      "english": "Status Codes"
+    },
+    {
+      "number": 326,
+      "key": "metrics.responsePercentiles",
+      "english": "Response Time Percentiles"
+    },
+    {
+      "number": 327,
+      "key": "metrics.refreshInterval",
+      "english": "Refreshes every 30s"
+    },
+    {
+      "number": 328,
+      "key": "metrics.refreshFailed",
+      "english": "Refresh failed"
+    },
+    {
+      "number": 329,
+      "key": "metrics.lastScraped",
+      "english": "Last scraped: {{time}}"
+    },
+    {
+      "number": 330,
+      "key": "notifications.title",
+      "english": "Notifications"
+    },
+    {
+      "number": 331,
+      "key": "notifications.saved",
+      "english": "Notification settings saved"
+    },
+    {
+      "number": 332,
+      "key": "notifications.testSent",
+      "english": "Test notification sent"
+    },
+    {
+      "number": 333,
+      "key": "notifications.enable",
+      "english": "Enable Notifications"
+    },
+    {
+      "number": 334,
+      "key": "notifications.disable",
+      "english": "Disable Notifications"
+    },
+    {
+      "number": 335,
+      "key": "notifications.provider",
+      "english": "Provider"
+    },
+    {
+      "number": 336,
+      "key": "notifications.customWebhook",
+      "english": "Custom Webhook"
+    },
+    {
+      "number": 337,
+      "key": "notifications.ntfyTopicUrl",
+      "english": "ntfy Topic URL"
+    },
+    {
+      "number": 338,
+      "key": "notifications.discordWebhookUrl",
+      "english": "Discord Webhook URL"
+    },
+    {
+      "number": 339,
+      "key": "notifications.discordHint",
+      "english": "Server Settings → Integrations → Webhooks → New Webhook"
+    },
+    {
+      "number": 340,
+      "key": "notifications.slackWebhookUrl",
+      "english": "Slack Incoming Webhook URL"
+    },
+    {
+      "number": 341,
+      "key": "notifications.slackHint",
+      "english": "Slack App → Incoming Webhooks → Add New Webhook to Workspace"
+    },
+    {
+      "number": 342,
+      "key": "notifications.userKey",
+      "english": "User Key"
+    },
+    {
+      "number": 343,
+      "key": "notifications.userKeyPlaceholder",
+      "english": "Your Pushover user key"
+    },
+    {
+      "number": 344,
+      "key": "notifications.apiToken",
+      "english": "API Token"
+    },
+    {
+      "number": 345,
+      "key": "notifications.apiTokenPlaceholder",
+      "english": "Your application API token"
+    },
+    {
+      "number": 346,
+      "key": "notifications.pushoverHint",
+      "english": "Create an application at pushover.net/apps/build"
+    },
+    {
+      "number": 347,
+      "key": "notifications.webhookUrl",
+      "english": "Webhook URL"
+    },
+    {
+      "number": 348,
+      "key": "notifications.httpMethod",
+      "english": "HTTP Method"
+    },
+    {
+      "number": 349,
+      "key": "notifications.jsonSchema",
+      "english": "JSON Payload Schema"
+    },
+    {
+      "number": 350,
+      "key": "notifications.jsonSchemaHint",
+      "english": "This JSON body is POSTed with Content-Type: application/json on each alert."
+    },
+    {
+      "number": 351,
+      "key": "notifications.triggers",
+      "english": "Triggers"
+    },
+    {
+      "number": 352,
+      "key": "notifications.upstreamOffline",
+      "english": "Upstream goes offline"
+    },
+    {
+      "number": 353,
+      "key": "notifications.upstreamOnline",
+      "english": "Upstream comes back online"
+    },
+    {
+      "number": 354,
+      "key": "notifications.certExpiring",
+      "english": "TLS certificate expiring within 14 days"
+    },
+    {
+      "number": 355,
+      "key": "notifications.updateAvailable",
+      "english": "New caddy/ui release available"
+    },
+    {
+      "number": 356,
+      "key": "notifications.routeOffline",
+      "english": "Route goes down"
+    },
+    {
+      "number": 357,
+      "key": "notifications.routeOnline",
+      "english": "Route comes back up"
+    },
+    {
+      "number": 358,
+      "key": "notifications.routeAlertHint",
+      "english": "Route alerts use route checks (turn them on from the Metrics page) and fire when a site answers with a server error, times out, or has a certificate problem, even if its upstream is still reachable. Skipped routes don't alert."
+    },
+    {
+      "number": 359,
+      "key": "notifications.debounce",
+      "english": "Debounce"
+    },
+    {
+      "number": 360,
+      "key": "notifications.cooldownMinutes",
+      "english": "Cooldown (minutes)"
+    },
+    {
+      "number": 361,
+      "key": "notifications.cooldownHint",
+      "english": "No repeat alerts for the same condition within this window."
+    },
+    {
+      "number": 362,
+      "key": "notifications.sending",
+      "english": "Sending..."
+    },
+    {
+      "number": 363,
+      "key": "notifications.testNotification",
+      "english": "Test notification"
+    },
+    {
+      "number": 364,
+      "key": "uptime.online",
+      "english": "Online"
+    },
+    {
+      "number": 365,
+      "key": "uptime.partial",
+      "english": "Partial"
+    },
+    {
+      "number": 366,
+      "key": "uptime.offline",
+      "english": "Offline"
+    },
+    {
+      "number": 367,
+      "key": "uptime.noData",
+      "english": "No data"
+    },
+    {
+      "number": 368,
+      "key": "uptime.offlineCount_one",
+      "english": "{{count}} offline"
+    },
+    {
+      "number": 369,
+      "key": "uptime.offlineCount_other",
+      "english": "{{count}} offline"
+    },
+    {
+      "number": 370,
+      "key": "uptime.partialCount_one",
+      "english": "{{count}} partial"
+    },
+    {
+      "number": 371,
+      "key": "uptime.partialCount_other",
+      "english": "{{count}} partial"
+    },
+    {
+      "number": 372,
+      "key": "uptime.allRoutesResponding",
+      "english": "All routes responding"
+    },
+    {
+      "number": 373,
+      "key": "uptime.allUpstreamsResponding",
+      "english": "All upstreams responding"
+    },
+    {
+      "number": 374,
+      "key": "uptime.waitingForChecks",
+      "english": "Waiting for first checks"
+    },
+    {
+      "number": 375,
+      "key": "uptime.routeUptime",
+      "english": "Route Uptime"
+    },
+    {
+      "number": 376,
+      "key": "uptime.upstreamUptime",
+      "english": "Upstream Uptime"
+    },
+    {
+      "number": 377,
+      "key": "uptime.routeChecks",
+      "english": "Route checks"
+    },
+    {
+      "number": 378,
+      "key": "uptime.routeCheckHint",
+      "english": "Requests each site through Caddy every 5 minutes, so these checks show up in access logs (User-Agent caddy-ui-route-check) and in request metrics."
+    },
+    {
+      "number": 379,
+      "key": "uptime.failedToLoadRoutes",
+      "english": "Failed to load routes: {{error}}"
+    },
+    {
+      "number": 380,
+      "key": "uptime.loading",
+      "english": "Loading upstream uptime..."
+    },
+    {
+      "number": 381,
+      "key": "uptime.noRoutesToCheck",
+      "english": "No routes to check"
+    },
+    {
+      "number": 382,
+      "key": "uptime.noRoutesWithUpstreams",
+      "english": "No routes with upstreams"
+    },
+    {
+      "number": 383,
+      "key": "uptime.routesOnline",
+      "english": "Routes Online"
+    },
+    {
+      "number": 384,
+      "key": "uptime.avgUptime",
+      "english": "Avg Uptime"
+    },
+    {
+      "number": 385,
+      "key": "uptime.acrossHistory",
+      "english": "Across recorded history"
+    },
+    {
+      "number": 386,
+      "key": "uptime.lowestUptime",
+      "english": "Lowest Uptime"
+    },
+    {
+      "number": 387,
+      "key": "uptime.noDataYet",
+      "english": "No data yet"
+    },
+    {
+      "number": 388,
+      "key": "uptime.status",
+      "english": "Status"
+    },
+    {
+      "number": 389,
+      "key": "uptime.route",
+      "english": "Route"
+    },
+    {
+      "number": 390,
+      "key": "uptime.upstream",
+      "english": "Upstream"
+    },
+    {
+      "number": 391,
+      "key": "uptime.uptime",
+      "english": "Uptime"
+    },
+    {
+      "number": 392,
+      "key": "uptime.currentStateFor",
+      "english": "Current State For"
+    },
+    {
+      "number": 393,
+      "key": "uptime.routeCheck",
+      "english": "Route Check"
+    },
+    {
+      "number": 394,
+      "key": "uptime.viewHistory",
+      "english": "View status history"
+    },
+    {
+      "number": 395,
+      "key": "uptime.upstreamStatus",
+      "english": "Upstream: {{status}}"
+    },
+    {
+      "number": 396,
+      "key": "uptime.routeCheckSkipped",
+      "english": "Route check skipped"
+    },
+    {
+      "number": 397,
+      "key": "uptime.resumeChecks",
+      "english": "Resume route checks for {{host}}"
+    },
+    {
+      "number": 398,
+      "key": "uptime.stopChecks",
+      "english": "Stop requesting {{host}}; its status falls back to the upstream"
+    },
+    {
+      "number": 399,
+      "key": "uptime.check",
+      "english": "Check"
+    },
+    {
+      "number": 400,
+      "key": "uptime.skip",
+      "english": "Skip"
+    },
+    {
+      "number": 401,
+      "key": "routeHistory.online",
+      "english": "Online"
+    },
+    {
+      "number": 402,
+      "key": "routeHistory.offline",
+      "english": "Offline"
+    },
+    {
+      "number": 403,
+      "key": "routeHistory.noData",
+      "english": "No data"
+    },
+    {
+      "number": 404,
+      "key": "routeHistory.noDataYet",
+      "english": "No data yet"
+    },
+    {
+      "number": 405,
+      "key": "routeHistory.justNow",
+      "english": "just now"
+    },
+    {
+      "number": 406,
+      "key": "routeHistory.secondsAgo",
+      "english": "{{count}}s ago"
+    },
+    {
+      "number": 407,
+      "key": "routeHistory.minutesAgo",
+      "english": "{{count}}m ago"
+    },
+    {
+      "number": 408,
+      "key": "routeHistory.hoursAgo",
+      "english": "{{count}}h ago"
+    },
+    {
+      "number": 409,
+      "key": "routeHistory.daysAgo",
+      "english": "{{count}}d ago"
+    },
+    {
+      "number": 410,
+      "key": "routeHistory.autoRefresh",
+      "english": "Auto-refresh"
+    },
+    {
+      "number": 411,
+      "key": "routeHistory.segmentTitle",
+      "english": "{{status}} — {{start}} to {{end}}"
+    },
+    {
+      "number": 412,
+      "key": "routeHistory.now",
+      "english": "Now"
+    },
+    {
+      "number": 413,
+      "key": "routeHistory.uptime",
+      "english": "Uptime"
+    },
+    {
+      "number": 414,
+      "key": "routeHistory.checks",
+      "english": "Checks"
+    },
+    {
+      "number": 415,
+      "key": "routeHistory.activity",
+      "english": "Activity"
+    },
+    {
+      "number": 416,
+      "key": "routeHistory.noChanges",
+      "english": "No status changes in this range"
+    },
+    {
+      "number": 417,
+      "key": "routes.editRoute",
+      "english": "Edit Route"
+    },
+    {
+      "number": 418,
+      "key": "routes.newRoute",
+      "english": "New Reverse Proxy Route"
+    },
+    {
+      "number": 419,
+      "key": "routes.title",
+      "english": "Title"
+    },
+    {
+      "number": 420,
+      "key": "routes.titlePlaceholder",
+      "english": "e.g. Home Assistant, media server..."
+    },
+    {
+      "number": 421,
+      "key": "routes.titleMigrationHint",
+      "english": "Save to store this title as a comment in your Caddyfile."
+    },
+    {
+      "number": 422,
+      "key": "routes.titleClearHint",
+      "english": "Leave blank to clear the title."
+    },
+    {
+      "number": 423,
+      "key": "routes.maintenanceEditHint",
+      "english": "This route is in maintenance mode. Disable maintenance to edit the Caddyfile content."
+    },
+    {
+      "number": 424,
+      "key": "routes.caddyfileLoadFailed",
+      "english": "This route is defined in your Caddyfile but couldn't be loaded for inline editing. Use the <strong>Caddyfile</strong> tab to edit it directly."
+    },
+    {
+      "number": 425,
+      "key": "routes.caddyfile",
+      "english": "Caddyfile"
+    },
+    {
+      "number": 426,
+      "key": "routes.domain",
+      "english": "Domain"
+    },
+    {
+      "number": 427,
+      "key": "routes.upstream",
+      "english": "Upstream"
+    },
+    {
+      "number": 428,
+      "key": "routes.stripPrefixOptional",
+      "english": "Strip Prefix (optional)"
+    },
+    {
+      "number": 429,
+      "key": "routes.addRoute",
+      "english": "Add Route"
+    },
+    {
+      "number": 430,
+      "key": "routes.status",
+      "english": "Status"
+    },
+    {
+      "number": 431,
+      "key": "routes.server",
+      "english": "Server"
+    },
+    {
+      "number": 432,
+      "key": "routes.id",
+      "english": "ID"
+    },
+    {
+      "number": 433,
+      "key": "routes.online",
+      "english": "Online"
+    },
+    {
+      "number": 434,
+      "key": "routes.partial",
+      "english": "Partial"
+    },
+    {
+      "number": 435,
+      "key": "routes.offline",
+      "english": "Offline"
+    },
+    {
+      "number": 436,
+      "key": "routes.maintenance",
+      "english": "Maintenance"
+    },
+    {
+      "number": 437,
+      "key": "routes.added",
+      "english": "Route for {{domain}} added"
+    },
+    {
+      "number": 438,
+      "key": "routes.deleteCaddyfileConfirm",
+      "english": "Delete this route? This will remove the site block from the Caddyfile."
+    },
+    {
+      "number": 439,
+      "key": "routes.removed",
+      "english": "Route removed"
+    },
+    {
+      "number": 440,
+      "key": "routes.caddyfileUpdated",
+      "english": "Caddyfile updated"
+    },
+    {
+      "number": 441,
+      "key": "routes.titleSaved",
+      "english": "Title saved"
+    },
+    {
+      "number": 442,
+      "key": "routes.updated",
+      "english": "Route updated"
+    },
+    {
+      "number": 443,
+      "key": "routes.deleteConfirm",
+      "english": "Delete this route?"
+    },
+    {
+      "number": 444,
+      "key": "routes.enableMaintenanceConfirm",
+      "english": "Enable maintenance mode for {{domain}}? The route will serve a maintenance page instead of proxying upstream."
+    },
+    {
+      "number": 445,
+      "key": "routes.maintenanceEnabled",
+      "english": "Maintenance mode enabled for {{domain}}"
+    },
+    {
+      "number": 446,
+      "key": "routes.maintenanceDisabled",
+      "english": "Maintenance mode disabled for {{domain}}"
+    },
+    {
+      "number": 447,
+      "key": "routes.maintenanceMode",
+      "english": "Maintenance mode"
+    },
+    {
+      "number": 448,
+      "key": "routes.noUpstream",
+      "english": "No upstream"
+    },
+    {
+      "number": 449,
+      "key": "routes.waitingForRouteCheck",
+      "english": "Waiting for first route check"
+    },
+    {
+      "number": 450,
+      "key": "routes.uptimeTitle",
+      "english": "{{label}} — {{pct}} uptime"
+    },
+    {
+      "number": 451,
+      "key": "routes.noUpstreamStatus",
+      "english": "No upstream, {{pct}}"
+    },
+    {
+      "number": 452,
+      "key": "routes.checkingStatus",
+      "english": "Checking, {{pct}}"
+    },
+    {
+      "number": 453,
+      "key": "routes.statusWithPct",
+      "english": "{{status}}, {{pct}}"
+    },
+    {
+      "number": 454,
+      "key": "routes.loading",
+      "english": "Loading routes..."
+    },
+    {
+      "number": 455,
+      "key": "routes.filterPlaceholder",
+      "english": "Filter by domain, upstream, note, or server..."
+    },
+    {
+      "number": 456,
+      "key": "routes.clearFilter",
+      "english": "Clear filter"
+    },
+    {
+      "number": 457,
+      "key": "routes.onlineSummary",
+      "english": "{{online}}/{{total}} routes online"
+    },
+    {
+      "number": 458,
+      "key": "routes.maintenanceCount_one",
+      "english": "{{count}} in maintenance"
+    },
+    {
+      "number": 459,
+      "key": "routes.maintenanceCount_other",
+      "english": "{{count}} in maintenance"
+    },
+    {
+      "number": 460,
+      "key": "routes.columns",
+      "english": "Columns"
+    },
+    {
+      "number": 461,
+      "key": "routes.someColumnsHidden",
+      "english": "Some columns are hidden"
+    },
+    {
+      "number": 462,
+      "key": "routes.domainActionsAlwaysShown",
+      "english": "Domain & actions are always shown"
+    },
+    {
+      "number": 463,
+      "key": "routes.noMatching",
+      "english": "No routes matching \"{{search}}\""
+    },
+    {
+      "number": 464,
+      "key": "routes.noneConfigured",
+      "english": "No routes configured"
+    },
+    {
+      "number": 465,
+      "key": "routes.serverFilterTitle",
+      "english": "Server ID {{id}} · click to filter"
+    },
+    {
+      "number": 466,
+      "key": "routes.disableMaintenance",
+      "english": "Disable maintenance mode"
+    },
+    {
+      "number": 467,
+      "key": "routes.enableMaintenance",
+      "english": "Enable maintenance mode"
+    },
+    {
+      "number": 468,
+      "key": "caddyfile.noDifferences",
+      "english": "No differences"
+    },
+    {
+      "number": 469,
+      "key": "caddyfile.unchangedLines_one",
+      "english": "{{count}} unchanged line"
+    },
+    {
+      "number": 470,
+      "key": "caddyfile.unchangedLines_other",
+      "english": "{{count}} unchanged lines"
+    },
+    {
+      "number": 471,
+      "key": "caddyfile.restoreConfirm",
+      "english": "Restore Caddyfile from {{timestamp}}? The current file will be snapshotted first."
+    },
+    {
+      "number": 472,
+      "key": "caddyfile.restore",
+      "english": "Restore"
+    },
+    {
+      "number": 473,
+      "key": "caddyfile.restoredFrom",
+      "english": "Restored from {{timestamp}}"
+    },
+    {
+      "number": 474,
+      "key": "caddyfile.deleteSnapshotConfirm",
+      "english": "Delete snapshot from {{timestamp}}?"
+    },
+    {
+      "number": 475,
+      "key": "caddyfile.snapshotDeleted",
+      "english": "Snapshot deleted"
+    },
+    {
+      "number": 476,
+      "key": "caddyfile.valid",
+      "english": "Caddyfile is valid"
+    },
+    {
+      "number": 477,
+      "key": "caddyfile.forceSaveConfirm",
+      "english": "Force save skips validation and writes the Caddyfile to disk even if Caddy can't load it. Continue?"
+    },
+    {
+      "number": 478,
+      "key": "caddyfile.forceSave",
+      "english": "Force save"
+    },
+    {
+      "number": 479,
+      "key": "caddyfile.reloadFailed",
+      "english": "Caddyfile written to disk; Caddy reload failed"
+    },
+    {
+      "number": 480,
+      "key": "caddyfile.savedReloaded",
+      "english": "Caddyfile saved and reloaded"
+    },
+    {
+      "number": 481,
+      "key": "caddyfile.reloadedFromDisk",
+      "english": "Caddy reloaded from disk"
+    },
+    {
+      "number": 482,
+      "key": "caddyfile.importConfirm",
+      "english": "Import this Caddyfile? This will validate, reload Caddy, and overwrite the current file."
+    },
+    {
+      "number": 483,
+      "key": "caddyfile.import",
+      "english": "Import"
+    },
+    {
+      "number": 484,
+      "key": "caddyfile.importedReloaded",
+      "english": "Caddyfile imported and reloaded"
+    },
+    {
+      "number": 485,
+      "key": "caddyfile.loading",
+      "english": "Loading Caddyfile..."
+    },
+    {
+      "number": 486,
+      "key": "caddyfile.sortEntries",
+      "english": "sort entries"
+    },
+    {
+      "number": 487,
+      "key": "caddyfile.unsavedChanges",
+      "english": "unsaved changes"
+    },
+    {
+      "number": 488,
+      "key": "caddyfile.upToDate",
+      "english": "up to date"
+    },
+    {
+      "number": 489,
+      "key": "caddyfile.validating",
+      "english": "Validating..."
+    },
+    {
+      "number": 490,
+      "key": "caddyfile.validate",
+      "english": "Validate"
+    },
+    {
+      "number": 491,
+      "key": "caddyfile.history",
+      "english": "History"
+    },
+    {
+      "number": 492,
+      "key": "caddyfile.reload",
+      "english": "Reload"
+    },
+    {
+      "number": 493,
+      "key": "caddyfile.forceSaveTitle",
+      "english": "Skip validation and write to disk even if Caddy rejects it"
+    },
+    {
+      "number": 494,
+      "key": "caddyfile.versionHistory",
+      "english": "Version History"
+    },
+    {
+      "number": 495,
+      "key": "caddyfile.versionPreview",
+      "english": "Version preview"
+    },
+    {
+      "number": 496,
+      "key": "caddyfile.showVersionList",
+      "english": "Show version list"
+    },
+    {
+      "number": 497,
+      "key": "caddyfile.hideVersionList",
+      "english": "Hide version list"
+    },
+    {
+      "number": 498,
+      "key": "caddyfile.savedVersions",
+      "english": "Saved versions"
+    },
+    {
+      "number": 499,
+      "key": "caddyfile.noSavedVersions",
+      "english": "No saved versions"
+    },
+    {
+      "number": 500,
+      "key": "caddyfile.selectVersion",
+      "english": "Select a version to preview"
+    },
+    {
+      "number": 501,
+      "key": "caddyfile.resizePanes",
+      "english": "Resize editor and history panes"
+    },
+    {
+      "number": 502,
+      "key": "caddyfile.resizePanesHint",
+      "english": "Drag or use arrow keys to resize. Double-click to reset."
+    },
+    {
+      "number": 503,
+      "key": "caddyfile.paneSizes",
+      "english": "{{editor}} editor, {{history}} history"
+    },
+    {
+      "number": 504,
+      "key": "caddyfile.noSnapshots",
+      "english": "No snapshots yet — save your Caddyfile to create one"
+    },
+    {
+      "number": 505,
+      "key": "caddyfile.latest",
+      "english": "latest"
+    },
+    {
+      "number": 506,
+      "key": "caddyfile.deleteSnapshot",
+      "english": "Delete snapshot"
+    },
+    {
+      "number": 507,
+      "key": "caddyfile.diff",
+      "english": "Diff"
+    },
+    {
+      "number": 508,
+      "key": "caddyfile.raw",
+      "english": "Raw"
+    },
+    {
+      "number": 509,
+      "key": "caddyfile.compareAgainst",
+      "english": "Compare against"
+    },
+    {
+      "number": 510,
+      "key": "caddyfile.vsCurrent",
+      "english": "vs. current file"
+    },
+    {
+      "number": 511,
+      "key": "caddyfile.savedMarker",
+      "english": "(saved)"
+    },
+    {
+      "number": 512,
+      "key": "caddyfile.vsSnapshot",
+      "english": "vs. {{timestamp}}"
+    }
+  ]
+}
