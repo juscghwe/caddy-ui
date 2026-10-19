@@ -12,7 +12,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Guardar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 003 · `common.cancel`
 
@@ -20,7 +20,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Cancelar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 004 · `common.confirm`
 
@@ -28,7 +28,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Confirmar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 005 · `common.loading`
 
@@ -36,7 +36,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Cargando...
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 006 · `common.saving`
 
@@ -44,7 +44,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Guardando...
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 007 · `common.refresh`
 
@@ -52,7 +52,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Actualizar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 008 · `common.refreshing`
 
@@ -60,7 +60,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Actualizando...
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 009 · `common.enable`
 
@@ -68,7 +68,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Activar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 010 · `common.disable`
 
@@ -76,7 +76,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Desactivar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 011 · `common.enabledUpper`
 
@@ -84,7 +84,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** ACTIVADO
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 012 · `common.disabledUpper`
 
@@ -92,7 +92,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** DESACTIVADO
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 013 · `common.enabled`
 
@@ -100,7 +100,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Activado
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 014 · `common.disabled`
 
@@ -108,15 +108,15 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Desactivado
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 015 · `common.clearSearch`
 
 **English:** Clear search
 
-**Draft:** Borrar búsqueda
+**Draft:** Borrar la búsqueda
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 016 · `common.export`
 
@@ -124,7 +124,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Exportar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 017 · `common.on`
 
@@ -132,7 +132,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Activado
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 018 · `common.off`
 
@@ -140,7 +140,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Desactivado
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 019 · `common.close`
 
@@ -148,7 +148,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Cerrar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 020 · `common.delete`
 
@@ -156,7 +156,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Eliminar
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 021 · `common.checking`
 
@@ -164,14 +164,14 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Comprobando...
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 022 · `common.notAvailable`
 
 **English:** N/A
 
-**Draft:** No disponible
+**Draft:** S/D
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 [Previous](01-test.md) · [Language index](README.md) · [Next](03-pages.md)
