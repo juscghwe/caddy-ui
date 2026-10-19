@@ -12,7 +12,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Panel de control
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 024 · `pages.caddyfile`
 
@@ -20,7 +20,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Editor de Caddyfile
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 025 · `pages.routes`
 
@@ -28,7 +28,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Gestor de rutas
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 026 · `pages.tls`
 
@@ -36,7 +36,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Certificados TLS
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 027 · `pages.logs`
 
@@ -44,15 +44,15 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Registros de acceso
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 028 · `pages.metrics`
 
 **English:** Metrics
 
-**Draft:** Métricas
+**Draft:** Medidas
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 029 · `pages.notifications`
 
@@ -60,7 +60,7 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Notificaciones
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 ### 030 · `pages.instances`
 
@@ -68,6 +68,6 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **Draft:** Instancias
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 [Previous](02-common.md) · [Language index](README.md) · [Next](04-errors-1.md)
