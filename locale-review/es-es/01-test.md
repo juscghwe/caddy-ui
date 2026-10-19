@@ -10,8 +10,8 @@ Compare the wording with English, correct it, and only then tick its review box.
 
 **English:** English loaded
 
-**Draft:** Español cargado
+**Draft:** Cargado en Español 
 
-- [ ] Human-reviewed
+- [X] Human-reviewed
 
 [Language index](README.md) · [Next](02-common.md)
