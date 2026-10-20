@@ -149,6 +149,7 @@ src/frontend/src/lib/caddyfileMode.js
 
 # Generated mdBook output
 docs/book/
+.docs-history/
 
 # Disposable local integration-test state (retain until explicit cleanup)
 .dev-caddy/
