@@ -5,6 +5,12 @@ It inventories historical releases, builds their books, and reports books that c
 share a snapshot. Pages publication, the version selector and UI Help links follow
 separately. The existing documentation deployment is unchanged.
 
+The [initial collection report](collection-report.md) covers v2.20.0–v3.6.0:
+44 candidates, 43 complete books and 40 byte-distinct snapshots. v3.0.0 is flagged
+because its legacy screenshot fixture reports an unauthenticated installation;
+the renderer skips failed readiness checks and captures the wrong view. Its source
+and build log remain available for a reviewed repair or release-notes fallback.
+
 ## Release and image evidence
 
 The first mdBook implementation is `4dee6c9`; its first release is **v2.20.0**
