@@ -19,6 +19,7 @@
         "i18n:preview:check-browser": "npm run i18n:preview:check-browser --prefix dev --",
         "test:cross-site:browser": "npm run test:cross-site:browser --prefix dev --",
         "dev:cloud-metadata": "npm run dev:cloud-metadata --prefix dev --",
-        "test:cloud-metadata": "npm run test:cloud-metadata --prefix dev --"
+        "test:cloud-metadata": "npm run test:cloud-metadata --prefix dev --",
+        "analysis:generate": "npm run analysis:generate --prefix dev --"
     }
 }

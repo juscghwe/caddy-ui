@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "test": "node --test dev-caddy/*.test.mjs integration/*.test.mjs",
+        "test": "node --test dev-caddy/*.test.mjs integration/*.test.mjs code-analysis/*.test.mjs",
         "test:playground": "vitest run playground/test/",
         "test:integration": "node --test integration/caddy.mjs integration/examples.mjs integration/api.mjs integration/startup.mjs integration/diagnostics.mjs integration/rate-limits.mjs",
         "test:e2e": "node --test --test-concurrency=1 e2e/error-logging.mjs e2e/languages.mjs e2e/cross-site.mjs e2e/auth.mjs e2e/api-tokens.mjs e2e/history.mjs",
@@ -18,7 +18,8 @@
         "i18n:preview:check-browser": "node playground/check-browser.mjs",
         "test:cross-site:browser": "node --test e2e/cross-site.mjs",
         "dev:cloud-metadata": "python3 cloud-metadata/collect.py",
-        "test:cloud-metadata": "python3 -m unittest discover -s cloud-metadata -p 'test_*.py'"
+        "test:cloud-metadata": "python3 -m unittest discover -s cloud-metadata -p 'test_*.py'",
+        "analysis:generate": "node code-analysis/dependency-graph.mjs"
     },
     "devDependencies": {
         "@babel/parser": "8.0.7",
