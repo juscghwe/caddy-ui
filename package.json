@@ -20,6 +20,9 @@
         "test:cross-site:browser": "npm run test:cross-site:browser --prefix dev --",
         "dev:cloud-metadata": "npm run dev:cloud-metadata --prefix dev --",
         "test:cloud-metadata": "npm run test:cloud-metadata --prefix dev --",
-        "analysis:generate": "npm run analysis:generate --prefix dev --"
+        "analysis:generate": "npm run analysis:generate --prefix dev --",
+        "analysis:preview": "npm run analysis:preview --prefix dev --",
+        "analysis:build": "npm run analysis:build --prefix dev --",
+        "analysis:check-browser": "npm run analysis:check-browser --prefix dev --"
     }
 }

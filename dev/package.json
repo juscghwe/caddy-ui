@@ -19,7 +19,13 @@
         "test:cross-site:browser": "node --test e2e/cross-site.mjs",
         "dev:cloud-metadata": "python3 cloud-metadata/collect.py",
         "test:cloud-metadata": "python3 -m unittest discover -s cloud-metadata -p 'test_*.py'",
-        "analysis:generate": "node code-analysis/dependency-graph.mjs"
+        "analysis:generate": "node code-analysis/dependency-graph.mjs",
+        "preanalysis:preview": "npm run analysis:generate",
+        "analysis:preview": "vite --config code-analysis/vite.config.js",
+        "preanalysis:build": "npm run analysis:generate",
+        "analysis:build": "vite build --config code-analysis/vite.config.js",
+        "preanalysis:check-browser": "npm run analysis:generate",
+        "analysis:check-browser": "node code-analysis/check-browser.mjs"
     },
     "devDependencies": {
         "@babel/parser": "8.0.7",

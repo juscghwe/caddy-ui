@@ -6,14 +6,14 @@ export default [
     ...backendConfig.map(config => ({ ...config, files: ['dev-caddy/**/*.mjs', 'integration/**/*.mjs'] })),
     {
         ...componentConfig,
-        files: ['playground/**/*.{js,jsx}', 'code-analysis/Explorer.jsx'],
+        files: ['playground/**/*.{js,jsx}', 'code-analysis/**/*.jsx'],
         rules: {
             ...componentConfig.rules,
             // Separate English-only contributor tool; never shipped in the app.
             'i18next/no-literal-string': 'off',
         },
     },
-    { ...nodeToolConfig, files: ['eslint.config.js', 'playground/**/*.mjs', 'playground/vite.config.js', 'code-analysis/**/*.mjs', 'code-analysis/model.js'] },
+    { ...nodeToolConfig, files: ['eslint.config.js', 'playground/**/*.mjs', 'playground/vite.config.js', 'code-analysis/**/*.mjs', 'code-analysis/model.js', 'code-analysis/vite.config.js'] },
     {
         ...nodeToolConfig,
         files: ['e2e/**/*.mjs'],
