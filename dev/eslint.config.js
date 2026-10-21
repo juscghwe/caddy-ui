@@ -27,7 +27,7 @@ export default [
         languageOptions: { globals: { __PREVIEW_SOURCE_HASH__: 'readonly' } },
     },
     {
-        files: ['playground/check-browser.mjs'],
+        files: ['playground/check-browser.mjs', 'code-analysis/check-browser.mjs'],
         languageOptions: { globals: componentConfig.languageOptions.globals },
     },
 ];

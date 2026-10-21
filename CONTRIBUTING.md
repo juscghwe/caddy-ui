@@ -21,7 +21,7 @@ Code contributions use a local checkout and the relevant service's tests and lin
 | --- | --- |
 | `src/backend/` | Backend application, unit/API tests and backend build dependencies |
 | `src/frontend/` | Frontend application, component tests and frontend build dependencies |
-| `dev/` | Disposable Caddy tools, shared integration/browser fixtures and localization playground |
+| `dev/` | Disposable Caddy tools, shared integration/browser fixtures, localization playground and code analysis |
 | `docs/` | Documentation content, theme and book tooling |
 | Root `package.json` | Stable commands that delegate to the owning package |
 
@@ -53,6 +53,16 @@ never hand-edit the generated `src/backend/DOCKERHUB.md` or `src/frontend/DOCKER
 
 See the [contribution hub](https://zackwag.github.io/caddy-ui/contributing.html)
 for the full onboarding paths, or [browse it as Markdown](docs/src/contributing.md).
+
+## Exploring code relationships
+
+Run `npm run analysis:preview` after installing the three packages above. It
+generates a source snapshot and opens a local dependency explorer at
+`http://127.0.0.1:5175`. No Caddy instance, backend server or enrollment is needed.
+Use it to inspect imports and dependants, review cycles and folder dependencies,
+export a focused Mermaid diagram, or compare snapshots before and after a
+refactor. See [the code-analysis guide](dev/code-analysis/README.md) for scope,
+commands and limitations.
 
 ## Testing with real Caddy instances
 
