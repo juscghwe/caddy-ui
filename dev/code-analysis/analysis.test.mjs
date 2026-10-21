@@ -22,6 +22,12 @@ const jsx = <div>import './jsx.js'</div>;`, 'fixture.jsx');
         ['dynamic-import', null, 6], ['require', './common.cjs', 7],
     ]);
     assert.throws(() => sourceReferences('import {', 'invalid.js'), SyntaxError);
+    const globs = sourceReferences(`import.meta.glob('./*.js', { eager: true, eager: false });
+import.meta.glob('./*.js', { eager: setting });
+import.meta.glob('./*.js', { query: value });`, 'globs.js');
+    assert.equal(globs[0].kind, 'glob-lazy');
+    assert.equal(globs[1].unsupportedOptions, true);
+    assert.equal(globs[2].unsupportedOptions, true);
 });
 
 test('tracked analysis resolves source evidence, globs, gaps and generated files reproducibly', async t => {

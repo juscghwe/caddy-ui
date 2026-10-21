@@ -28,11 +28,11 @@ export function sourceReferences(source, filename) {
             const patterns = argument?.type === 'ArrayExpression' ? argument.elements.map(literal) : [literal(argument)];
             const options = node.arguments[1];
             const unsupportedOptions = options && (options.type !== 'ObjectExpression' || options.properties.some(property =>
-                property.type !== 'ObjectProperty' || property.computed || (property.key.name || property.key.value) === 'base'
-                || ((property.key.name || property.key.value) === 'eager' && property.value.type !== 'BooleanLiteral')));
-            const eager = options?.type === 'ObjectExpression' && options.properties.some(property =>
-                property.type === 'ObjectProperty' && !property.computed && (property.key.name || property.key.value) === 'eager'
-                && property.value.type === 'BooleanLiteral' && property.value.value);
+                property.type !== 'ObjectProperty' || property.computed || (property.key.name || property.key.value) !== 'eager'
+                || property.value.type !== 'BooleanLiteral'));
+            const eagerOption = options?.type === 'ObjectExpression' && options.properties.findLast(property =>
+                property.type === 'ObjectProperty' && !property.computed && (property.key.name || property.key.value) === 'eager');
+            const eager = eagerOption?.value?.type === 'BooleanLiteral' && eagerOption.value.value;
             add(node, eager ? 'glob-eager' : 'glob-lazy', null, { patterns, unsupportedOptions: Boolean(unsupportedOptions) });
         }
         for (const value of Object.values(node)) {

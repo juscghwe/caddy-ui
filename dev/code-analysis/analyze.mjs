@@ -55,7 +55,7 @@ export async function analyzeRepository(root) {
         for (const reference of references) {
             if (reference.kind.startsWith('glob-')) {
                 if (reference.unsupportedOptions || !reference.patterns.every(pattern => typeof pattern === 'string' && /^(?:!?\.\.?\/|!?\/)/.test(pattern))) {
-                    diagnostics.push({ file, line: reference.line, message: 'Unsupported glob: use literal relative or root-relative patterns and literal options without base. Aliases and expressions are not expanded.' });
+                    diagnostics.push({ file, line: reference.line, message: 'Unsupported glob: use literal relative or root-relative patterns; only literal eager options are supported. Aliases and expressions are not expanded.' });
                     continue;
                 }
                 const normalize = pattern => pattern.startsWith('/')
