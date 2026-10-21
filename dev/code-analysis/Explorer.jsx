@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import snapshot from './generated/analysis.json';
-import { dynamicKinds } from './model.js';
+import { dynamicKinds, mermaidMarkdown } from './model.js';
+import { Comparison, Cycles, Diagnostics, Matrix } from './AnalysisViews.jsx';
 import './explorer.css';
 
 const byId = new Map(snapshot.nodes.map(node => [node.id, node]));
@@ -75,8 +76,9 @@ export default function Explorer() {
     const [scope, setScope] = useState('all');
     const [mode, setMode] = useState('all');
     const [external, setExternal] = useState(false);
+    const [view, setView] = useState('module');
     useEffect(() => {
-        const navigate = () => setSelected(selectedFromUrl());
+        const navigate = () => { setSelected(selectedFromUrl()); setView('module'); };
         window.addEventListener('hashchange', navigate);
         return () => window.removeEventListener('hashchange', navigate);
     }, []);
@@ -93,9 +95,10 @@ export default function Explorer() {
         </header>
         <div className="provenance"><span>Commit <code>{snapshot.metadata.commit.slice(0, 12)}</code>{snapshot.metadata.dirty ? ' · modified application sources' : ' · clean application sources'}</span>
             <span>{snapshot.nodes.filter(node => node.kind === 'source').length} modules · {snapshot.edges.length} references · {snapshot.cycles.length} cyclic groups · {snapshot.diagnostics.length} diagnostics</span></div>
-        <div className="workspace"><aside>
+        <div className="workspace" onClick={event => { if (event.target.closest('a[href^="#module="]')) setView('module'); }}><aside>
             <label>Find a module<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="File name or path" /></label>
             <label>Application<select aria-label="Application" value={scope} onChange={event => setScope(event.target.value)}><option value="all">Both services</option><option value="backend">Backend</option><option value="frontend">Frontend</option></select></label>
+            <p className="hint">Application and search filter the module list.</p>
             <label>Relationships<select aria-label="Relationships" value={mode} onChange={event => setMode(event.target.value)}><option value="all">All kinds</option><option value="static">Static only</option><option value="dynamic">Dynamic only</option></select></label>
             <label className="checkbox"><input type="checkbox" checked={external} onChange={event => setExternal(event.target.checked)} />Include packages, built-ins and assets</label>
             <div className="hint">{modules.length} modules shown</div>
@@ -103,14 +106,22 @@ export default function Explorer() {
                 <span>{short(module.label)}</span>{module.kind !== 'source' && <small>{module.kind}</small>}
             </a>)}</nav>
         </aside>
-        <main>{!node ? <p role="alert">This module is not in the snapshot. Select one from the list.</p> : <>
+        <main><nav className="view-tabs" aria-label="Analysis views">{[
+            ['module', 'Module'], ['cycles', 'Cycles'], ['matrix', 'Folder matrix'], ['compare', 'Compare'], ['diagnostics', 'Diagnostics'],
+        ].map(([key, title]) => <button key={key} aria-pressed={view === key} onClick={() => setView(key)}>{title}</button>)}</nav>
+        {view === 'cycles' && <Cycles nodes={snapshot.nodes} edges={edges} />}
+        {view === 'matrix' && <Matrix nodes={snapshot.nodes} edges={edges} />}
+        {view === 'compare' && <Comparison snapshot={snapshot} />}
+        {view === 'diagnostics' && <Diagnostics snapshot={snapshot} />}
+        {view === 'module' && (!node ? <p role="alert">This module is not in the snapshot. Select one from the list.</p> : <>
             <div className="eyebrow">{node.group} · {node.kind}</div><h2>{short(node.label)}</h2><p className="path">{node.id}</p>
+            <button onClick={() => download(mermaidMarkdown(snapshot.nodes, edges, selected), 'module-relationships.md', 'text/markdown')}>Export Mermaid</button>
             {node.reason && <p className="notice">{node.reason}</p>}
             {(node.kind === 'unresolved' || node.unresolved) && <p className="notice">This dependency could not be resolved. It remains visible so it cannot be mistaken for an unused module.</p>}
             <Neighborhood selected={selected} edges={edges} />
             <ReferenceTable title="Dependencies" edges={outgoing} />
             <ReferenceTable title="Imported by" edges={incoming} incoming />
-        </>}
+        </>)}
         <details className="limitations"><summary>Scope and limitations</summary><ul>{snapshot.metadata.limitations.map(item => <li key={item}>{item}</li>)}</ul>
             <p>Source fingerprint: <code>{snapshot.metadata.sourceHash}</code></p><p>Regenerate with <code>npm run analysis:generate</code> after source changes. Newly created files must be staged or committed to enter the scope.</p></details>
         </main></div>

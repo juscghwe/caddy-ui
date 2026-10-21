@@ -58,7 +58,9 @@ export async function analyzeRepository(root) {
                     diagnostics.push({ file, line: reference.line, message: 'Unsupported glob: use literal relative or root-relative patterns and literal options without base. Aliases and expressions are not expanded.' });
                     continue;
                 }
-                const normalize = pattern => pattern.startsWith('/') ? pattern.slice(1) : path.posix.join(path.posix.dirname(file), pattern);
+                const normalize = pattern => pattern.startsWith('/')
+                    ? path.posix.join('src', file.split('/')[1], pattern.slice(1))
+                    : path.posix.join(path.posix.dirname(file), pattern);
                 const positive = reference.patterns.filter(pattern => !pattern.startsWith('!')).map(normalize);
                 const negative = reference.patterns.filter(pattern => pattern.startsWith('!')).map(pattern => normalize(pattern.slice(1)));
                 const matches = tracked.filter(candidate => positive.some(pattern => picomatch(pattern, { dot: true })(candidate))
@@ -95,6 +97,7 @@ export async function analyzeRepository(root) {
     const nodeList = [...nodes.keys()].sort().map(id => nodes.get(id));
     edges.sort((a, b) => a.from.localeCompare(b.from, 'en') || (a.line || 0) - (b.line || 0) || a.to.localeCompare(b.to, 'en') || a.kind.localeCompare(b.kind, 'en'));
     const fingerprint = createHash('sha256');
+    fingerprint.update(JSON.stringify(tracked) + '\0');
     for (const [file, source] of sources) fingerprint.update(file + '\0' + source + '\0');
     const toolPackage = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
     return { schemaVersion: 1, metadata: { commit: git(['rev-parse', 'HEAD']),

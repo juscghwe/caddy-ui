@@ -5,7 +5,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { analyzeRepository } from './analyze.mjs';
-import { compareSnapshots, findCycles, folderMatrix } from './model.js';
+import { compareSnapshots, findCycles, folderMatrix, mermaidMarkdown } from './model.js';
 import { sourceReferences } from './source.mjs';
 
 test('AST evidence distinguishes imports, re-exports, dynamic expressions and literal text', () => {
@@ -43,8 +43,9 @@ import 'not-an-installed-package';
     await put('src/backend/src/common.cjs', "require('node:fs');\n");
     await put('src/frontend/src/main.jsx', `import './lib/caddyfileMode.js';
 const locales = import.meta.glob(['./locales/*.js', '!./locales/en.js']);
-const eager = import.meta.glob('./locales/en.js', { eager: true });
+const eager = import.meta.glob('/src/locales/en.js', { eager: true });
 const invalid = import.meta.glob(expression);
+const based = import.meta.glob('./locales/*.js', { base: './locales' });
 const view = <p>Hello</p>;
 `);
     await put('src/frontend/src/locales/en.js', 'export default {};\n');
@@ -64,6 +65,7 @@ const view = <p>Hello</p>;
     assert.ok(!first.nodes.some(node => node.label.includes('imaginary')));
     assert.ok(first.diagnostics.some(item => item.message.includes('Nonliteral dynamic-import')));
     assert.ok(first.diagnostics.some(item => item.message.includes('Unsupported glob')));
+    assert.equal(first.diagnostics.filter(item => item.message.includes('Unsupported glob')).length, 2);
     assert.deepEqual(first.staticCycles, [[main, shared]]);
     await put('src/frontend/src/lib/caddyfileMode.js', 'throw new Error("Never execute or parse generated code");\n');
     await put('src/backend/src/untracked.js', "import './main.js';\n");
@@ -99,4 +101,13 @@ test('snapshot comparison ignores line movement but retains dependency kinds', (
     assert.equal(compareSnapshots(before, after).removed.length, 1);
     assert.throws(() => compareSnapshots({}, after), /version 1/);
     assert.throws(() => compareSnapshots({ ...before, metadata: { scopes: ['other'] } }, after), /same analysis scope/);
+});
+
+test('focused Mermaid exports preserve kinds, escape labels and include isolated selections', () => {
+    const nodes = [{ id: 'a', label: 'a"<tag>\n' }, { id: 'b', label: 'b' }, { id: 'c', label: 'c' }];
+    const text = mermaidMarkdown(nodes, [{ from: 'a', to: 'b', kind: 'dynamic-import' }], 'a');
+    assert.ok(text.includes('a#quot;#lt;tag#gt; '));
+    assert.ok(text.includes('-.->|dynamic-import|'));
+    assert.ok(!text.includes('["c"]'));
+    assert.ok(mermaidMarkdown(nodes, [], 'c').includes('["c"]'));
 });

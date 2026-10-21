@@ -38,7 +38,9 @@ export function folderMatrix(nodes, edges) {
 }
 
 export function compareSnapshots(before, after) {
-    if (before.schemaVersion !== 1 || after.schemaVersion !== 1 || !Array.isArray(before.edges) || !Array.isArray(before.nodes)) throw new Error('Select a version 1 analysis JSON snapshot.');
+    if (before?.schemaVersion !== 1 || after.schemaVersion !== 1 || !Array.isArray(before.edges) || !Array.isArray(before.nodes)
+        || !Array.isArray(before.metadata?.scopes) || !before.edges.every(edge => edge && ['from', 'to', 'kind', 'specifier'].every(key => typeof edge[key] === 'string'))
+        || !before.nodes.every(node => node && typeof node.id === 'string' && typeof node.kind === 'string')) throw new Error('Select a version 1 analysis JSON snapshot.');
     if (JSON.stringify(before.metadata.scopes) !== JSON.stringify(after.metadata.scopes)) throw new Error('Snapshots must use the same analysis scope.');
     const previous = new Map(before.edges.map(edge => [edgeKey(edge), edge]));
     const current = new Map(after.edges.map(edge => [edgeKey(edge), edge]));
@@ -48,4 +50,18 @@ export function compareSnapshots(before, after) {
         addedModules: after.nodes.filter(node => node.kind === 'source' && !before.nodes.some(previous => previous.id === node.id)),
         removedModules: before.nodes.filter(node => node.kind === 'source' && !after.nodes.some(current => current.id === node.id)),
     };
+}
+
+export function mermaidMarkdown(nodes, edges, selected) {
+    const related = edges.filter(edge => edge.from === selected || edge.to === selected);
+    const ids = new Set([selected, ...related.flatMap(edge => [edge.from, edge.to])]);
+    const visible = nodes.filter(node => ids.has(node.id)).sort((a, b) => a.id.localeCompare(b.id, 'en'));
+    const symbols = new Map(visible.map((node, i) => [node.id, `n${i}`]));
+    const escape = value => value.replaceAll('&', '#amp;').replaceAll('"', '#quot;').replaceAll('<', '#lt;').replaceAll('>', '#gt;').replace(/\s+/g, ' ');
+    const lines = ['flowchart LR', ...visible.map(node => `  ${symbols.get(node.id)}["${escape(node.label)}"]`)];
+    for (const edge of new Map(related.map(edge => [edgeKey(edge), edge])).values()) {
+        const arrow = dynamicKinds.includes(edge.kind) ? '-.->' : '-->';
+        lines.push(`  ${symbols.get(edge.from)} ${arrow}|${escape(edge.kind)}| ${symbols.get(edge.to)}`);
+    }
+    return '# Focused module relationships\n\n```mermaid\n' + lines.join('\n') + '\n```\n';
 }

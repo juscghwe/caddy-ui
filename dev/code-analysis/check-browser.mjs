@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
 
@@ -26,6 +27,15 @@ try {
     assert.equal(await modules.getByRole('link').count(), 2);
     await modules.getByRole('link', { name: 'backend/notifications.js', exact: true }).click();
     await page.getByRole('heading', { name: 'backend/notifications.js', exact: true }).waitFor();
+    const mermaidDownload = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Export Mermaid' }).click();
+    const mermaid = await mermaidDownload;
+    assert.equal(mermaid.suggestedFilename(), 'module-relationships.md');
+    assert.ok((await readFile(await mermaid.path(), 'utf8')).includes('-.->|dynamic-import|'));
+    await page.getByLabel('Include packages, built-ins and assets').check();
+    await page.getByRole('link', { name: 'node:crypto', exact: true }).waitFor();
+    await page.getByLabel('Include packages, built-ins and assets').uncheck();
+    assert.equal(await page.getByRole('link', { name: 'node:crypto', exact: true }).count(), 0);
     await page.getByLabel('Relationships', { exact: true }).selectOption('dynamic');
     await page.getByRole('cell', { name: 'dynamic-import', exact: true }).first().waitFor();
     assert.ok(await page.locator('.edge.dynamic').count() > 0);
@@ -43,10 +53,41 @@ try {
     await page.goto(origin + '#module=' + encodeURIComponent('not-in-snapshot'));
     await page.getByRole('alert').filter({ hasText: 'not in the snapshot' }).waitFor();
     await page.goto(origin);
+    await page.getByRole('button', { name: 'Cycles', exact: true }).click();
+    await page.getByRole('heading', { name: 'Cyclic dependency groups' }).waitFor();
+    await page.getByRole('link', { name: 'backend/notifications.js', exact: true }).last().waitFor();
+    await page.getByLabel('Relationships', { exact: true }).selectOption('static');
+    await page.getByText('No cycles in this view.', { exact: true }).waitFor();
+    await page.getByLabel('Relationships', { exact: true }).selectOption('all');
+    await page.getByRole('button', { name: 'Folder matrix', exact: true }).click();
+    await page.getByRole('button', { name: /^backend\/routes imports backend: / }).click();
+    await page.getByRole('heading', { name: 'backend/routes → backend', exact: true }).waitFor();
+    assert.ok(await page.locator('.reference-list li').count() > 0);
+    // Opening the currently selected module must also leave the matrix view.
+    await page.getByRole('navigation', { name: 'Modules' }).getByRole('link', { name: 'backend/routes/logs.js', exact: true }).click();
+    await page.getByRole('heading', { name: 'backend/routes/logs.js', exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Diagnostics', exact: true }).click();
+    await page.getByText('No unresolved or unsupported references in this snapshot.', { exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Compare', exact: true }).click();
+    await page.getByLabel('Baseline snapshot').setInputFiles({ name: 'invalid.json', mimeType: 'application/json', buffer: Buffer.from('{}') });
+    await page.getByRole('alert').filter({ hasText: 'version 1' }).waitFor();
+    const current = JSON.parse(await readFile(new URL('generated/analysis.json', import.meta.url), 'utf8'));
+    await page.getByLabel('Baseline snapshot').setInputFiles({ name: 'same.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(current)) });
+    await page.getByText('0 added relationships · 0 removed relationships · 0 added modules · 0 removed modules', { exact: true }).waitFor();
+    const baseline = structuredClone(current);
+    baseline.edges.shift();
+    baseline.edges.push({ from: 'src/backend/src/index.js', to: 'package:old-dependency', kind: 'import', specifier: 'old-dependency' });
+    await page.getByLabel('Baseline snapshot').setInputFiles({ name: 'baseline.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(baseline)) });
+    await page.getByText('1 added relationships · 1 removed relationships · 0 added modules · 0 removed modules', { exact: true }).waitFor();
     const downloaded = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download snapshot' }).click();
     assert.match((await downloaded).suggestedFilename(), /^caddy-ui-analysis-.*\.json$/);
-    if (process.env.ANALYSIS_SCREENSHOT) await page.screenshot({ path: process.env.ANALYSIS_SCREENSHOT, fullPage: true });
+    if (process.env.ANALYSIS_SCREENSHOT) {
+        await page.getByRole('button', { name: 'Module', exact: true }).click();
+        await page.screenshot({ path: process.env.ANALYSIS_SCREENSHOT, fullPage: true });
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'Narrow screens keep diagram scrolling inside its panel');
     assert.deepEqual(errors, []);
     assert.deepEqual(apiCalls, []);
     console.log('Dependency explorer browser checks passed.');

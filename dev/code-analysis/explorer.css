@@ -48,5 +48,21 @@ code { font-family: ui-monospace, monospace; font-size: 11px; overflow-wrap: any
 .notice { background: #30291f; border-left: 3px solid #b89762; color: #e1cbae; padding: 13px; font-size: 12px; }
 .limitations { margin-top: 35px; border-top: 1px solid #2a394a; padding-top: 16px; color: #9db0c4; font-size: 12px; }
 summary { cursor: pointer; }
+.view-tabs { display: flex; flex-wrap: wrap; gap: 6px; max-height: none; margin: 0 0 25px; }
+.view-tabs button { background: transparent; border-color: #35485b; color: #9fb5c9; padding: 7px 13px; }
+.view-tabs button[aria-pressed=true] { color: #e0f0ff; background: #23425e; border-color: #6793b9; }
+.analysis-card { border: 1px solid #35485b; border-radius: 7px; padding: 5px 20px 12px; margin-top: 18px; }
+.analysis-card h3 { margin-top: 12px; }
+.analysis-card li { margin-block: 7px; }
+.matrix th { white-space: nowrap; }
+.matrix td { text-align: center; }
+.matrix button { padding: 3px 8px; }
+.reference-list { padding-left: 20px; }
+.reference-list li { padding-block: 7px; overflow-wrap: anywhere; font-size: 12px; }
+.reference-list p { margin-block: 5px; }
+.reference-list .badge { margin-left: 7px; }
+.file-label { padding: 18px; border: 1px dashed #55718b; border-radius: 7px; margin-top: 20px; }
+.file-label input { display: block; margin-top: 10px; }
+.comparison-summary { background: #1d3448; padding: 14px; border-radius: 6px; }
 @media (max-width: 800px) { .workspace { grid-template-columns: 210px minmax(0, 1fr); } header, main { padding: 18px; } .provenance { padding-inline: 18px; } }
 @media (max-width: 560px) { .workspace { display: block; } aside { border-bottom: 1px solid #2a394a; border-right: 0; } nav { max-height: 160px; } header { align-items: flex-start; flex-direction: column; } }
