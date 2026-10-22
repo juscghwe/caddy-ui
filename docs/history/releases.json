@@ -2,8 +2,8 @@
   "schema": 1,
   "repository": "zackwag/caddy-ui",
   "from": "v2.20.0",
-  "throughCommit": "a4fbf1a087485e54369fee2361c0efccff53f0e2",
-  "publicationsCommit": "13186c19857c63fd7d725d446b03b435f96e2d05",
+  "throughCommit": "cbeaee5d5f471e0f147d7674b11070af617698da",
+  "publicationsCommit": "80aebbbe779c7193abf08c250ad5996bbe42a4fd",
   "releases": [
     {"tag":"v2.20.0","commit":"aeb981f9633ba4e50850f0e05f16cfa9a740c7d0","images":{"frontend":{"version":"2.20.0","recordedAt":"8d1530e7403c0828cb682550d9101ac133c6292f"},"backend":{"version":"2.20.0","recordedAt":"8d1530e7403c0828cb682550d9101ac133c6292f"}},"hasBook":true},
     {"tag":"v2.20.1","commit":"dadd264fca096e9fed6f391a9008575af24e07d3","images":{"frontend":{"version":"2.20.1","recordedAt":"0ade719e2c2241fdbea91653166bf4fabb86b902"},"backend":{"version":"2.20.1","recordedAt":"0ade719e2c2241fdbea91653166bf4fabb86b902"}},"hasBook":true},
@@ -48,6 +48,17 @@
     {"tag":"v3.3.0","commit":"7f38cc69765c60b268089839601eea281faf224e","images":{"frontend":{"version":"3.3.0","recordedAt":"876cb5daafe5c265e2250353955f8d489367272e"},"backend":{"version":"3.3.0","recordedAt":"876cb5daafe5c265e2250353955f8d489367272e"}},"hasBook":true},
     {"tag":"v3.4.0","commit":"facbd16f517b57bc4a743ad4bcdd126948a236a6","images":{"frontend":{"version":"3.4.0","recordedAt":"0088fc6a04a7afb5082fa55ee8b6033fe935a996"},"backend":{"version":"3.4.0","recordedAt":"0088fc6a04a7afb5082fa55ee8b6033fe935a996"}},"hasBook":true},
     {"tag":"v3.5.0","commit":"84bb43d78626f611797d894cd4033241f300e336","images":{"frontend":{"version":"3.5.0","recordedAt":"ba50616b2137a0f83ccabd1a091aa535acf9bc94"},"backend":{"version":"3.5.0","recordedAt":"ba50616b2137a0f83ccabd1a091aa535acf9bc94"}},"hasBook":true},
-    {"tag":"v3.6.0","commit":"a4fbf1a087485e54369fee2361c0efccff53f0e2","images":{"frontend":{"version":"3.6.0","recordedAt":"13186c19857c63fd7d725d446b03b435f96e2d05"},"backend":{"version":"3.6.0","recordedAt":"13186c19857c63fd7d725d446b03b435f96e2d05"}},"hasBook":true}
+    {"tag":"v3.6.0","commit":"a4fbf1a087485e54369fee2361c0efccff53f0e2","images":{"frontend":{"version":"3.6.0","recordedAt":"13186c19857c63fd7d725d446b03b435f96e2d05"},"backend":{"version":"3.6.0","recordedAt":"13186c19857c63fd7d725d446b03b435f96e2d05"}},"hasBook":true},
+    {"tag":"v3.6.1","commit":"84e8ab350a48fed7c468d44230d9080f716012d8","images":{"frontend":{"version":"3.6.1","recordedAt":"edbdad3d9f92567e5640f5dce7c45320c32c6cd7"},"backend":{"version":"3.6.1","recordedAt":"edbdad3d9f92567e5640f5dce7c45320c32c6cd7"}},"hasBook":true},
+    {"tag":"v3.6.2","commit":"59eb05c343f4911fdccb318813f97def49bbba29","images":{"frontend":{"version":"3.6.2","recordedAt":"c1bfc312e04fcb22d89b79477fcb0da62e26940b"},"backend":{"version":"3.6.2","recordedAt":"c1bfc312e04fcb22d89b79477fcb0da62e26940b"}},"hasBook":true},
+    {"tag":"v3.6.3","commit":"9f854eb7b49638b67dab43923144eb0c81fd3744","images":{"frontend":{"version":"3.6.3","recordedAt":"588c2985fdc64dbb68af4c504b54a70fb906b935"},"backend":{"version":"3.6.3","recordedAt":"588c2985fdc64dbb68af4c504b54a70fb906b935"}},"hasBook":true},
+    {"tag":"v3.6.4","commit":"e55626f510b0510ac79cf449c314131c6c8fc5a3","images":{"frontend":{"version":"3.6.4","recordedAt":"ab71a8e56cbe07f517c158f743b2bfd574138932"},"backend":{"version":"3.6.4","recordedAt":"ab71a8e56cbe07f517c158f743b2bfd574138932"}},"hasBook":true},
+    {"tag":"v3.6.5","commit":"dfbc0a12b8515152d41ce94c3bfcbf18c922afa5","images":{"frontend":{"version":"3.6.5","recordedAt":"a6b7815a195ad1437a106b408c08e8e5d4c55b09"},"backend":{"version":"3.6.5","recordedAt":"a6b7815a195ad1437a106b408c08e8e5d4c55b09"}},"hasBook":true},
+    {"tag":"v3.6.6","commit":"e7e93520e1758105acff04a5730d7cdfbd87b95b","images":{"frontend":{"version":"3.6.6","recordedAt":"17886e44a4a7023d920cc7b9b32d251f0cc38c01"},"backend":{"version":"3.6.6","recordedAt":"17886e44a4a7023d920cc7b9b32d251f0cc38c01"}},"hasBook":true},
+    {"tag":"v3.6.7","commit":"e103e67577f87a81b1ca31743786049231dff9a4","images":{"frontend":{"version":"3.6.7","recordedAt":"b2613472d029cbd503af1078e13fe906e9e64b65"},"backend":{"version":"3.6.7","recordedAt":"b2613472d029cbd503af1078e13fe906e9e64b65"}},"hasBook":true},
+    {"tag":"v3.6.8","commit":"9de550491b2eb6eb1c5a08298266bca6258fb1ad","images":{"frontend":{"version":"3.6.8","recordedAt":"f56f361eba780f4b5445753b861c9959b57fd278"},"backend":{"version":"3.6.8","recordedAt":"f56f361eba780f4b5445753b861c9959b57fd278"}},"hasBook":true},
+    {"tag":"v3.6.9","commit":"44058e4d60fed19c21bb71e616f02b8eb2bec841","images":{"frontend":{"version":"3.6.9","recordedAt":"84a9353d541e31169fe9300635149ed8d0704fbe"},"backend":{"version":"3.6.9","recordedAt":"84a9353d541e31169fe9300635149ed8d0704fbe"}},"hasBook":true},
+    {"tag":"v3.6.10","commit":"37952893bebb418888d8b8f72177f40de5897980","images":{"frontend":{"version":"3.6.10","recordedAt":"951a9560b3d2e57783055439ce6d7c8df02c9be1"},"backend":{"version":"3.6.10","recordedAt":"951a9560b3d2e57783055439ce6d7c8df02c9be1"}},"hasBook":true},
+    {"tag":"v3.7.0","commit":"cbeaee5d5f471e0f147d7674b11070af617698da","images":{"frontend":{"version":"3.7.0","recordedAt":"80aebbbe779c7193abf08c250ad5996bbe42a4fd"},"backend":{"version":"3.7.0","recordedAt":"80aebbbe779c7193abf08c250ad5996bbe42a4fd"}},"hasBook":true}
   ]
 }
