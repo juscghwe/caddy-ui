@@ -113,7 +113,7 @@ export function historyReport(inventory, results, groups) {
     return lines.join('\n') + '\n';
 }
 
-export function writeBookReport(directory, inventory, results, config) {
+export function validateBookResults(directory, inventory, results) {
     if (!Array.isArray(results) || new Set(results.map(result => result.tag)).size !== results.length) throw new Error('Invalid backfill results');
     for (const result of results) {
         if (!inventory.releases.some(release => release.tag === result.tag && release.commit === result.commit)
@@ -123,6 +123,10 @@ export function writeBookReport(directory, inventory, results, config) {
             throw new Error(`Snapshot integrity check failed for ${result.tag}`);
         }
     }
+}
+
+export function writeBookReport(directory, inventory, results, config) {
+    validateBookResults(directory, inventory, results);
     const groups = groupBooks(inventory.releases, results, config);
     writeFileSync(join(directory, 'groups.json'), JSON.stringify({ schema: 1, releases: groups }, null, 2) + '\n');
     writeFileSync(join(directory, 'report.md'), historyReport(inventory, results, groups));

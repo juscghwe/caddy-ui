@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -64,6 +64,26 @@ test('a failed historical build is recorded, cleans up its worktree, and can be 
     assert.equal(built.results[0].commit, commit);
     assert.equal(readFileSync(join(output, 'books', built.results[0].fingerprint, 'index.html'), 'utf8'), 'Historical source');
     assert.equal(JSON.parse(readFileSync(join(output, 'backfill.json'))).inventory.releases[0].commit, commit);
+
+    const incremental = join(root, 'incremental');
+    cpSync(output, incremental, { recursive: true });
+    git(root, ['tag', 'v2.20.9']);
+    const extended = { ...inventory, releases: [...inventory.releases, { ...inventory.releases[0], tag: 'v2.20.9' }] };
+    const crawl = { ...settings, output: incremental, inventory: extended, reuse: true };
+    process.env.BACKFILL_TEST_FAIL = '1';
+    const partial = await backfill(crawl);
+    assert.deepEqual(partial.results.map(r => r.status), ['built', 'failed'], 'only the newly discovered release is built');
+    delete process.env.BACKFILL_TEST_FAIL;
+    assert.deepEqual((await backfill(crawl)).results.map(r => r.status), ['built', 'failed'], 'failed releases are not silently retried');
+    const retried = await backfill({ ...crawl, retryFailed: true });
+    assert.deepEqual(retried.results.map(r => r.status), ['built', 'built']);
+    assert.equal(retried.results[0].fingerprint, built.results[0].fingerprint, 'published source snapshots are reused unchanged');
+    await assert.rejects(backfill({ ...crawl, inventory: { ...extended,
+        releases: extended.releases.map(r => r.tag === 'v2.20.0' ? { ...r, commit: 'a'.repeat(40) } : r),
+    } }), /source changed or disappeared/);
+    writeFileSync(join(incremental, 'books', built.results[0].fingerprint, 'index.html'), 'Corrupt cached payload');
+    await assert.rejects(backfill(crawl), /integrity check/);
+
     process.env.BACKFILL_TEST_FAIL = 'wait';
     process.env.BACKFILL_TEST_MARKER = join(root, 'building');
     const controller = new AbortController();

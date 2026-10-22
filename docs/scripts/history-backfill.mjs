@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { fingerprintBook, validateBookAssets, writeBookReport } from './history-books.mjs';
+import { fingerprintBook, validateBookAssets, validateBookResults, writeBookReport } from './history-books.mjs';
 import { git, options, repository } from './history-inventory.mjs';
 
 const exec = promisify(execFile);
@@ -33,7 +33,8 @@ function writeJson(path, data) {
     renameSync(path + '.tmp', path);
 }
 
-export async function backfill({ root, inventory, output, mdbook = 'mdbook', selected, grouping, signal, notify = console.log }) {
+export async function backfill({ root, inventory, output, mdbook = 'mdbook', selected, grouping, signal, notify = console.log,
+    reuse = false, retryFailed = false }) {
     validateInventory(inventory);
     const tags = selected ? selected.split(',') : inventory.releases.map(release => release.tag);
     if (!tags.length || new Set(tags).size !== tags.length || tags.some(tag => !inventory.releases.some(release => release.tag === tag))) {
@@ -51,8 +52,20 @@ export async function backfill({ root, inventory, output, mdbook = 'mdbook', sel
     try {
         if (existsSync(manifestPath)) {
             const previous = JSON.parse(readFileSync(manifestPath, 'utf8'));
-            if (previous.schema !== 1 || previous.inventoryFingerprint !== inventoryFingerprint) {
+            if (previous.schema !== 1 || !previous.inventory || previous.inventoryFingerprint !== digest(JSON.stringify(previous.inventory))) {
+                throw new Error('Invalid historical archive manifest');
+            }
+            if (previous.inventoryFingerprint !== inventoryFingerprint && !reuse) {
                 throw new Error('Output belongs to a different inventory; choose another --output directory');
+            }
+            if (reuse) {
+                validateInventory(previous.inventory);
+                validateBookResults(output, previous.inventory, previous.results);
+                for (const release of previous.inventory.releases) {
+                    if (inventory.releases.find(entry => entry.tag === release.tag)?.commit !== release.commit) {
+                        throw new Error(`Archived release source changed or disappeared: ${release.tag}`);
+                    }
+                }
             }
             results = previous.results;
         }
@@ -61,8 +74,11 @@ export async function backfill({ root, inventory, output, mdbook = 'mdbook', sel
         function checkpoint() {
             writeJson(manifestPath, { schema: 1, inventoryFingerprint, inventory, results });
         }
+        checkpoint();
         for (const release of inventory.releases.filter(release => tags.includes(release.tag))) {
             signal?.throwIfAborted();
+            const previous = results.find(result => result.tag === release.tag);
+            if (reuse && previous && (previous.status === 'built' || !retryFailed)) continue;
             notify(`Backfilling ${release.tag} (${release.commit.slice(0, 7)})`);
             const temporary = mkdtempSync(join(tmpdir(), 'caddy-book-backfill-'));
             const checkout = join(temporary, 'source');
