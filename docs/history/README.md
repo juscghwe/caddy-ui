@@ -5,8 +5,8 @@ It inventories historical releases, builds their books, and reports books that c
 share a snapshot. Pages publication, the version selector and UI Help links follow
 separately. The existing documentation deployment is unchanged.
 
-The [initial collection report](collection-report.md) covers v2.20.0–v3.6.0:
-44 candidates, 43 complete books and 40 byte-distinct snapshots. v3.0.0 is flagged
+The [collection report](collection-report.md) covers v2.20.0–v3.7.0:
+55 candidates, 54 complete books and 47 byte-distinct snapshots. v3.0.0 is flagged
 because its legacy screenshot fixture reports an unauthenticated installation;
 the renderer skips failed readiness checks and captures the wrong view. Its source
 and build log remain available for a reviewed repair or release-notes fallback.
@@ -47,7 +47,7 @@ compatible system Chromium, as with the existing screenshot command.
 ```sh
 npm run docs:history:backfill
 # Or select a binary and a subset of releases, including retries:
-npm run docs:history:backfill -- --mdbook /path/to/mdbook --releases v2.20.0,v3.6.0
+npm run docs:history:backfill -- --mdbook /path/to/mdbook --releases v2.20.0,v3.7.0
 ```
 
 Each release gets a detached temporary worktree. The builder installs its locked
