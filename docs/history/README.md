@@ -1,9 +1,9 @@
-# Historical documentation collection
+# Versioned online documentation
 
-This is the collection stage of [#288](https://github.com/zackwag/caddy-ui/issues/288).
-It inventories historical releases, builds their books, and reports books that can
-share a snapshot. Pages publication, the version selector and UI Help links follow
-separately. The existing documentation deployment is unchanged.
+This implements the online documentation part of
+[#288](https://github.com/zackwag/caddy-ui/issues/288): historical collection,
+incremental release crawling, Pages publication and version selection. The Help
+button inside caddy/ui and bundling offline documentation remain separate work.
 
 The [collection report](collection-report.md) covers v2.20.0–v3.7.0:
 55 candidates, 54 complete books and 47 byte-distinct snapshots. v3.0.0 is flagged
@@ -35,7 +35,7 @@ npm run docs:history:inventory -- --from v2.20.0 --to refs/remotes/upstream/main
 
 The command uses stable tags reachable from the selected source boundary.
 Review and commit inventory updates separately from tooling changes. Releases
-before v2.20.0 need a release-notes fallback in the future online resolver.
+before v2.20.0 appear in the selector with a release-notes fallback.
 
 ## Build the historical books
 
@@ -123,3 +123,95 @@ grouping decision with its review reason. No wording-based grouping is automatic
 Run `npm test --prefix docs` for inventory, grouping, integrity, failure/retry and
 existing documentation-tooling regressions. Keep the generated archive outside
 Git; archive it with its manifests and logs before discarding the local output.
+
+## Crawl future releases
+
+After refreshing the upstream refs, reuse an existing archive with:
+
+```sh
+npm run docs:history:crawl -- --to refs/remotes/upstream/main
+# Explicitly retry unavailable books, without rerendering successful snapshots:
+npm run docs:history:crawl -- --to refs/remotes/upstream/main --retry-failed true
+```
+
+The crawler discovers stable tags reachable from upstream `main`, refreshes each
+component's publication evidence, verifies the previous manifest and snapshot
+bytes, and builds only newly discovered releases. Changed or removed source tags
+and corrupted cached books stop the crawl. Known failed books remain recorded
+until an explicit retry; they get release-note links rather than current docs.
+The crawler succeeds with these documented fallbacks, while the lower-level
+`history:backfill` command retains its failure exit status for a failed render.
+
+The Documentation workflow runs on main updates, completion of the Release image
+workflow, a daily catch-up schedule, and manual dispatch.
+The image-workflow trigger catches frontend/backend publication records written
+after the release itself. Production runs queue rather than cancelling an active
+publication; PR runs can replace their own obsolete preview.
+
+Actions cache retains the raw archive. Keys change with release/publication
+records; development-only updates reuse the existing cache without saving another
+large copy. A manual retry saves a new cache generation. Cache availability is an
+optimization: a cold runner rebuilds from release tags, without needing release
+attachments or a generated Git branch. Such rerenders can change screenshot
+bytes, as described above; this is not permanent storage of original deployments.
+Download the preview and crawl diagnostics artifacts when retaining a particular
+render matters. Diagnostics contain the inventory, results, report and build logs.
+
+PRs and manual runs on feature branches produce preview artifacts. Only main-ref
+publication runs can deploy Pages, preserving main-only environment rules.
+A `workflow_run` trigger checks the source repository and checks out main,
+never the triggering run's code or artifacts. The build job has read-only repository
+permissions; Pages write permission belongs only to the deployment job.
+
+## Assemble and preview the published site
+
+Build the current development book normally, then assemble the site:
+
+```sh
+MDBOOK_OUTPUT__HTML__SITE_URL=/ mdbook build docs
+npm run docs:history:site -- --base /
+python3 -m http.server 8000 --bind 127.0.0.1 --directory .docs-site
+```
+
+Open `http://localhost:8000`. `mdbook serve` remains useful for editing prose;
+version navigation is attached by the publication assembler. For project Pages,
+use `--base /caddy-ui/` instead of `/`; the workflow derives this from the repository
+name and also supports a user/organization Pages root.
+
+The ignored `.docs-site/` directory contains:
+
+| Path relative to the Pages site | Purpose |
+| --- | --- |
+| `/` and `/dev/` | Clearly labelled development documentation; old root chapter URLs keep working |
+| `/documentation.json` | Release, image-publication and source-commit catalogue |
+| `/books/<sha256>/` | One complete book per selected source fingerprint |
+| `/versions/<tag>/` | Stable release permalink, resolving to its book or release notes |
+| `/resolve.html` | Installed-version resolver for future integration links |
+
+The assembler checks the complete archive before replacing an existing local site.
+It decorates copies with shared navigation; raw archived files and their hashes
+remain unchanged. Historical source links point at the source commit. Identical
+books share assets and search indexes, while the selected release is retained in
+the URL across chapter and search navigation. When a selected version lacks the
+current chapter, its home page explains the fallback.
+
+The resolver accepts either `?version=3.7.0` or independent
+`?frontend=3.6.8&backend=3.7.0` parameters. Matching component versions open the
+matching book; differing versions show two explicitly labelled choices. Component
+matching requires a recorded publication for that component. `dev`, `edge`, `beta`
+and their commit-suffixed build labels select development docs. Known releases
+without a book open their release notes; unknown stable versions open the release
+list, never a falsely version-matched development book. Malformed values show a
+version chooser. Optional `page=configuration.html` and a fragment preserve a
+chapter/anchor only when that chapter exists in the target book.
+
+After installing the shared dev package and its Playwright browser, run:
+
+```sh
+npm run test:docs:history:browser -- --site "$PWD/.docs-site" --base /
+```
+
+This checks the oldest/newest books, images and search, shared-book selection,
+chapter/anchor preservation, unavailable releases, mismatched component versions,
+development builds and the mobile version label. It also works under the project
+Pages prefix. The workflow performs this check before deploying.
