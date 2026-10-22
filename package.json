@@ -15,6 +15,7 @@
         "docs:history:backfill": "node docs/scripts/history-backfill.mjs",
         "docs:history:crawl": "node docs/scripts/history-crawl.mjs",
         "docs:history:site": "node docs/scripts/history-site.mjs",
+        "test:docs:history:browser": "npm run test:history:browser --prefix docs --",
         "docs:history:report": "node docs/scripts/history-report.mjs",
         "test:playground": "npm run test:playground --prefix dev --",
         "i18n:preview": "npm run i18n:preview --prefix dev --",
