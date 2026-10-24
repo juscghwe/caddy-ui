@@ -69,6 +69,7 @@ npm test --prefix src/frontend
 npm run lint --prefix src/frontend -- --max-warnings=0
 npm run lint:dev-caddy
 npm run test:dev-caddy
+npm run test:workflows
 ```
 
 Backend tests use Vitest for helpers and HTTP contracts. Frontend tests cover
