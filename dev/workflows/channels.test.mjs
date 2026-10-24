@@ -13,6 +13,25 @@ const publicationChannels = document => Object.values(document.jobs).flatMap(job
     (job.steps || []).flatMap(step => [...(step.run || '').matchAll(/publish-versions\.sh\s+(\S+)/g)]
         .map(match => match[1])));
 
+for (const channel of ['release', 'edge', 'beta']) {
+    test(`${channel} refreshes every published base image while retaining layer caching`, () => {
+        const components = [];
+        for (const [name, job] of Object.entries(workflow(channel).jobs)) {
+            for (const step of job.steps || []) {
+                if (!step.uses?.startsWith('docker/build-push-action@')) continue;
+                components.push(name);
+                assert.equal(step.with.pull, true, `${name}: resolves current base images, including intermediate and COPY stages`);
+                assert.notEqual(String(step.with['no-cache']).toLowerCase(), 'true', `${name}: ordinary cached layers remain usable`);
+                // Allow explicit scopes so channel/image cache isolation can follow.
+                assert.match(step.with['cache-from'], /^type=gha(?:,|$)/, `${name}: imports the layer cache`);
+                assert.match(step.with['cache-to'], /^type=gha(?:,|$)/, `${name}: exports the layer cache`);
+                assert.match(step.with['cache-to'], /(?:^|,)mode=max(?:,|$)/, `${name}: retains cached intermediate stages`);
+            }
+        }
+        assert.deepEqual(components.sort(), ['docker-backend', 'docker-frontend']);
+    });
+}
+
 test('version publication is detected through common shell command prefixes', () => {
     for (const prefix of ['.github/scripts/', 'bash .github/scripts/', './.github/scripts/', '"$GITHUB_WORKSPACE"/.github/scripts/']) {
         const document = { jobs: { versions: { steps: [{ run: `${prefix}publish-versions.sh beta` }] } } };
