@@ -49,7 +49,8 @@ select excerpts for the book. Never edit `src/backend/DOCKERHUB.md` or
 Work in a checkout of your fork. Install the prebuilt
 [mdBook 0.5.4 binary for your environment](https://github.com/rust-lang/mdBook/releases/tag/v0.5.4)
 and put it on your `PATH`. For a Linux devcontainer or WSL, use the Linux binary;
-for a native Windows terminal, use the Windows binary. Install Node.js 22.12 or newer
+for a native Windows terminal, use the Windows binary. Install Node.js 24, matching
+the tested major in `.node-version`,
 and run `npm ci --prefix docs --ignore-scripts` once before building or serving.
 
 From the repository root:
