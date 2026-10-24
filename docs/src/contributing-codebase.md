@@ -23,7 +23,11 @@ There are no npm workspaces or additional build orchestrators. The generated
 
 ## Getting set up
 
-Use Node.js 22.16+ or 24 and npm. From the repository root:
+Use Node.js 24 and npm. The tested Node major is recorded in `.node-version` and
+matches the backend runtime and frontend build stage in the production
+Dockerfiles. CI reads this file for application, integration, browser and
+documentation checks; other Node majors have no required compatibility coverage.
+From the repository root:
 
 ```sh
 npm ci --prefix src/backend
@@ -89,6 +93,12 @@ Real-Caddy integration and Chromium checks use the same root commands locally an
 in CI. Follow the [integration testing guide](development-caddy.md#automated-integration-and-browser-checks)
 for browser installation, fixture ownership and cleanup. The required `Test` check
 includes both application tests and the real-service/browser integration job.
+
+When upgrading the production Node major, update `.node-version` and the Node
+stages in both Dockerfiles together, run the checks on that runtime, and update
+the setup instructions. `test:workflows` rejects mismatched Docker Node stages or
+workflow setup that overrides the shared version. GitHub Actions' own internal
+JavaScript runtimes are managed by the actions and are separate from this policy.
 
 ## Verifying UI changes
 
