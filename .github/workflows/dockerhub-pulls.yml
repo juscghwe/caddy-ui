@@ -1,0 +1,63 @@
+name: Docker Hub pull history
+
+on:
+  schedule:
+    # Daily at 00:17 UTC; avoid the busiest top-of-hour scheduling window.
+    - cron: '17 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dockerhub-pull-history
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    # Forks can try it manually without duplicating the upstream daily worker.
+    if: github.repository == 'zackwag/caddy-ui' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      DATA_DIRECTORY: ${{ github.workspace }}/dockerhub-pulls
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
+      - name: Restore collected history
+        id: history
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { pathToFileURL } = await import('node:url');
+            const { restore } = await import(pathToFileURL(`${process.env.GITHUB_WORKSPACE}/dev/dockerhub/publish.mjs`));
+            const head = await restore({ github, context, directory: process.env.DATA_DIRECTORY });
+            core.setOutput('head', head);
+
+      - name: Collect pull counts
+        run: node dev/dockerhub/collect.mjs "$DATA_DIRECTORY"
+
+      - name: Persist history on the data branch
+        uses: actions/github-script@v8
+        env:
+          HISTORY_HEAD: ${{ steps.history.outputs.head }}
+        with:
+          script: |
+            const { pathToFileURL } = await import('node:url');
+            const { publish } = await import(pathToFileURL(`${process.env.GITHUB_WORKSPACE}/dev/dockerhub/publish.mjs`));
+            await publish({ github, context, directory: process.env.DATA_DIRECTORY, head: process.env.HISTORY_HEAD });
+
+      - name: Upload raw observations
+        uses: actions/upload-artifact@v7
+        with:
+          name: dockerhub-pull-history
+          path: ${{ env.DATA_DIRECTORY }}
+          if-no-files-found: error
+          retention-days: 30
