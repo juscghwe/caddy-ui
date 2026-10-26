@@ -45,10 +45,13 @@ release/grouping provenance before making it available to the crawler. Unchanged
 release inventories create no additional assets. Fresh retries can explicitly
 preserve updated diagnostics even when their outcome remains unchanged.
 
-The archive workflow also runs daily and after successful Release runs in the
-fork. The daily crawl discovers releases published upstream. Scheduled triggers
-become active only when the workflow and tooling reach the fork's default branch;
-manual dispatch from this branch can build the initial archive first. Writers
+The default-branch Documentation workflow can call this runner daily and after
+successful Release runs in the fork. The daily crawl discovers releases published
+upstream. Its `archive` job pins both the reusable workflow and `tooling_ref` to
+the same reviewed full commit, so the fork's default branch need not include the
+unfinished site integration. That small scheduling change must reach the fork's
+default branch before daily triggers become active. Manual dispatch from this
+branch can build the initial archive first. Writers
 queue under one concurrency group. The archive job rejects PR events and storage
 outside the owner's fork. Its write token is exposed only to restore/upload
 steps, never to historical build scripts. The archive tag is not a `v*` release.

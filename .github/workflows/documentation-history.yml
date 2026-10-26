@@ -13,17 +13,16 @@ on:
         default: false
   workflow_call:
     inputs:
+      tooling_ref:
+        description: Pinned tooling commit when called from a separate default-branch workflow
+        type: string
+        default: ''
       bootstrap:
         type: boolean
         default: false
       retry_failed:
         type: boolean
         default: false
-  schedule:
-    - cron: '17 4 * * *'
-  workflow_run:
-    workflows: [Release]
-    types: [completed]
 
 permissions:
   contents: read
@@ -45,7 +44,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref: ${{ github.event_name == 'workflow_run' && github.event.repository.default_branch || github.ref }}
+          ref: ${{ inputs.tooling_ref || github.sha }}
 
       - uses: actions/setup-node@v7
         with:
@@ -103,7 +102,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RETRY_FAILED: ${{ inputs.retry_failed || false }}
-        run: node docs/scripts/history-archive.mjs publish --repository "$GITHUB_REPOSITORY" --source-commit "$GITHUB_SHA" --force "$RETRY_FAILED"
+        run: node docs/scripts/history-archive.mjs publish --repository "$GITHUB_REPOSITORY" --source-commit "$(git rev-parse HEAD)" --force "$RETRY_FAILED"
 
       - name: Retain diagnostics even when a build or upload fails
         if: always()
