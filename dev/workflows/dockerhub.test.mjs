@@ -4,11 +4,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { parse } from 'yaml';
-import { emptyHistory, repository } from '../dockerhub/collect.mjs';
+import { emptyHistory, repositories } from '../dockerhub/collect.mjs';
 import { dataBranch, publish, restore } from '../dockerhub/publish.mjs';
 
 const sample = observedAt => ({ observedAt, pullCount: 85000 });
-const history = (...samples) => ({ version: 1, repository, samples });
+const history = (...samples) => ({ version: 1, repositories: Object.fromEntries(repositories.map(repository => [repository, [...samples]])) });
 const day = value => new Date(`2026-10-${value}T00:17:00.000Z`);
 
 const context = { repo: { owner: 'example', repo: 'caddy-ui' } };
