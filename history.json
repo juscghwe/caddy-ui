@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "repositories": {
+    "zackwag/caddy-ui-backend": [
+      {
+        "observedAt": "2026-10-26T14:45:22.153Z",
+        "pullCount": 87931
+      }
+    ],
+    "zackwag/caddy-ui-frontend": [
+      {
+        "observedAt": "2026-10-26T14:45:22.153Z",
+        "pullCount": 86530
+      }
+    ]
+  }
+}
