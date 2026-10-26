@@ -25,6 +25,7 @@ A modern, self-hosted web interface for managing your [Caddy](https://caddyserve
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![Frontend](https://img.shields.io/badge/frontend-React-61dafb?style=flat-square)
 ![Backend](https://img.shields.io/badge/backend-Node.js-339933?style=flat-square)
+[![Backend pulls](https://img.shields.io/docker/pulls/zackwag/caddy-ui-backend?style=flat-square&label=backend%20pulls)](https://hub.docker.com/r/zackwag/caddy-ui-backend)
 
 <details>
 <summary>Docker image roles</summary>
