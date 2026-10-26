@@ -21,43 +21,15 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: write
-    env:
-      DATA_DIRECTORY: ${{ github.workspace }}/dockerhub-pulls
     steps:
       - uses: actions/checkout@v7
         with:
-          persist-credentials: false
+          # The worktree publisher uses this job's short-lived token to push,
+          # matching the existing versions-branch publication workflow.
+          persist-credentials: true
       - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
 
-      - name: Restore collected history
-        id: history
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const { pathToFileURL } = await import('node:url');
-            const { restore } = await import(pathToFileURL(`${process.env.GITHUB_WORKSPACE}/dev/dockerhub/publish.mjs`));
-            const head = await restore({ github, context, directory: process.env.DATA_DIRECTORY });
-            core.setOutput('head', head);
-
-      - name: Collect pull counts
-        run: node dev/dockerhub/collect.mjs "$DATA_DIRECTORY"
-
-      - name: Persist history on the data branch
-        uses: actions/github-script@v8
-        env:
-          HISTORY_HEAD: ${{ steps.history.outputs.head }}
-        with:
-          script: |
-            const { pathToFileURL } = await import('node:url');
-            const { publish } = await import(pathToFileURL(`${process.env.GITHUB_WORKSPACE}/dev/dockerhub/publish.mjs`));
-            await publish({ github, context, directory: process.env.DATA_DIRECTORY, head: process.env.HISTORY_HEAD });
-
-      - name: Upload raw observations
-        uses: actions/upload-artifact@v7
-        with:
-          name: dockerhub-pull-history
-          path: ${{ env.DATA_DIRECTORY }}
-          if-no-files-found: error
-          retention-days: 30
+      - name: Collect and publish pull history
+        run: bash .github/scripts/dockerhub-pulls/publish.sh

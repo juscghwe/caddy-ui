@@ -5,7 +5,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { collect, emptyHistory, repositories, run, validateHistory } from '../dockerhub/collect.mjs';
+import { collect, emptyHistory, repositories, run, validateHistory } from '../../.github/scripts/dockerhub-pulls/collect.mjs';
 
 const sample = (observedAt, count = 85000) => ({ observedAt, pullCount: count });
 const history = (...samples) => ({ version: 1, repositories: Object.fromEntries(repositories.map(repository => [repository, [...samples]])) });
