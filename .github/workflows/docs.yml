@@ -36,9 +36,9 @@ jobs:
     if: github.repository == 'juscghwe/caddy-ui' && ((github.event_name == 'workflow_dispatch' && inputs.archive_history) || github.event_name == 'schedule' || (github.event_name == 'workflow_run' && github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.conclusion == 'success'))
     permissions:
       contents: write
-    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@a1fe0791e21b1df45618a41e38c40142a4bd60ba
+    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@1d01a539cfbbce29750e0820cdf194cc56df3765
     with:
-      tooling_ref: a1fe0791e21b1df45618a41e38c40142a4bd60ba
+      tooling_ref: 1d01a539cfbbce29750e0820cdf194cc56df3765
       bootstrap: ${{ inputs.bootstrap || false }}
       retry_failed: ${{ inputs.retry_failed || false }}
 
