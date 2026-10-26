@@ -13,6 +13,9 @@ const digest = value => createHash('sha256').update(value).digest('hex');
 const releaseTag = /^v\d+\.\d+\.\d+$/;
 const commitId = /^[a-f0-9]{40}$/;
 
+export const requiresBuild = (previous, { reuse = false, retryFailed = false } = {}) =>
+    !reuse || !previous || (previous.status !== 'built' && retryFailed);
+
 export function validateInventory(inventory) {
     if (inventory.schema !== 1 || inventory.repository !== repository || !Array.isArray(inventory.releases)
         || !commitId.test(inventory.throughCommit) || !commitId.test(inventory.publicationsCommit)
@@ -78,7 +81,7 @@ export async function backfill({ root, inventory, output, mdbook = 'mdbook', sel
         for (const release of inventory.releases.filter(release => tags.includes(release.tag))) {
             signal?.throwIfAborted();
             const previous = results.find(result => result.tag === release.tag);
-            if (reuse && previous && (previous.status === 'built' || !retryFailed)) continue;
+            if (!requiresBuild(previous, { reuse, retryFailed })) continue;
             notify(`Backfilling ${release.tag} (${release.commit.slice(0, 7)})`);
             const temporary = mkdtempSync(join(tmpdir(), 'caddy-book-backfill-'));
             const checkout = join(temporary, 'source');

@@ -42,7 +42,8 @@ and build/failure counts. A checkpoint is uploaded only after its payload, and
 older assets are retained. Each bundle is unpacked and verified before upload;
 restores verify the payload, every snapshot fingerprint, asset references and
 release/grouping provenance before making it available to the crawler. Unchanged
-release inventories create no additional assets. Fresh retries can explicitly
+release inventories create no additional assets and skip installing rendering
+dependencies and Chromium. Fresh retries can explicitly
 preserve updated diagnostics even when their outcome remains unchanged.
 
 The default-branch Documentation workflow can call this runner daily and after

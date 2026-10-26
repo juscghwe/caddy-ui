@@ -79,7 +79,25 @@ jobs:
           tar -xzf "$RUNNER_TEMP/mdbook.tar.gz" -C "$RUNNER_TEMP/mdbook-bin"
           echo "$RUNNER_TEMP/mdbook-bin" >> "$GITHUB_PATH"
 
+      - name: Check whether any historical render is needed
+        id: rendering
+        env:
+          INVENTORY_FILE: ${{ runner.temp }}/documentation-releases.json
+          RETRY_FAILED: ${{ inputs.retry_failed || false }}
+        run: |
+          node --input-type=module <<'JS'
+          import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+          import { requiresBuild } from './docs/scripts/history-backfill.mjs';
+          const { releases } = JSON.parse(readFileSync(process.env.INVENTORY_FILE, 'utf8'));
+          const previous = existsSync('.docs-history/backfill.json')
+              ? JSON.parse(readFileSync('.docs-history/backfill.json', 'utf8')).results : [];
+          const needed = releases.some(release => requiresBuild(previous.find(result => result.tag === release.tag),
+              { reuse: true, retryFailed: process.env.RETRY_FAILED === 'true' }));
+          appendFileSync(process.env.GITHUB_OUTPUT, `needed=${needed}\n`);
+          JS
+
       - name: Install historical rendering support
+        if: steps.rendering.outputs.needed == 'true'
         run: |
           npm ci --prefix dev --ignore-scripts
           npm exec --prefix dev -- playwright install --with-deps chromium
