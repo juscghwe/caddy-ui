@@ -4,18 +4,47 @@ on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
   workflow_dispatch:
+    inputs:
+      archive_history:
+        description: Preserve historical books without building or deploying Pages
+        type: boolean
+        default: false
+      bootstrap:
+        description: Allow the initial archive to be created if none exists
+        type: boolean
+        default: false
+      retry_failed:
+        description: Retry failed historical books while preserving successful snapshots
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: documentation-${{ github.ref }}
-  cancel-in-progress: true
+  group: documentation-${{ github.ref }}-${{ (inputs.archive_history || github.event_name == 'schedule' || github.event_name == 'workflow_run') && 'archive' || 'site' }}
+  cancel-in-progress: ${{ !inputs.archive_history && github.event_name != 'schedule' && github.event_name != 'workflow_run' }}
 
 jobs:
+  archive:
+    if: github.repository == 'juscghwe/caddy-ui' && ((github.event_name == 'workflow_dispatch' && inputs.archive_history) || github.event_name == 'schedule' || (github.event_name == 'workflow_run' && github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.conclusion == 'success'))
+    permissions:
+      contents: write
+    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@a1fe0791e21b1df45618a41e38c40142a4bd60ba
+    with:
+      tooling_ref: a1fe0791e21b1df45618a41e38c40142a4bd60ba
+      bootstrap: ${{ inputs.bootstrap || false }}
+      retry_failed: ${{ inputs.retry_failed || false }}
+
   build:
     name: Build mdBook
+    if: ${{ !inputs.archive_history && github.event_name != 'schedule' && github.event_name != 'workflow_run' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -95,7 +124,7 @@ jobs:
 
   deploy:
     name: Deploy documentation
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'schedule' && github.event_name != 'workflow_run' && !inputs.archive_history
     needs: build
     runs-on: ubuntu-latest
     permissions:
