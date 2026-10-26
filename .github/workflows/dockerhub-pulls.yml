@@ -1,9 +1,8 @@
-name: Docker Hub pull history
+name: Docker Hub pull history (validation)
 
 on:
-  schedule:
-    # Daily at 00:17 UTC; avoid the busiest top-of-hour scheduling window.
-    - cron: '17 0 * * *'
+  push:
+    branches: [validation/dockerhub-pulls]
   workflow_dispatch:
 
 permissions:
@@ -16,7 +15,7 @@ concurrency:
 jobs:
   collect:
     # Forks can try it manually without duplicating the upstream daily worker.
-    if: github.repository == 'zackwag/caddy-ui' || github.event_name == 'workflow_dispatch'
+    if: github.repository == 'juscghwe/caddy-ui'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
