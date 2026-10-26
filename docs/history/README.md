@@ -5,11 +5,64 @@ This implements the online documentation part of
 incremental release crawling, Pages publication and version selection. The Help
 button inside caddy/ui and bundling offline documentation remain separate work.
 
-The [collection report](collection-report.md) covers v2.20.0–v3.7.0:
-55 candidates, 54 complete books and 47 byte-distinct snapshots. v3.0.0 is flagged
+The [collection report](collection-report.md) records an earlier v2.20.0–v3.7.0
+backfill: 55 candidates, 54 complete books and 47 byte-distinct snapshots. It is
+build evidence, not confirmation that the generated files are still retained.
+A fresh archive run records its own current results. v3.0.0 was flagged
 because its legacy screenshot fixture reports an unauthenticated installation;
-the renderer skips failed readiness checks and captures the wrong view. Its source
-and build log remain available for a reviewed repair or release-notes fallback.
+the renderer skips failed readiness checks and captures the wrong view. Failed
+renders retain their source identity and logs for a reviewed repair or fallback.
+
+## Preserve books without deploying the site
+
+Generated books are never committed. The Historical documentation archive Action
+stores complete `.docs-history/` bundles in the dedicated
+[`documentation-history-archive` prerelease in the owner's fork](https://github.com/juscghwe/caddy-ui/releases/tag/documentation-history-archive).
+This is storage for future docs integration, not an application release or a Pages
+deployment. Git retains the tooling, inventory evidence and grouping decisions.
+
+Bootstrap from the working branch through the existing Documentation workflow:
+
+```sh
+gh workflow run docs.yml --repo juscghwe/caddy-ui \
+  --ref docs/historical-book-inventory \
+  -f archive_history=true -f bootstrap=true
+```
+
+`archive_history=true` skips both the normal site build and Pages deployment.
+Later manual crawls use the same command without `bootstrap=true`. Add
+`-f retry_failed=true` to explicitly retry failed renders; successful snapshots
+are always reused after integrity checks. Bootstrap permits an absent archive,
+but never bypasses a corrupted archive or an authentication failure.
+
+Each immutable `history-<sha256>.tar.gz` contains raw books, `backfill.json`,
+`groups.json`, the grouping configuration, report and build logs. Its matching
+JSON checkpoint records the complete payload's SHA-256, size, tool-source commit
+and build/failure counts. A checkpoint is uploaded only after its payload, and
+older assets are retained. Each bundle is unpacked and verified before upload;
+restores verify the payload, every snapshot fingerprint, asset references and
+release/grouping provenance before making it available to the crawler. Unchanged
+release inventories create no additional assets. Fresh retries can explicitly
+preserve updated diagnostics even when their outcome remains unchanged.
+
+The archive workflow also runs daily and after successful Release runs in the
+fork. The daily crawl discovers releases published upstream. Scheduled triggers
+become active only when the workflow and tooling reach the fork's default branch;
+manual dispatch from this branch can build the initial archive first. Writers
+queue under one concurrency group. The archive job rejects PR events and storage
+outside the owner's fork. Its write token is exposed only to restore/upload
+steps, never to historical build scripts. The archive tag is not a `v*` release.
+
+Restore a saved archive locally with GitHub CLI, Node 24, the documentation
+dependencies, Python 3.12+ and `tar` installed:
+
+```sh
+node docs/scripts/history-archive.mjs restore --repository juscghwe/caddy-ui
+```
+
+Restore requires an absent `.docs-history/` directory. Actions caches and
+diagnostic artifacts are not the durable archive. A normal crawl fails if its
+preserved archive is missing rather than silently recreating different renders.
 
 ## Release and image evidence
 
@@ -148,14 +201,14 @@ The image-workflow trigger catches frontend/backend publication records written
 after the release itself. Production runs queue rather than cancelling an active
 publication; PR runs can replace their own obsolete preview.
 
-Actions cache retains the raw archive. Keys change with release/publication
+The existing site-preview prototype also caches raw books. Keys change with release/publication
 records; development-only updates reuse the existing cache without saving another
 large copy. A manual retry saves a new cache generation. Cache availability is an
 optimization: a cold runner rebuilds from release tags, without needing release
 attachments or a generated Git branch. Such rerenders can change screenshot
 bytes, as described above; this is not permanent storage of original deployments.
-Download the preview and crawl diagnostics artifacts when retaining a particular
-render matters. Diagnostics contain the inventory, results, report and build logs.
+For preservation, use the release-asset archive above. Preview and diagnostic
+artifacts remain useful for debugging and expire according to Actions retention.
 
 PRs and manual runs on feature branches produce preview artifacts. Only main-ref
 publication runs can deploy Pages, preserving main-only environment rules.
