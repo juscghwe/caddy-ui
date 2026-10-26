@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import test from 'node:test';
-import { publishArchive, restoreArchive } from './history-archive.mjs';
+import { githubStore, publishArchive, restoreArchive } from './history-archive.mjs';
 import { fingerprintBook, writeBookReport } from './history-books.mjs';
 
 function fixture(t) {
@@ -113,4 +113,44 @@ test('corrupted local snapshots cannot replace a preserved archive', t => {
     writeFileSync(join(f.directory, 'books', f.fingerprint, 'index.html'), 'Changed bytes');
     assert.throws(() => publishArchive(f.settings), /integrity check/);
     assert.equal(f.assets.length, 2);
+});
+
+test('GitHub storage paginates assets without newer CLI flags and distinguishes missing releases from access errors', t => {
+    const f = fixture(t);
+    const bin = join(f.root, 'bin');
+    mkdirSync(bin);
+    const executable = join(bin, 'gh');
+    writeFileSync(executable, `#!${process.execPath}
+const path = process.argv[3];
+if (process.env.ARCHIVE_TEST_STATUS) {
+    console.error('gh: fixture failure (HTTP ' + process.env.ARCHIVE_TEST_STATUS + ')');
+    process.exit(1);
+}
+if (process.argv[2] !== 'api' || path.startsWith('--')) process.exit(2);
+if (path.endsWith('/releases/tags/documentation-history-archive')) {
+    console.log(JSON.stringify({ id: 1 }));
+} else {
+    const match = /assets\\?per_page=100&page=([123])$/.exec(path);
+    if (!match) process.exit(2);
+    const page = Number(match[1]);
+    console.log(JSON.stringify(Array.from({ length: page < 3 ? 100 : 1 }, (_, i) => ({
+        id: (page - 1) * 100 + i, name: 'fixture-' + ((page - 1) * 100 + i),
+    }))));
+}
+`);
+    chmodSync(executable, 0o755);
+    const previousPath = process.env.PATH;
+    process.env.PATH = bin + ':' + previousPath;
+    t.after(() => {
+        process.env.PATH = previousPath;
+        delete process.env.ARCHIVE_TEST_STATUS;
+    });
+    const store = githubStore('juscghwe/caddy-ui');
+    const assets = store.list();
+    assert.equal(assets.length, 201);
+    assert.equal(assets.at(-1).id, 200);
+    process.env.ARCHIVE_TEST_STATUS = '404';
+    assert.equal(store.list(), null);
+    process.env.ARCHIVE_TEST_STATUS = '403';
+    assert.throws(() => store.list(), /HTTP 403/);
 });

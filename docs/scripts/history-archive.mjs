@@ -175,7 +175,17 @@ export function githubStore(repository) {
     const store = {
         list() {
             const current = release();
-            return current ? JSON.parse(gh(['api', '--paginate', '--slurp', `repos/${repository}/releases/${current.id}/assets?per_page=100`])).flat() : null;
+            if (!current) {
+                return null;
+            }
+            const assets = [];
+            for (let page = 1; ; page++) {
+                const batch = JSON.parse(gh(['api', `repos/${repository}/releases/${current.id}/assets?per_page=100&page=${page}`]));
+                assets.push(...batch);
+                if (batch.length < 100) {
+                    return assets;
+                }
+            }
         },
         download(asset, destination) {
             const file = openSync(destination, 'w');
@@ -189,7 +199,7 @@ export function githubStore(repository) {
         upload(path, sourceCommit) {
             if (!release()) {
                 gh(['release', 'create', archiveTag, '--repo', repository, '--target', sourceCommit,
-                    '--title', 'Historical documentation archive', '--prerelease', '--latest=false',
+                    '--title', 'Historical documentation archive', '--prerelease',
                     '--notes', 'Backfilled documentation books, provenance and logs. Archive storage only; no application release or Pages deployment.']);
             }
             const existing = store.list().find(asset => asset.name === basename(path));
