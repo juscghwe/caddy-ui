@@ -23,7 +23,7 @@ There are no npm workspaces or additional build orchestrators. The generated
 
 ## Getting set up
 
-Use Node.js 24 and npm. The tested Node major is recorded in `.node-version` and
+Use Node.js 26 and npm. The tested Node major is recorded in `.node-version` and
 matches the backend runtime and frontend build stage in the production
 Dockerfiles. CI reads this file for application, integration, browser and
 documentation checks; other Node majors have no required compatibility coverage.
@@ -100,31 +100,14 @@ in CI. Follow the [integration testing guide](development-caddy.md#automated-int
 for browser installation, fixture ownership and cleanup. The required `Test` check
 includes both application tests and the real-service/browser integration job.
 
-When upgrading the production Node major, update `.node-version` and the Node
-stages in both Dockerfiles together, run the checks on that runtime, and update
-the setup instructions. `test:workflows` rejects mismatched Docker Node stages,
+When upgrading the production Node major, update `.node-version`, the Node
+stages in both Dockerfiles and `.devcontainer/devcontainer.example.json` together,
+run the checks on that runtime, and update the setup instructions.
+`test:workflows` rejects mismatched Docker and Dev Container Node stages,
 workflow setup that overrides the shared version, and package `engines.node`
 fields that don't require that major. Package manifests don't need an `engines`
 field; `.node-version` is the source of truth. GitHub Actions' own internal
 JavaScript runtimes are managed by the actions and are separate from this policy.
-
-Node 26 is a manually requested compatibility candidate while `.node-version`
-and the production Dockerfiles remain on Node 24. Select **Run workflow** on the
-Test workflow and enable `node26_trial`, or dispatch from a working branch:
-
-```sh
-gh workflow run test.yml --repo juscghwe/caddy-ui \
-  --ref ci/node26-compatibility-trial -f node26_trial=true
-```
-
-The trial runs application/tooling tests, lint, real-Caddy and browser scenarios,
-frontend/documentation builds, and local Alpine builds of both images. Candidate
-Dockerfiles are generated under the runner's temporary directory; no images are
-pushed and no shared publication caches are exported. A failure stays visible;
-there is no automatic rerun on Node 24 that could disguise a Node 26 failure.
-Normal PR checks continue to use the production runtime. The runtime contract
-allows only this manual workflow to select Node 26 explicitly. Review the trial
-results before proposing a coordinated production upgrade.
 
 ## Verifying UI changes
 
