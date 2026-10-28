@@ -1,0 +1,27 @@
+name: Validate restored docs archive reference
+
+on:
+  push:
+    branches: [validation/docs-archive-reference]
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    # GitHub resolves this workflow before evaluating if. Validate the exact
+    # production reference without crawling releases or writing archive data.
+    if: github.repository == 'juscghwe/caddy-ui' && github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@1d01a539cfbbce29750e0820cdf194cc56df3765
+    with:
+      tooling_ref: 1d01a539cfbbce29750e0820cdf194cc56df3765
+      bootstrap: false
+      retry_failed: false
+
+  reference-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - run: echo 'GitHub loaded the restored pinned archive workflow successfully.'
