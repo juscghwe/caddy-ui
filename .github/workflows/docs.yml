@@ -4,24 +4,68 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  schedule:
+    - cron: '17 4 * * *'
   workflow_dispatch:
+    inputs:
+      archive_history:
+        description: Archive books in the fork only, without building or deploying Pages
+        type: boolean
+        default: false
+      bootstrap:
+        description: Allow creation of the initial historical archive
+        type: boolean
+        default: false
+      retry_failed:
+        description: Retry unavailable historical books (successful snapshots stay unchanged)
+        type: boolean
+        default: false
+
+# Public archive storage and Pages hosting have separate owners. This is a
+# read-only dependency; repository owners can select a reviewed replacement.
+env:
+  DOCUMENTATION_ARCHIVE_REPOSITORY: ${{ vars.DOCS_ARCHIVE_REPOSITORY || 'juscghwe/caddy-ui' }}
 
 permissions:
   contents: read
 
 concurrency:
-  group: documentation-${{ github.ref }}
-  cancel-in-progress: true
+  group: documentation-${{ github.ref }}-${{ github.repository == 'juscghwe/caddy-ui' && (inputs.archive_history || github.event_name == 'schedule' || github.event_name == 'workflow_run') && 'archive' || 'site' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  archive:
+    if: github.repository == 'juscghwe/caddy-ui' && ((github.event_name == 'workflow_dispatch' && inputs.archive_history) || github.event_name == 'schedule' || (github.event_name == 'workflow_run' && github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.conclusion == 'success'))
+    permissions:
+      contents: write
+    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@1d01a539cfbbce29750e0820cdf194cc56df3765
+    with:
+      tooling_ref: 1d01a539cfbbce29750e0820cdf194cc56df3765
+      bootstrap: ${{ inputs.bootstrap || false }}
+      retry_failed: ${{ inputs.retry_failed || false }}
+
   build:
     name: Build mdBook
+    # The fork's scheduled runs collect books; the upstream repository publishes
+    # them. workflow_run always builds trusted main, never triggering artifacts.
+    if: >-
+      !inputs.archive_history &&
+      (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'schedule' && !github.event.repository.fork) ||
+      (github.event_name == 'workflow_run' && !github.event.repository.fork &&
+      github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || github.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v7
@@ -56,6 +100,18 @@ jobs:
       - name: Install Chromium
         run: npm exec --prefix dev -- playwright install --with-deps chromium
 
+      - name: Restore preserved release books
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node docs/scripts/history-archive.mjs restore --repository "$DOCUMENTATION_ARCHIVE_REPOSITORY"
+
+      - name: Discover released documentation and image publications
+        env:
+          INVENTORY_FILE: ${{ runner.temp }}/documentation-releases.json
+        run: |
+          git fetch https://github.com/zackwag/caddy-ui.git --tags refs/heads/main:refs/remotes/upstream/main refs/heads/versions:refs/remotes/upstream/versions
+          node docs/scripts/history-inventory.mjs --to refs/remotes/upstream/main --output "$INVENTORY_FILE"
+
       - name: Generate screenshots
         run: npm run docs:screenshots
 
@@ -66,15 +122,17 @@ jobs:
         run: npm test --prefix docs
 
       - name: Build documentation
-        env:
-          REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: |
-          if [[ "$REPOSITORY_NAME" == *.github.io ]]; then
-            export MDBOOK_OUTPUT__HTML__SITE_URL="/"
-          else
-            export MDBOOK_OUTPUT__HTML__SITE_URL="/$REPOSITORY_NAME/"
-          fi
-          mdbook build docs
+          MDBOOK_OUTPUT__HTML__SITE_URL=/ mdbook build docs
+          case "${GITHUB_REPOSITORY#*/}" in
+            *.github.io) DOCS_BASE=/ ;;
+            *) DOCS_BASE="/${GITHUB_REPOSITORY#*/}/" ;;
+          esac
+          echo "DOCS_BASE=$DOCS_BASE" >> "$GITHUB_ENV"
+          node docs/scripts/history-site.mjs --base "$DOCS_BASE" --inventory "$RUNNER_TEMP/documentation-releases.json"
+
+      - name: Check versioned documentation in Chromium
+        run: npm run test:history:browser --prefix docs -- --site "$PWD/.docs-site" --base "$DOCS_BASE"
 
       - name: Validate unchanged Docker Hub routing
         run: |
@@ -85,17 +143,30 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: documentation-preview
-          path: docs/book
+          path: .docs-site
+          include-hidden-files: true
+
+      - name: Retain crawl diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: documentation-history-report
+          include-hidden-files: true
+          path: |
+            .docs-history/backfill.json
+            .docs-history/report.md
+            .docs-history/groups.json
+            .docs-history/logs
 
       - name: Upload Pages artifact
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !github.event.repository.fork
         uses: actions/upload-pages-artifact@v5
         with:
-          path: docs/book
+          path: .docs-site
 
   deploy:
     name: Deploy documentation
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !github.event.repository.fork && !inputs.archive_history
     needs: build
     runs-on: ubuntu-latest
     permissions:
