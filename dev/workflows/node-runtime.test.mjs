@@ -18,6 +18,11 @@ for (const component of ['backend', 'frontend']) {
     });
 }
 
+test('the example Dev Container uses the tested Node major', () => {
+    const container = JSON.parse(readFileSync(new URL('.devcontainer/devcontainer.example.json', root), 'utf8'));
+    assert.match(container.image, new RegExp(`^node:${version}(?=[.\\s-]|$)`), 'Dev Container image follows .node-version');
+});
+
 test('package manifests do not declare a different Node runtime', () => {
     const manifests = ['package.json', 'src/backend/package.json', 'src/frontend/package.json', 'dev/package.json', 'docs/package.json'];
     for (const manifest of manifests) {
