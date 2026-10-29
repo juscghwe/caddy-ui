@@ -52,7 +52,7 @@ test('Pages deploys a successful build despite skipped ancestors, but never a fa
 
 test('release-driven documentation keeps collection in the fork and makes publication wait for it', () => {
     const group = workflow.match(/^ {2}group: documentation-\$\{\{ github.ref \}\}-\$\{\{ (.+) \}\}$/m)[1];
-    assert.doesNotMatch(workflow, /^ {2}schedule:/m, 'collection and publication cannot race on independent cron triggers');
+    assert.match(workflow, /^ {2}schedule:\n {4}- cron: '17 4 \* \* 1'$/m);
     assert.doesNotMatch(workflow, /archive_request|^run-name:/m);
     assert.match(job('build'), /^ {4}needs: \[archive, collect\]/m);
     for (const event of ['push', 'workflow_run']) {
@@ -87,6 +87,20 @@ test('release-driven documentation keeps collection in the fork and makes public
     }
     assert.equal(eligible('deploy', context('push', { fork: true })), false);
     assert.equal(eligible('deploy', context('push')), true);
+});
+
+test('weekly catch-up collects before publishing only in upstream and blocks on failed collection', () => {
+    assert.equal(eligible('collect', context('schedule')), true);
+    assert.equal(eligible('build', context('schedule', { collection: 'success' })), true);
+    assert.equal(eligible('deploy', context('schedule')), true);
+    assert.equal(eligible('collect', context('schedule', { ref: 'refs/heads/feature' })), false);
+    for (const collection of ['failure', 'cancelled']) {
+        assert.equal(eligible('build', context('schedule', { collection })), false);
+    }
+    for (const name of ['archive', 'collect', 'build', 'deploy']) {
+        assert.equal(eligible(name, context('schedule', { fork: true })), false, 'the fork has no independent scheduled work');
+    }
+    assert.doesNotMatch(archiveWorkflow, /^ {2}schedule:/m);
 });
 
 test('release completion cannot publish foreign artifacts or run archive writes from PRs', () => {

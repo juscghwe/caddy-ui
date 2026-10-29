@@ -7,6 +7,9 @@ on:
   workflow_run:
     workflows: [Release]
     types: [completed]
+  # Upstream catch-up uses the same collect-then-publish path, never a timed race.
+  schedule:
+    - cron: '17 4 * * 1'
   workflow_dispatch:
     inputs:
       collect_history:
@@ -55,7 +58,7 @@ jobs:
     name: Collect release books in the archive fork
     if: >-
       github.repository == 'zackwag/caddy-ui' && github.ref == 'refs/heads/main' && !inputs.archive_history &&
-      ((github.event_name == 'workflow_dispatch' && inputs.collect_history) ||
+      (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.collect_history) ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.head_repository.full_name == github.repository &&
       github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
@@ -94,6 +97,7 @@ jobs:
       (needs.archive.result == 'success' || needs.archive.result == 'skipped') &&
       (needs.collect.result == 'success' || needs.collect.result == 'skipped') &&
       (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'schedule' && github.repository == 'zackwag/caddy-ui') ||
       (github.event_name == 'workflow_run' && !github.event.repository.fork &&
       github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
