@@ -24,9 +24,23 @@ export async function collectHistory({ repository, timeoutMs = 95 * 60 * 1000, p
     const url = `https://github.com/${repository}/actions/runs/${id}`;
     notify(`Requested archive collection: ${url}`);
     let previous;
+    let pollFailures = 0;
     try {
         while (true) {
-            const run = JSON.parse(await api([`repos/${repository}/actions/runs/${id}`]));
+            let response;
+            try {
+                response = await api([`repos/${repository}/actions/runs/${id}`]);
+                pollFailures = 0;
+            } catch (error) {
+                bounded.throwIfAborted();
+                // Reads are safe to retry. Three consecutive failures are
+                // tolerated; a fourth stops publication. Never redispatch.
+                if (++pollFailures >= 4) throw error;
+                notify(`Archive status lookup failed (${pollFailures}/4); retrying: ${url}`);
+                await sleep(pollMs, undefined, { signal: bounded });
+                continue;
+            }
+            const run = JSON.parse(response);
             if (run?.id !== id || run.event !== 'workflow_dispatch' || run.head_branch !== 'main'
                 || !['queued', 'in_progress', 'completed', 'waiting', 'pending', 'requested'].includes(run.status)) {
                 throw new Error('Invalid dispatched archive workflow run');
