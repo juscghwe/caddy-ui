@@ -1,5 +1,4 @@
 name: Documentation
-run-name: ${{ inputs.archive_request || github.event.pull_request.title || github.event.head_commit.message || github.workflow }}
 
 on:
   pull_request:
@@ -14,10 +13,6 @@ on:
         description: Collect release books in the archive fork before publishing (upstream only)
         type: boolean
         default: false
-      archive_request:
-        description: Correlation ID supplied by the upstream release publisher
-        type: string
-        default: ''
       archive_history:
         description: Archive books in the fork only, without building or deploying Pages
         type: boolean
@@ -80,13 +75,12 @@ jobs:
           # Fine-grained token: Actions write on the archive fork only. It is
           # never passed to historical renderers or the publishing job.
           GH_TOKEN: ${{ secrets.DOCS_ARCHIVE_DISPATCH_TOKEN }}
-          ARCHIVE_REQUEST: docs-archive-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo '::error::Configure DOCS_ARCHIVE_DISPATCH_TOKEN with Actions write on the archive fork.'
             exit 1
           fi
-          node docs/scripts/history-collect.mjs --repository "$DOCUMENTATION_ARCHIVE_REPOSITORY" --request "$ARCHIVE_REQUEST"
+          node docs/scripts/history-collect.mjs --repository "$DOCUMENTATION_ARCHIVE_REPOSITORY"
 
   build:
     name: Build mdBook

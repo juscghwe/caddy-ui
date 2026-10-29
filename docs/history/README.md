@@ -58,9 +58,8 @@ archive tag is not a `v*` release. There is no scheduled collection or deploymen
 
 After a successful `Release` run in `zackwag/caddy-ui`, the upstream Documentation
 workflow dispatches `docs.yml` on the archive fork's `main` with
-`archive_history=true` and an `archive_request` identifying the upstream run and
-attempt. Collection and archive storage stay in the fork. The upstream workflow
-waits for the matching dispatched run to complete successfully before its build
+`archive_history=true` and `return_run_details=true` on the dispatch API. Collection and archive storage stay in the fork. The upstream workflow
+polls the returned `workflow_run_id` directly until that run succeeds before its build
 job restores the archive, assembles the site and deploys Pages. It never accepts
 an unrelated successful crawl as completion of its own request. Collection
 failure, cancellation, access errors or a 95-minute wait timeout stop that
@@ -69,8 +68,8 @@ publication rather than deploying the previous archive as a release update.
 Before enabling the release handoff:
 
 1. Merge the workflow change upstream and sync the fork's `main` so its
-   `docs.yml` supports `archive_request`. Both repositories use the same workflow
-   definition; the repository and event determine which jobs run.
+   its `docs.yml` uses the reviewed collector. Both repositories use the same
+   workflow definition; the repository and event determine which jobs run.
 2. Create a fine-grained token selecting only `juscghwe/caddy-ui`, with repository
    **Actions: read and write**. The upstream workflow needs it to dispatch and
    observe the fork's run; GitHub's built-in token cannot dispatch across

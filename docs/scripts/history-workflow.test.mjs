@@ -37,7 +37,7 @@ test('Pages deploys a successful build despite skipped ancestors, but never a fa
 test('release-driven documentation keeps collection in the fork and makes publication wait for it', () => {
     const group = workflow.match(/^ {2}group: documentation-\$\{\{ github.ref \}\}-\$\{\{ (.+) \}\}$/m)[1];
     assert.doesNotMatch(workflow, /^ {2}schedule:/m, 'collection and publication cannot race on independent cron triggers');
-    assert.match(workflow, /^run-name: \$\{\{ inputs.archive_request \|\|/m);
+    assert.doesNotMatch(workflow, /archive_request|^run-name:/m);
     assert.match(job('build'), /^ {4}needs: \[archive, collect\]/m);
     for (const event of ['push', 'workflow_run']) {
         assert.equal(runInNewContext(group, context(event)), 'site', 'upstream publications share one concurrency group');
@@ -92,6 +92,5 @@ test('release completion cannot publish foreign artifacts or run archive writes 
     assert.match(job('build'), /--require-collected "\$REQUIRE_COLLECTED"/);
     assert.match(job('collect'), /ref: main/);
     assert.match(job('collect'), /secrets\.DOCS_ARCHIVE_DISPATCH_TOKEN/);
-    assert.match(job('collect'), /docs-archive-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}/);
     assert.doesNotMatch(job('build'), /secrets\.DOCS_ARCHIVE_DISPATCH_TOKEN/);
 });
