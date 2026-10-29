@@ -4,6 +4,7 @@ import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 
 const workflow = readFileSync(new URL('../../.github/workflows/docs.yml', import.meta.url), 'utf8');
+const archiveWorkflow = readFileSync(new URL('../../.github/workflows/documentation-history.yml', import.meta.url), 'utf8');
 const job = name => workflow.match(new RegExp(`^  ${name}:\\n([\\s\\S]*?)(?=^  [a-z]+:|$(?![\\s\\S]))`, 'm'))[1];
 function condition(name) {
     const source = job(name);
@@ -19,6 +20,12 @@ function context(event, { fork = false, archive = false, collect = false, source
             event: { repository: { fork }, workflow_run: { head_repository: { full_name: source || repository }, conclusion } } } };
 }
 const eligible = (name, event) => runInNewContext(`Boolean(${condition(name).replace(/^\$\{\{\s*|\s*\}\}$/g, '')})`, event);
+
+test('the reusable archive serializes writers without replacing a second pending request', () => {
+    assert.match(archiveWorkflow, /^ {2}group: historical-documentation-archive$/m);
+    assert.match(archiveWorkflow, /^ {2}queue: max$/m);
+    assert.match(archiveWorkflow, /^ {2}cancel-in-progress: false$/m);
+});
 
 test('Pages deploys a successful build despite skipped ancestors, but never a failed or cancelled build', () => {
     // An explicit status function overrides Actions' implicit success(), which
