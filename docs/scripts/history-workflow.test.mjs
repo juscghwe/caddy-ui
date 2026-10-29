@@ -11,14 +11,28 @@ function condition(name) {
         || source.match(/^ {4}if: (.+)$/m)[1];
 }
 function context(event, { fork = false, archive = false, collect = false, source, conclusion = 'success', ref = 'refs/heads/main',
-    collection = 'skipped', archival = 'skipped', cancelled = false } = {}) {
+    collection = 'skipped', archival = 'skipped', build = 'success', cancelled = false } = {}) {
     const repository = fork ? 'juscghwe/caddy-ui' : 'zackwag/caddy-ui';
     return { inputs: { archive_history: archive, collect_history: collect }, cancelled: () => cancelled,
-        needs: { collect: { result: collection }, archive: { result: archival } },
+        needs: { collect: { result: collection }, archive: { result: archival }, build: { result: build } },
         github: { repository, ref, sha: 'trusted-event-sha', event_name: event,
             event: { repository: { fork }, workflow_run: { head_repository: { full_name: source || repository }, conclusion } } } };
 }
-const eligible = (name, event) => runInNewContext(`Boolean(${condition(name)})`, event);
+const eligible = (name, event) => runInNewContext(`Boolean(${condition(name).replace(/^\$\{\{\s*|\s*\}\}$/g, '')})`, event);
+
+test('Pages deploys a successful build despite skipped ancestors, but never a failed or cancelled build', () => {
+    // An explicit status function overrides Actions' implicit success(), which
+    // otherwise includes skipped archive/collect jobs in the dependency chain.
+    assert.match(condition('deploy'), /!cancelled\(\)/);
+    assert.match(condition('deploy'), /needs\.build\.result == 'success'/);
+    for (const event of ['push', 'workflow_run', 'workflow_dispatch']) {
+        assert.equal(eligible('deploy', context(event)), true);
+        for (const build of ['failure', 'cancelled', 'skipped']) {
+            assert.equal(eligible('deploy', context(event, { build })), false);
+        }
+        assert.equal(eligible('deploy', context(event, { cancelled: true })), false);
+    }
+});
 
 test('release-driven documentation keeps collection in the fork and makes publication wait for it', () => {
     const group = workflow.match(/^ {2}group: documentation-\$\{\{ github.ref \}\}-\$\{\{ (.+) \}\}$/m)[1];

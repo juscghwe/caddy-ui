@@ -211,7 +211,7 @@ jobs:
 
   deploy:
     name: Deploy documentation
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !github.event.repository.fork && !inputs.archive_history
+    if: ${{ !cancelled() && needs.build.result == 'success' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !github.event.repository.fork && !inputs.archive_history }}
     needs: build
     runs-on: ubuntu-latest
     permissions:
