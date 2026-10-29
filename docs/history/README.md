@@ -49,7 +49,9 @@ preserve updated diagnostics even when their outcome remains unchanged.
 
 The fork's Documentation workflow accepts an explicit collection request. Its
 `archive` job pins both the reusable workflow and `tooling_ref` to the same
-reviewed full commit. Writers queue under one concurrency group. The archive job
+reviewed full commit. Writers queue under one concurrency group with
+`queue: max`, so multiple pending requests wait instead of replacing each other.
+GitHub limits that queue to 100 pending runs; requests beyond it are cancelled. The archive job
 rejects PR events and storage outside the owner's fork. Its write token is
 exposed only to restore/upload steps, never to historical build scripts. The
 archive tag is not a `v*` release. There is no scheduled collection or deployment.
@@ -244,8 +246,11 @@ In the upstream repository, the Documentation workflow publishes on main updates
 completion of successful local Release runs, and manual dispatch. Release runs
 first request and wait for collection as described above; ordinary development
 updates and PR previews restore the preserved archive without requesting a crawl.
-Production runs are not cancelled by a newer run; PR previews can replace their
-own obsolete previews.
+All Documentation runs, including PR previews, use `queue: max` with cancellation
+disabled. Site runs queue by ref, separately from fork archive requests; the
+reusable collector also queues all writers together. A later push, release or
+manual request cannot replace an already pending run. Queue time counts toward
+the upstream collection wait, so a long backlog can still reach its timeout.
 
 The publisher restores the latest complete archive from `juscghwe/caddy-ui`,
 verifying the payload checksum, snapshot bytes and provenance before assembly.

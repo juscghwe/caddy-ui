@@ -27,6 +27,15 @@ test('the reusable archive serializes writers without replacing a second pending
     assert.match(archiveWorkflow, /^ {2}cancel-in-progress: false$/m);
 });
 
+test('documentation preserves multiple pending publications and pins the updated collector', () => {
+    assert.match(workflow, /^ {2}queue: max$/m);
+    assert.match(workflow, /^ {2}cancel-in-progress: false$/m);
+    const pinnedWorkflow = job('archive').match(/documentation-history\.yml@([a-f0-9]{40})/)[1];
+    const pinnedTooling = job('archive').match(/tooling_ref: ([a-f0-9]{40})/)[1];
+    assert.equal(pinnedWorkflow, pinnedTooling);
+    assert.notEqual(pinnedWorkflow, '1d01a539cfbbce29750e0820cdf194cc56df3765', 'the old collector still replaces pending writers');
+});
+
 test('Pages deploys a successful build despite skipped ancestors, but never a failed or cancelled build', () => {
     // An explicit status function overrides Actions' implicit success(), which
     // otherwise includes skipped archive/collect jobs in the dependency chain.

@@ -36,16 +36,18 @@ permissions:
 
 concurrency:
   group: documentation-${{ github.ref }}-${{ inputs.archive_history && 'archive' || 'site' }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # Preserve pending release/manual requests when more pushes arrive.
+  queue: max
+  cancel-in-progress: false
 
 jobs:
   archive:
     if: github.repository == 'juscghwe/caddy-ui' && github.event_name == 'workflow_dispatch' && inputs.archive_history
     permissions:
       contents: write
-    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@1d01a539cfbbce29750e0820cdf194cc56df3765
+    uses: juscghwe/caddy-ui/.github/workflows/documentation-history.yml@bafb0788a3d14cd4fef1e61971061307ca8b1e61
     with:
-      tooling_ref: 1d01a539cfbbce29750e0820cdf194cc56df3765
+      tooling_ref: bafb0788a3d14cd4fef1e61971061307ca8b1e61
       bootstrap: ${{ inputs.bootstrap || false }}
       retry_failed: ${{ inputs.retry_failed || false }}
 
