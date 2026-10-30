@@ -53,10 +53,15 @@ test('production CSP blocks script injection and keeps HTTP and HTTPS UI feature
     await scope.acquire(() => exec('docker', ['create', '--name', container,
         '--label', 'io.caddy-ui.test-fixture=true', '--add-host', 'caddy-ui-backend:127.0.0.1',
         '-p', '127.0.0.1::80',
-        '-v', `${dist}:/usr/share/nginx/html:ro`,
-        '-v', `${join(root, 'src/frontend/nginx.conf')}:/etc/nginx/conf.d/default.conf:ro`,
         'nginx:alpine'], { timeout: 60000, signal: scope.signal }),
     () => exec('docker', ['rm', '-f', container], { timeout: 10000 }));
+    // The Docker daemon may run outside this Dev Container, where neither the
+    // checkout nor our temporary build directory exists. Copy through the Docker
+    // client instead of asking the daemon to bind-mount client-side paths.
+    await exec('docker', ['cp', `${dist}/.`, `${container}:/usr/share/nginx/html`],
+        { timeout: 15000, signal: scope.signal });
+    await exec('docker', ['cp', join(root, 'src/frontend/nginx.conf'), `${container}:/etc/nginx/conf.d/default.conf`],
+        { timeout: 15000, signal: scope.signal });
     await exec('docker', ['start', container], { timeout: 15000, signal: scope.signal });
     await waitForContainerNetwork(container, { signal: scope.signal });
     const { stdout } = await exec('docker', ['port', container, '80/tcp'], { timeout: 10000 });
